@@ -20,7 +20,7 @@
     </target>
 
     <!-- ================================= 
-          target: clean-cache              
+          target: clean-cache-
          ================================= -->
     <target name="clean-cache" description="--> clean the ivy cache">
 	<ivy:cleancache />
