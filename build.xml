@@ -1,0 +1,28 @@
+<project name="idm-blitz" default="resolve" xmlns:ivy="antlib:org.apache.ivy.ant">
+    <!-- ================================= 
+          target: resolve              
+         ================================= -->
+    <target name="resolve" description="--> retreive dependencies with ivy">
+        <ivy:retrieve/>
+    </target>
+
+    <!-- ================================= 
+          target: clean              
+         ================================= -->
+    <target name="clean" description="--> clean the project">
+        <delete includeemptydirs="true">
+            <fileset dir="${basedir}">
+            	<exclude name="src/**" />
+            	<exclude name="build.xml" />
+              <exclude name="ivy.xml" />
+        	</fileset>
+    	</delete>
+    </target>
+
+    <!-- ================================= 
+          target: clean-cache              
+         ================================= -->
+    <target name="clean-cache" description="--> clean the ivy cache">
+	<ivy:cleancache />
+    </target>
+</project>
