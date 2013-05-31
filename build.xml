@@ -1,4 +1,6 @@
 <project name="idm-blitz" default="resolve" xmlns:ivy="antlib:org.apache.ivy.ant">
+    <property name="lib.dir" value="lib" />
+
     <!-- ================================= 
           target: resolve              
          ================================= -->
