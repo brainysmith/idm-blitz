@@ -1,7 +1,76 @@
-<project name="idm-blitz" default="main">
-	
+<project name="idm-blitz" default="main" xmlns:ivy="antlib:org.apache.ivy.ant">
+
+	<!--=================================
+		Setting properties
+		=================================-->
+	<property name="fs" value="${file.separator}" />
+
+	<!--=================================
+		Building of database adapter
+		==================================-->
+	<target name="db-adapter.build" description="builds db-adapter">
+		<echo>Started building of db-adapter</echo>
+	</target>
+
+	<target name="db-adapter.test" description="test db-adapter" depends="db-adapter.build">
+		<echo>Started testing of db-adapter</echo>
+	</target>
+
+	<target name="db-adapter" description="build and test db-adapter" depends="db-adapter.test">
+		<echo>Started building and testing of db-adapter</echo>
+	</target>
+
+	<!--=================================
+			Building of idp
+		=================================-->
+	<target name="idp.init">
+		<property name="idp.dir" value="${basedir}${fs}idp" />
+		<property name="idp.dir.lib" value="${idp.dir}${fs}lib" />
+		<mkdir dir="${idp.dir.lib}" />
+		<ivy:resolve file="${idp.dir}${fs}ivy.xml" />
+		<ivy:retrieve pattern="${idp.dir.lib}/[artifact]-[type]-[revision].[ext]" />
+		<path id="idp.dir.lib.id">
+			<fileset dir="${idp.dir.lib}" />
+		</path>
+	</target>
+
+	<target name="idp-config.init" depends="idp.init">
+		<property name="idp-config.dir" value="${idp.dir}${fs}idp-config" />
+		<property name="idp-config.dir.src" value="${idp-config.dir}${fs}src${fs}main${fs}java" />
+		<property name="idp-config.dir.dest" value="${idp-config.dir}${fs}target" />
+		<property name="idp-config.dir.dest.classes" value="${idp-config.dir.dest}${fs}classes" />
+		<property name="idp-config.dir.lib" value="${idp-config.dir}${fs}lib" />
+		<mkdir dir="${idp-config.dir.dest}" />
+		<mkdir dir="${idp-config.dir.dest.classes}" />
+	</target>
+
+	<target name="idp-config.build" depends="idp-config.init">
+		<javac srcdir="${idp-config.dir.src}" destdir="${idp-config.dir.dest.classes}" classpathref="idp.dir.lib.id" includeantruntime="true" />
+		<jar destfile="${idp-config.dir.dest}${fs}idp-config.jar" basedir="${idp-config.dir.dest.classes}"/>
+	</target>
+
+
+
+
+
+
+
+	<target name="idp.build" description="builds idp">
+		<echo>Started building of db-adapter</echo>
+	</target>
+
+	<target name="idp.test" description="test idp" depends="idp.build">
+		<echo>Started testing of db-adapter</echo>
+	</target>
+
+	<target name="idp" description="build and test idp" depends="idp.test">
+		<echo>Started building and testing of db-adapter</echo>
+	</target>
+
+
+
 	<target name="main">
 		<echo>Has not realised yet!</echo>
 	</target>
-	
+
 </project>
