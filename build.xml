@@ -34,6 +34,9 @@
 		</path>
 	</target>
 
+	<!--=================================
+				Building of idp-config
+		=================================-->
 	<target name="idp-config.init" depends="idp.init">
 		<property name="idp-config.dir" value="${idp.dir}${fs}idp-config" />
 		<property name="idp-config.dir.src" value="${idp-config.dir}${fs}src${fs}main${fs}java" />
@@ -46,9 +49,28 @@
 
 	<target name="idp-config.build" depends="idp-config.init">
 		<javac srcdir="${idp-config.dir.src}" destdir="${idp-config.dir.dest.classes}" classpathref="idp.dir.lib.id" includeantruntime="true" />
-		<jar destfile="${idp-config.dir.dest}${fs}idp-config.jar" basedir="${idp-config.dir.dest.classes}"/>
+		<jar destfile="${idp-config.dir.dest}${fs}idp-config.jar" basedir="${idp-config.dir.dest.classes}" />
 	</target>
 
+	<!--=================================
+		Building of netty-servlet-bridge (nsb)
+		=================================-->
+	<target name="nsb.init" depends="idp-config.init">
+		<property name="nsb.dir" value="${idp.dir}${fs}netty-servlet-bridge" />
+		<property name="nsb.dir.src" value="${nsb.dir}${fs}src${fs}main${fs}java" />
+		<property name="nsb.dir.dest" value="${nsb.dir}${fs}target" />
+		<property name="nsb.dir.dest.classes" value="${nsb.dir.dest}${fs}classes" />
+		<property name="nsb.dir.lib" value="${nsb.dir}${fs}lib" />
+		<mkdir dir="${nsb.dir.dest}" />
+		<mkdir dir="${nsb.dir.dest.classes}" />
+	</target>
+
+	<target name="nsb.build" depends="nsb.init, idp-config.build">
+		<javac srcdir="${nsb.dir.src}" destdir="${nsb.dir.dest.classes}" classpath="${idp-config.dir.dest}${fs}idp-config.jar" 
+			classpathref="idp.dir.lib.id" includeantruntime="true">
+		</javac>
+		<jar destfile="${nsb.dir.dest}${fs}netty-servlet-bridge.jar" basedir="${nsb.dir.dest.classes}" />
+	</target>
 
 
 
