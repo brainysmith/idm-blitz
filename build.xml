@@ -4,6 +4,8 @@
 		Setting properties
 		=================================-->
 	<property name="fs" value="${file.separator}" />
+	<ivy:configure id="basic.settings" file="${basedir}${fs}ivysettings-basic.xml"/>
+	
 
 	<!--=================================
 		Building of database adapter
@@ -70,6 +72,26 @@
 			classpathref="idp.dir.lib.id" includeantruntime="true">
 		</javac>
 		<jar destfile="${nsb.dir.dest}${fs}netty-servlet-bridge.jar" basedir="${nsb.dir.dest.classes}" />
+	</target>
+
+	<!--=================================
+		Building of shibboleth-common (sbc)
+		=================================-->
+	<target name="sbc.init" depends="idp-config.init">
+		<property name="sbc.dir" value="${idp.dir}${fs}shibboleth-common" />
+		<property name="sbc.dir.src" value="${sbc.dir}${fs}src${fs}main${fs}java" />
+		<property name="sbc.dir.dest" value="${sbc.dir}${fs}target" />
+		<property name="sbc.dir.dest.classes" value="${sbc.dir.dest}${fs}classes" />
+		<property name="sbc.dir.lib" value="${sbc.dir}${fs}lib" />
+		<mkdir dir="${sbc.dir.dest}" />
+		<mkdir dir="${sbc.dir.dest.classes}" />
+	</target>
+
+	<target name="sbc.build" depends="sbc.init, idp-config.build">
+		<javac srcdir="${sbc.dir.src}" destdir="${sbc.dir.dest.classes}" classpath="${idp-config.dir.dest}${fs}idp-config.jar" 
+				classpathref="idp.dir.lib.id" includeantruntime="true">
+		</javac>
+		<jar destfile="${sbc.dir.dest}${fs}shibboleth-common.jar" basedir="${sbc.dir.dest.classes}" />
 	</target>
 
 
