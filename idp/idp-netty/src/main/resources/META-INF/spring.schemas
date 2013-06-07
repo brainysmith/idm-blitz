@@ -1,0 +1,3 @@
+urn\:mace\:shibboleth\:2.0\:idp\:profile-handler = schema/shibboleth-2.0-idp-profile-handler.xsd
+urn\:blitz\:shibboleth\:2.0\:afp = schema/blitz-shibboleth-2.0-idp-afp.xsd
+urn\:blitz\:shibboleth\:2.0\:resolver = schema/blitz-shibboleth-2.0-idp-data-connector.xsd

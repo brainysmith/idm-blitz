@@ -36,7 +36,7 @@
 			<fileset dir="${idp.dir.lib}" />
 		</path>
 	</target>
-
+	
 	<!--=================================
 				Building of idp-config
 		=================================-->
@@ -112,13 +112,32 @@
 		<jar destfile="${sip.dir.dest}${fs}shibboleth-identityprovider.jar" basedir="${sip.dir.dest.classes}" />
 	</target>
 
+	<!--=================================
+		Building of idp-netty
+		=================================-->
+	<target name="idp-netty.init" depends="idp-config.init">
+		<property name="idp-netty.dir" value="${idp.dir}${fs}idp-netty" />
+		<property name="idp-netty.dir.src" value="${idp-netty.dir}${fs}src${fs}main${fs}java" />
+		<property name="idp-netty.dir.dest" value="${idp-netty.dir}${fs}target" />
+		<property name="idp-netty.dir.dest.classes" value="${idp-netty.dir.dest}${fs}classes" />
+		<property name="idp-netty.dir.lib" value="${idp-netty.dir}${fs}lib" />
+		<mkdir dir="${idp-netty.dir.dest}" />
+		<mkdir dir="${idp-netty.dir.dest.classes}" />
+	</target>
+
+	<target name="idp-netty.build" depends="idp-netty.init, sip.build, sbc.build, nsb.build, idp-config.build">
+		<javac srcdir="${idp-netty.dir.src}" destdir="${idp-netty.dir.dest.classes}" classpath="${idp-config.dir.dest}${fs}idp-config.jar${ps}${sbc.dir.dest}${fs}shibboleth-common.jar${ps}${sip.dir.dest}${fs}shibboleth-identityprovider.jar${ps}${nsb.dir.dest}${fs}netty-servlet-bridge.jar" classpathref="idp.dir.lib.id" includeantruntime="true">
+		</javac>
+		<jar destfile="${idp-netty.dir.dest}${fs}idp-netty.jar" basedir="${idp-netty.dir.dest.classes}" />
+	</target>
 
 
 
 
 
-	<target name="idp.build" description="builds idp">
-		<echo>Started building of db-adapter</echo>
+
+	<target name="idp.build" description="builds idp" depends="idp-netty.build">
+		<echo>Started building of IdP</echo>
 	</target>
 
 	<target name="idp.test" description="test idp" depends="idp.build">

@@ -1,0 +1,72 @@
++<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="urn:blitz:shibboleth:2.0:mdext"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="urn:blitz:shibboleth:2.0:mdext"
+    elementFormDefault="qualified">
+
+    <xsd:annotation>
+        <xsd:documentation>
+            BLITZ metadata extensions.
+        </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType name="GlobalRoleType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Global role type.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="ID" type="xsd:string" use="required"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="SupportedGlobalRoles">
+        <xsd:annotation>
+            <xsd:documentation>
+                A set of global roles.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="GlobalRole" type="GlobalRoleType" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+     <xsd:complexType name="Org2Type">
+        <xsd:annotation>
+            <xsd:documentation>
+                Organization type.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="ID" type="xsd:string" use="required"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="AssuranceLevelType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Confidence level type.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="ID" type="xsd:string" use="required"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="SupportedOrgTypes">
+        <xsd:annotation>
+            <xsd:documentation>
+                A set of organization types.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="OrgType" type="Org2Type" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="SupportedAssuranceLevels">
+        <xsd:annotation>
+            <xsd:documentation>
+                A set of confidence levels.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="AssuranceLevel" type="AssuranceLevelType" />
+        </xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XMLTooling xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:shibmd="urn:mace:shibboleth:metadata:1.0"
+            xmlns:encoder="urn:mace:shibboleth:2.0:attribute:encoder" xmlns="http://www.opensaml.org/xmltooling-config"
+            xmlns:blitz-encoder="urn:blitz:shibboleth:2.0:attribute:encoder"
+            xmlns:blitz="urn:blitz:shibboleth:2.0:mdext"
+            xsi:schemaLocation="http://www.opensaml.org/xmltooling-config ../../src/schema/xmltooling-config.xsd">
+
+
+    <!-- Shibboleth SAML Metadata Extensions Object providers -->
+    <ObjectProviders>
+
+        <!-- Scope provider -->
+        <ObjectProvider qualifiedName="shibmd:Scope">
+            <BuilderClass className="edu.internet2.middleware.shibboleth.common.xmlobject.impl.ShibbolethMetadataScopeBuilder"/>
+            <MarshallingClass className="edu.internet2.middleware.shibboleth.common.xmlobject.impl.ShibbolethMetadataScopeMarshaller"/>
+            <UnmarshallingClass className="edu.internet2.middleware.shibboleth.common.xmlobject.impl.ShibbolethMetadataScopeUnmarshaller"/>
+        </ObjectProvider>
+
+        <!-- KeyAuthority provider -->
+        <ObjectProvider qualifiedName="shibmd:KeyAuthority">
+            <BuilderClass className="edu.internet2.middleware.shibboleth.common.xmlobject.impl.ShibbolethMetadataKeyAuthorityBuilder"/>
+            <MarshallingClass className="edu.internet2.middleware.shibboleth.common.xmlobject.impl.ShibbolethMetadataKeyAuthorityMarshaller"/>
+            <UnmarshallingClass className="edu.internet2.middleware.shibboleth.common.xmlobject.impl.ShibbolethMetadataKeyAuthorityUnmarshaller"/>
+        </ObjectProvider>
+
+        <ObjectProvider qualifiedName="encoder:ScopedValue">
+            <BuilderClass className="edu.internet2.middleware.shibboleth.common.xmlobject.impl.ShibbolethScopedValueBuilder"/>
+            <MarshallingClass className="edu.internet2.middleware.shibboleth.common.xmlobject.impl.ShibbolethScopedValueMarshaller"/>
+            <UnmarshallingClass className="edu.internet2.middleware.shibboleth.common.xmlobject.impl.ShibbolethScopedValueUnmarshaller"/>
+        </ObjectProvider>
+
+        <!-- Blitz extensions -->
+        <ObjectProvider qualifiedName="blitz:SupportedGlobalRoles">
+            <BuilderClass className="com.blitz.idm.idp.netty.config.md.ext.SupportedGlobalRolesBuilder"/>
+            <MarshallingClass className="com.blitz.idm.idp.netty.config.md.ext.SupportedGlobalRolesMarshaller"/>
+            <UnmarshallingClass className="com.blitz.idm.idp.netty.config.md.ext.SupportedGlobalRolesUnmarshaller"/>
+        </ObjectProvider>
+
+        <ObjectProvider qualifiedName="blitz:GlobalRole">
+            <BuilderClass className="com.blitz.idm.idp.netty.config.md.ext.GlobalRoleBuilder"/>
+            <MarshallingClass className="com.blitz.idm.idp.netty.config.md.ext.GlobalRoleMarshaller"/>
+            <UnmarshallingClass className="com.blitz.idm.idp.netty.config.md.ext.GlobalRoleUnmarshaller"/>
+        </ObjectProvider>
+
+
+        <ObjectProvider qualifiedName="blitz:SupportedAssuranceLevels">
+            <BuilderClass className="com.blitz.idm.idp.netty.config.md.ext.SupportedAssuranceLevelsBuilder"/>
+            <MarshallingClass className="com.blitz.idm.idp.netty.config.md.ext.SupportedAssuranceLevelsMarshaller"/>
+            <UnmarshallingClass className="com.blitz.idm.idp.netty.config.md.ext.SupportedAssuranceLevelsUnmarshaller"/>
+        </ObjectProvider>
+
+        <ObjectProvider qualifiedName="blitz:AssuranceLevel">
+            <BuilderClass className="com.blitz.idm.idp.netty.config.md.ext.AssuranceLevelBuilder"/>
+            <MarshallingClass className="com.blitz.idm.idp.netty.config.md.ext.AssuranceLevelMarshaller"/>
+            <UnmarshallingClass className="com.blitz.idm.idp.netty.config.md.ext.AssuranceLevelUnmarshaller"/>
+        </ObjectProvider>
+
+        <ObjectProvider qualifiedName="blitz:SupportedOrgTypes">
+            <BuilderClass className="com.blitz.idm.idp.netty.config.md.ext.SupportedOrgTypesBuilder"/>
+            <MarshallingClass className="com.blitz.idm.idp.netty.config.md.ext.SupportedOrgTypesMarshaller"/>
+            <UnmarshallingClass className="com.blitz.idm.idp.netty.config.md.ext.SupportedOrgTypesUnmarshaller"/>
+        </ObjectProvider>
+
+        <ObjectProvider qualifiedName="blitz:OrgType">
+            <BuilderClass className="com.blitz.idm.idp.netty.config.md.ext.OrgTypeBuilder"/>
+            <MarshallingClass className="com.blitz.idm.idp.netty.config.md.ext.OrgTypeMarshaller"/>
+            <UnmarshallingClass className="com.blitz.idm.idp.netty.config.md.ext.OrgTypeUnmarshaller"/>
+        </ObjectProvider>
+
+        <!-- Blitz authorities attribute -->
+        <ObjectProvider qualifiedName="blitz-encoder:Authority">
+            <BuilderClass className="com.blitz.idm.idp.netty.config.md.atr.AuthorityBuilder"/>
+            <MarshallingClass className="com.blitz.idm.idp.netty.config.md.atr.AuthorityMarshaller"/>
+            <UnmarshallingClass className="com.blitz.idm.idp.netty.config.md.atr.AuthorityUnmarshaller"/>
+        </ObjectProvider>
+
+        <ObjectProvider qualifiedName="blitz-encoder:Authorities">
+            <BuilderClass className="com.blitz.idm.idp.netty.config.md.atr.AuthoritiesBuilder"/>
+            <MarshallingClass className="com.blitz.idm.idp.netty.config.md.atr.AuthoritiesMarshaller"/>
+            <UnmarshallingClass className="com.blitz.idm.idp.netty.config.md.atr.AuthoritiesUnmarshaller"/>
+        </ObjectProvider>
+
+
+    </ObjectProviders>
+</XMLTooling>

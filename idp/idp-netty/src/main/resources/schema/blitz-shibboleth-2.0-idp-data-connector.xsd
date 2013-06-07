@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="urn:blitz:shibboleth:2.0:resolver"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
+            elementFormDefault="qualified">
+
+    <xsd:import namespace="urn:mace:shibboleth:2.0:resolver"
+        schemaLocation="classpath:/schema/shibboleth-2.0-attribute-resolver.xsd" />
+
+    <xsd:complexType name="PrincipalData">
+        <xsd:annotation>
+            <xsd:documentation>
+               Identity data connector.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="resolver:BaseDataConnectorType">
+                <xsd:attribute name="storageService" type="xsd:string" />
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="DBData">
+        <xsd:annotation>
+            <xsd:documentation>
+               Identity data connector.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="resolver:BaseDataConnectorType">
+                <xsd:attribute name="storageService" type="xsd:string" />
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+</xsd:schema>

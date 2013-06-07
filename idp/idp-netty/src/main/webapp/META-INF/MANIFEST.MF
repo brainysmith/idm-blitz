@@ -1,0 +1,5 @@
+Extension-List: active-cache
+active-cache-Extension-Name: active-cache
+active-cache-Implementation-Version: 1.0
+active-cache-Specification-Version: 1.0
+
