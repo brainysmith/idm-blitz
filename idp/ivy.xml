@@ -3,9 +3,12 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
 	<info organisation="com.blitz" module="idm.idp" />
+	<configurations>
+		<include file="${ivy.project.dir}/ivy-conf.xml"/>
+	</configurations>	
 	<dependencies>
-		<dependency org="org.slf4j" name="slf4j-api" rev="1.7.2" />
-		<dependency org="javax.servlet" name="javax.servlet-api" rev="3.0.1"/>
-		<dependency org="io.netty" name="netty" rev="3.6.6.Final"/>
+		<dependency org="org.slf4j" name="slf4j-api" rev="1.7.2" conf="runtime"/>
+		<dependency org="javax.servlet" name="javax.servlet-api" rev="3.0.1" conf="runtime"/>
+		<dependency org="io.netty" name="netty" rev="3.6.6.Final" conf="runtime"/>
 	</dependencies>
 </ivy-module>
