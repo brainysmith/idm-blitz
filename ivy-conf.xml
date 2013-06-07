@@ -1,7 +1,7 @@
 <configurations defaultconf="runtime" defaultconfmapping="%->default" >
-	<conf name="compile" description="Required only to compile module" transitive="false"/>
+	<conf name="compile" description="Required only to compile module"/>
 	<conf name="runtime" description="Additional run-time dependencies"
-		extends="compile" transitive="false"/>
+		extends="compile"/>
 	<conf name="test" description="Required for test only" extends="runtime"
-		visibility="private" transitive="false"/>
+		visibility="private"/>
 </configurations>
