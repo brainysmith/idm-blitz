@@ -10,7 +10,7 @@
 		<dependency org="org.slf4j" name="slf4j-api" rev="1.7.5" transitive="false"/>
 		<dependency org="javax.servlet" name="javax.servlet-api" rev="3.0.1" transitive="false"/>
 		<dependency org="io.netty" name="netty" rev="3.6.6.Final" transitive="false"/>
-		<dependency org="org.opensaml" name="opensaml" rev="2.6.0"/>
+		<dependency org="org.opensaml" name="opensaml" rev="2.6.0" transitive="true"/>
 		<dependency org="jargs" name="jargs" rev="1.0" transitive="false"/>
 		<dependency org="org.springframework" name="spring-context-support" rev="2.5.6.SEC03" transitive="false">
 			<exclude org="aopalliance" name="aopalliance"/>
@@ -21,7 +21,7 @@
 			<exclude org="com.oracle" name="oc4j"/>
 			<exclude org="com.bea.wlplatform" name="commonj-twm"/>
 		</dependency>
-		<dependency org="org.springframework" name="spring-web" rev="2.5.6.SEC03">
+		<dependency org="org.springframework" name="spring-web" rev="2.5.6.SEC03" transitive="true">
 			<exclude org="commons-logging" name="commons-logging"/>
 			<exclude org="javax.faces" name="jsf-api"/>
 			<exclude org="javax.jms" name="jms"/>
@@ -41,5 +41,6 @@
 		<dependency org="org.slf4j" name="slf4j-api" rev="1.7.2" conf="runtime"/>
 		<dependency org="javax.servlet" name="javax.servlet-api" rev="3.0.1" conf="runtime"/>
 		<dependency org="io.netty" name="netty" rev="3.6.6.Final" conf="runtime"/>
+		<dependency org="net.jcip" name="jcip-annotations" rev="1.0" conf="runtime"/>
 	</dependencies>
 </ivy-module>
