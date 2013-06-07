@@ -1,5 +1,5 @@
-<configurations defaultconf="runtime" defaultconfmapping="%->default" >
-	<conf name="compile" description="Required only to compile module"/>
+<configurations defaultconf="runtime" defaultconfmapping="%->default" confmappingoverride="true" >
+	<conf name="compile" description="Required only to compile module" transitive="false"/>
 	<conf name="runtime" description="Additional run-time dependencies"
 		extends="compile"/>
 	<conf name="test" description="Required for test only" extends="runtime"
