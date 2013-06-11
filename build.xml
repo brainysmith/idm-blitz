@@ -7,6 +7,7 @@
 	<property name="ps" value="${path.separator}" />
 	<ivy:configure id="basic.settings" file="${basedir}${fs}ivysettings-basic.xml" />
 
+	<property name="sbt.dir" value="${basedir}${fs}tools${fs}sbt" />
 
 	<!--=================================
 		Building of database adapter
@@ -36,7 +37,7 @@
 			<fileset dir="${idp.dir.lib}" />
 		</path>
 	</target>
-	
+
 	<!--=================================
 				Building of idp-config
 		=================================-->
@@ -131,11 +132,6 @@
 		<jar destfile="${idp-netty.dir.dest}${fs}idp-netty.jar" basedir="${idp-netty.dir.dest.classes}" />
 	</target>
 
-
-
-
-
-
 	<target name="idp.build" description="builds idp" depends="idp-netty.build">
 		<echo>Started building of IdP</echo>
 	</target>
@@ -148,7 +144,39 @@
 		<echo>Started building and testing of db-adapter</echo>
 	</target>
 
+	<!--=================================
+		Building of web-login
+		==================================-->
+	<target name="web-login.init">
+		<echo>Started initializing of web-login</echo>
 
+	</target>	
+	
+	<target name="web-login.build" description="builds web-login" depends="web-login.init">
+		<echo>Started building of web-login</echo>
+		<path id="spt.boot.properties.path">
+			<pathelement path="${sbt.dir}${fs}blitz.boot.properties"/>
+		</path>
+		<pathconvert targetos="unix" property="spt.boot.properties" refid="spt.boot.properties.path"/>
+		
+		<java jar="${sbt.dir}${fs}/sbt-launch.jar" fork="true" failonerror="true" maxmemory="128m">			
+			<arg value="-Dsbt.dir=${sbt.dir}"/>
+			<arg value="-Dsbt.boot.properties=file:/${spt.boot.properties}"/>
+			<arg value="compile"/>
+			<!--<classpath>
+				<pathelement location="dist/test.jar" />
+				<pathelement path="${java.class.path}" />
+			</classpath>-->
+		</java>
+	</target>
+
+	<target name="web-login.test" description="test web-login" depends="web-login.build">
+		<echo>Started testing of web-login</echo>
+	</target>
+
+	<target name="web-login" description="build and test web-login" depends="web-login.test">
+		<echo>Started building and testing of web-login</echo>
+	</target>
 
 	<target name="main">
 		<echo>Has not realised yet!</echo>
