@@ -1,3 +1,5 @@
 /.project
 *.class
 /.settings/*
+/web-login/target
+/web-login/project/target

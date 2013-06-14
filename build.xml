@@ -6,7 +6,6 @@
 	<property name="fs" value="${file.separator}" />
 	<property name="ps" value="${path.separator}" />
 	<ivy:configure id="basic.settings" file="${basedir}${fs}ivysettings-basic.xml" />
-
 	<property name="sbt.dir" value="${basedir}${fs}tools${fs}sbt" />
 
 	<!--=================================
@@ -154,15 +153,25 @@
 	
 	<target name="web-login.build" description="builds web-login" depends="web-login.init">
 		<echo>Started building of web-login</echo>
-		<path id="spt.boot.properties.path">
-			<pathelement path="${sbt.dir}${fs}blitz.boot.properties"/>
+		<path id="sbt.boot.properties.path">
+			<pathelement path="${sbt.dir}${fs}sbt.boot.properties"/>
 		</path>
-		<pathconvert targetos="unix" property="spt.boot.properties" refid="spt.boot.properties.path"/>
+		<pathconvert targetos="unix" property="sbt.boot.properties" refid="sbt.boot.properties.path"/>
 		
-		<java jar="${sbt.dir}${fs}/sbt-launch.jar" fork="true" failonerror="true" maxmemory="128m">			
-			<arg value="-Dsbt.dir=${sbt.dir}"/>
-			<arg value="-Dsbt.boot.properties=file:/${spt.boot.properties}"/>
+		<java jar="${sbt.dir}${fs}/sbt-launch.jar" fork="true" failonerror="true" maxmemory="2048M" dir="${basedir}${fs}web-login">			
+			<jvmarg value="-XX:+UseConcMarkSweepGC"/>
+			<jvmarg value="-XX:+CMSClassUnloadingEnabled"/>
+			<jvmarg value="-XX:PermSize=256M"/>
+			<jvmarg value="-XX:MaxPermSize=2048M"/>
+			<jvmarg value="-XX:+CMSClassUnloadingEnabled"/>
+					
+			<arg value="-Dfile.encoding=UTF-8"/>
+			<arg value="-Dplay.version=&quot;2.1.1&quot;"/>
+			<arg value="-Dsbt.ivy.home=&quot;${sbt.dir}/repository&quot;"/>						
+			<arg value="-Dsbt.boot.properties=&quot;file:/${sbt.boot.properties}&quot;"/>		
+			<!--<arg value="clean"/>-->
 			<arg value="compile"/>
+			<arg value="stage"/>
 			<!--<classpath>
 				<pathelement location="dist/test.jar" />
 				<pathelement path="${java.class.path}" />
