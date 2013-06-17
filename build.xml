@@ -5,9 +5,11 @@
 		=================================-->
 	<property name="fs" value="${file.separator}" />
 	<property name="ps" value="${path.separator}" />
-	<ivy:configure id="basic.settings" file="${basedir}${fs}ivysettings-basic.xml" />
-	<property name="sbt.dir" value="${basedir}${fs}tools${fs}sbt" />
+	<property name="play.version" value="2.1.1"/>
+	<property name="sbt.dir" value="${basedir}${fs}tools${fs}sbt"/>
+	<property name="sbt.launch.jar" value="${sbt.dir}${fs}sbt-launch.jar"/>
 
+	<ivy:configure id="basic.settings" file="${basedir}${fs}ivysettings-basic.xml" />	
 	<!--=================================
 		Building of database adapter
 		==================================-->
@@ -148,38 +150,46 @@
 		==================================-->
 	<target name="web-login.init">
 		<echo>Started initializing of web-login</echo>
-
-	</target>	
-	
-	<target name="web-login.build" description="builds web-login" depends="web-login.init">
-		<echo>Started building of web-login</echo>
+		
+		<property name="web-login.dir" value="${basedir}${fs}web-login"/>
 		<path id="sbt.boot.properties.path">
 			<pathelement path="${sbt.dir}${fs}sbt.boot.properties"/>
 		</path>
 		<pathconvert targetos="unix" property="sbt.boot.properties" refid="sbt.boot.properties.path"/>
-		
-		<java jar="${sbt.dir}${fs}sbt-launch.jar" fork="true" failonerror="true" maxmemory="2048M" dir="${basedir}${fs}web-login">			
+	</target>	
+	
+	<target name="web-login.clean" description="cleans web-login" depends="web-login.init">
+		<echo>Started cleaning of web-login</echo>
+		<java jar="${sbt.launch.jar}" fork="true" failonerror="true" maxmemory="512M" dir="${web-login.dir}">			
+			<jvmarg value="-XX:+UseConcMarkSweepGC"/>
+			<jvmarg value="-XX:+CMSClassUnloadingEnabled"/>
+			<jvmarg value="-XX:PermSize=256M"/>
+			<jvmarg value="-XX:MaxPermSize=512M"/>
+			<jvmarg value="-XX:+CMSClassUnloadingEnabled"/>					
+			<jvmarg value="-Dfile.encoding=UTF-8"/>
+			<jvmarg value="-Dplay.version=${path.separator}"/>
+			<jvmarg value="-Dsbt.dir=${sbt.dir}"/>
+			<jvmarg value="-Dsbt.boot.properties=&quot;file:/${sbt.boot.properties}&quot;"/>
+					
+			<arg value="clean"/>
+		</java>		
+	</target>
+	
+	<target name="web-login.build" description="builds web-login" depends="web-login.init">
+		<echo>Started building of web-login</echo>		
+		<java jar="${sbt.launch.jar}" fork="true" failonerror="true" maxmemory="2048M" dir="${web-login.dir}">			
 			<jvmarg value="-XX:+UseConcMarkSweepGC"/>
 			<jvmarg value="-XX:+CMSClassUnloadingEnabled"/>
 			<jvmarg value="-XX:PermSize=256M"/>
 			<jvmarg value="-XX:MaxPermSize=2048M"/>
-			<jvmarg value="-XX:+CMSClassUnloadingEnabled"/>
+			<jvmarg value="-XX:+CMSClassUnloadingEnabled"/>					
+			<jvmarg value="-Dfile.encoding=UTF-8"/>
+			<jvmarg value="-Dplay.version=${path.separator}"/>
+			<jvmarg value="-Dsbt.dir=${sbt.dir}"/>
+			<jvmarg value="-Dsbt.boot.properties=&quot;file:/${sbt.boot.properties}&quot;"/>
 					
-			<arg value="-Dfile.encoding=UTF-8"/>
-			<arg value="-Dplay.version=2.1.1"/>
-			
-			<!--<arg value="-Dplay.home=${basedir}${fs}tools"/>
-			<arg value="-Dsbt.ivy.home=${sbt.dir}${fs}repository"/>-->
-			
-			<arg value="-Dsbt.home=${sbt.dir}"/>
-			<arg value="-Dsbt.boot.properties=&quot;file:/${sbt.boot.properties}&quot;"/>		
-			<!--<arg value="clean"/>-->
 			<arg value="compile"/>
 			<arg value="stage"/>
-			<!--<classpath>
-				<pathelement location="dist/test.jar" />
-				<pathelement path="${java.class.path}" />
-			</classpath>-->
 		</java>
 	</target>
 

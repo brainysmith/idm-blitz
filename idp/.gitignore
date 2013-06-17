@@ -1,1 +1,6 @@
 /lib
+/idp-config/target
+/idp-netty/target
+/netty-servlet-bridge/target
+/shibboleth-common/target
+/shibboleth-identityprovider/target
