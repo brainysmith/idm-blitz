@@ -169,7 +169,7 @@
 			<jvmarg value="-Dfile.encoding=UTF-8"/>
 			<jvmarg value="-Dplay.version=${path.separator}"/>
 			<jvmarg value="-Dsbt.dir=${sbt.dir}"/>
-			<jvmarg value="-Dsbt.boot.properties=&quot;file:/${sbt.boot.properties}&quot;"/>
+			<jvmarg value="-Dsbt.boot.properties=file://${sbt.boot.properties}"/>
 					
 			<arg value="clean"/>
 		</java>		
@@ -186,7 +186,7 @@
 			<jvmarg value="-Dfile.encoding=UTF-8"/>
 			<jvmarg value="-Dplay.version=${path.separator}"/>
 			<jvmarg value="-Dsbt.dir=${sbt.dir}"/>
-			<jvmarg value="-Dsbt.boot.properties=&quot;file:/${sbt.boot.properties}&quot;"/>
+			<jvmarg value="-Dsbt.boot.properties=file://${sbt.boot.properties}"/>
 					
 			<arg value="compile"/>
 			<arg value="stage"/>
