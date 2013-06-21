@@ -1,7 +1,9 @@
 .classpath
 .project
-/.settings
-/logs
-/target
-/project/project
-/project/target
+.cache
+.target/
+.settings/
+logs/
+target/
+project/project/
+project/target/
