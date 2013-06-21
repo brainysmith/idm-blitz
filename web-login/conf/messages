@@ -1,0 +1,11 @@
+main.copyright=&copy;&nbsp;Identity Blitz, 2013
+main.errPP.title=Error
+main.errPP.button.close=close
+
+#Login page
+login.head.title=Login
+login.loginFm.lgn.label=Login
+login.loginFm.lgn.placeholder=Login
+login.loginFm.pswd.label=Password
+login.loginFm.pswd.placeholder=Password
+login.loginFm.btn.submit=Login

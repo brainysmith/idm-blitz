@@ -1,0 +1,51 @@
+@(loginForm : Form[(String, String)])(implicit request: Request[AnyContent])
+
+@stylesheets = {
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("css/login.css")">
+}
+
+@import helper._
+
+@tmpl.main(
+    Messages("login.head.title"),
+    stylesheets = stylesheets
+) {
+
+    <form id="loginFm" action="@routes.Login.authenticate()" method="post">
+
+        <div class="">
+
+            @inputText(loginForm("lgn"),
+                '_id -> "lgn",
+                '_label -> Messages("login.loginFm.lgn.label"),
+                '_showErrors -> true,
+                '_showConstraints -> false,
+                'placeholder -> Messages("login.loginFm.lgn.placeholder"))
+
+            @inputPassword(loginForm("pswd"),
+                '_id -> "pswd",
+                '_label -> Messages("login.loginFm.pswd.label"),
+                '_showErrors -> true,
+                '_showConstraints -> false,
+                'placeholder -> Messages("login.loginFm.pswd.placeholder"))
+
+            @if(!loginForm.errors("").isEmpty) {
+                <dl class="line-msgs">
+                    <dt></dt>
+                    @for(error <- loginForm.errors("")) {
+                        <dd class="error">@error.message</dd>
+                    }
+                </dl>
+            }
+
+            <dl class="line-btns">
+                <dt></dt>
+                <dd>
+                    <button type="submit" class="button-base">@Messages("login.loginFm.btn.submit")</button>
+                </dd>
+            </dl>
+        </div>
+
+    </form>
+
+}

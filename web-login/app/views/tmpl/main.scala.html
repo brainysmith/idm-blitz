@@ -1,0 +1,65 @@
+@(
+    title: String,
+    stylesheets: Html = Html.empty,
+    scripts: Html = Html.empty
+)(content: Html)(implicit request: Request[AnyContent])
+
+@import utils.msg.JsMessages
+@import play.api.Play.current
+
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>@title</title>
+
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("css/main.css")">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("css/thirdparty/kendo.common.min.css")">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("css/thirdparty/kendo.default.min.css")">
+        @stylesheets
+
+        <script src="@routes.Assets.at("js/thirdparty/jquery-1.9.0.min.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("js/thirdparty/kendo.web.min.js")" type="text/javascript"></script>
+        
+        <script type="text/javascript">
+            @JsMessages(Some("mainMsg"))("main.errPP.title")
+        </script>        
+        <script src="@routes.Assets.at("js/main.js")" type="text/javascript"></script>
+        @scripts
+
+        <!--[if lte IE 9]>
+        	<script src="@routes.Assets.at("js/utils/placeholder.js")" type="text/javascript"></script>
+        <![endif]-->
+    </head>
+
+    <body>
+        <div class="page-wrap content-wrap">
+            <div class="">
+                @content
+            </div>
+        </div>
+
+        <div class="footer-wrap">
+            <div class="page-wrap footer">
+
+                <div class="copyright">
+                    @Html(Messages("main.copyright"))
+                </div>
+
+            </div>
+        </div>
+
+
+        <div id="errPP">
+            <div class="content-styles">
+                <p id="errMsg" class="big"></p>
+            </div>
+            <div class="buttons-group">
+                <button class="button-base" onclick="errPP.close()">@Messages("main.errPP.button.close")</button>
+            </div>
+        </div>
+
+    </body>
+
+</html>
