@@ -167,9 +167,9 @@
 			<jvmarg value="-XX:MaxPermSize=512M"/>
 			<jvmarg value="-XX:+CMSClassUnloadingEnabled"/>					
 			<jvmarg value="-Dfile.encoding=UTF-8"/>
-			<jvmarg value="-Dplay.version=${path.separator}"/>
+			<jvmarg value="-Dplay.version=${play.version}"/>
 			<jvmarg value="-Dsbt.dir=${sbt.dir}"/>
-			<jvmarg value="-Dsbt.boot.properties=file://${sbt.boot.properties}"/>
+			<jvmarg value="-Dsbt.boot.properties=file:///${sbt.boot.properties}"/>
 					
 			<arg value="clean"/>
 		</java>		
@@ -186,7 +186,7 @@
 			<jvmarg value="-Dfile.encoding=UTF-8"/>
 			<jvmarg value="-Dplay.version=${path.separator}"/>
 			<jvmarg value="-Dsbt.dir=${sbt.dir}"/>
-			<jvmarg value="-Dsbt.boot.properties=file://${sbt.boot.properties}"/>
+			<jvmarg value="-Dsbt.boot.properties=file:///${sbt.boot.properties}"/>
 					
 			<arg value="compile"/>
 			<arg value="stage"/>
@@ -195,10 +195,12 @@
 
 	<target name="web-login.test" description="test web-login" depends="web-login.build">
 		<echo>Started testing of web-login</echo>
+		<echo>Hasn't realized yet!</echo>
 	</target>
 
 	<target name="web-login" description="build and test web-login" depends="web-login.test">
 		<echo>Started building and testing of web-login</echo>
+		<echo>Hasn't realized yet!</echo>
 	</target>
 
 	<target name="main">
