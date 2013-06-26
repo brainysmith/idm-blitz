@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="shibboleth-common">
+    <output-path>$PROJECT_DIR$/idp/shibboleth-common/target</output-path>
+    <root id="archive" name="shibboleth-common.jar">
+      <element id="module-output" name="shibboleth-common" />
+    </root>
+  </artifact>
+</component>

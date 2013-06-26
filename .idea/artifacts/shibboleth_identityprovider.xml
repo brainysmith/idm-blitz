@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="shibboleth-identityprovider">
+    <output-path>$PROJECT_DIR$/idp/shibboleth-identityprovider/target</output-path>
+    <root id="archive" name="shibboleth-identityprovider.jar">
+      <element id="module-output" name="shibboleth-identityprovider" />
+    </root>
+  </artifact>
+</component>

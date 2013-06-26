@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="netty-servlet-bridge">
+    <output-path>$PROJECT_DIR$/idp/netty-servlet-bridge/target</output-path>
+    <root id="archive" name="netty-servlet-bridge.jar">
+      <element id="module-output" name="netty-servlet-bridge" />
+    </root>
+  </artifact>
+</component>

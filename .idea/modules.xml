@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/idp/idp-config/idp-config.iml" filepath="$PROJECT_DIR$/idp/idp-config/idp-config.iml" />
+      <module fileurl="file://$PROJECT_DIR$/idp/idp-netty/idp-netty.iml" filepath="$PROJECT_DIR$/idp/idp-netty/idp-netty.iml" />
+      <module fileurl="file://$PROJECT_DIR$/idp/netty-servlet-bridge/netty-servlet-bridge.iml" filepath="$PROJECT_DIR$/idp/netty-servlet-bridge/netty-servlet-bridge.iml" />
+      <module fileurl="file://$PROJECT_DIR$/idp/shibboleth-common/shibboleth-common.iml" filepath="$PROJECT_DIR$/idp/shibboleth-common/shibboleth-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/idp/shibboleth-identityprovider/shibboleth-identityprovider.iml" filepath="$PROJECT_DIR$/idp/shibboleth-identityprovider/shibboleth-identityprovider.iml" />
+      <module fileurl="file://$PROJECT_DIR$/web-login/.idea_modules/web-login.iml" filepath="$PROJECT_DIR$/web-login/.idea_modules/web-login.iml" />
+      <module fileurl="file://$PROJECT_DIR$/web-login/.idea_modules/web-login-build.iml" filepath="$PROJECT_DIR$/web-login/.idea_modules/web-login-build.iml" />
+    </modules>
+  </component>
+</project>
+

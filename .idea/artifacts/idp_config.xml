@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="idp-config">
+    <output-path>$PROJECT_DIR$/idp/idp-config/target</output-path>
+    <root id="archive" name="idp-config.jar">
+      <element id="module-output" name="idp-config" />
+    </root>
+  </artifact>
+</component>
