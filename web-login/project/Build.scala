@@ -14,8 +14,12 @@ object ApplicationBuild extends Build {
 
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
-      {       
+      {
+        /*requireJs += "main.js"*/
+        requireJsFolder := "js"
+        requireJs ++= Seq("app.js", "login.js", "/utils/placeholder.js")
         externalIvySettingsURL(url(System.getProperty("ivy.settings.path")))
+        /*requireJs ++= Seq("main.js","/utils/placeholder.js")*/
 //        externalIvyFile(baseDirectory(_ / "ivy.xml"))
       }
   )

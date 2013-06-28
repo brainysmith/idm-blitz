@@ -26,8 +26,8 @@ object Login extends Controller {
         errorForm => {
           BadRequest(views.html.login(errorForm))
         },
-        value => {
-          Ok("Good")
+        form => {
+          Ok("Good! Lgn: " + form._1 + ", pswd: " + form._2 + ".")
         }
       )
     }

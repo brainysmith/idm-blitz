@@ -1,10 +1,3 @@
-/**
- * Created with IntelliJ IDEA.
- * User: tyashneva
- * Date: 22.05.13
- * Time: 13:15
- * To change this template use File | Settings | File Templates.
- */
 $(document).ready(function(){
     $('input[placeholder]').each(function(){
 
