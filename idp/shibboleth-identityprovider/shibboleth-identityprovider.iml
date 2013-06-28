@@ -9,6 +9,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="idp-libs" level="project" />
+    <orderEntry type="module" module-name="idp-config" />
+    <orderEntry type="module" module-name="shibboleth-common" />
   </component>
 </module>
 
