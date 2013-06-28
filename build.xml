@@ -27,6 +27,47 @@
     </target>
 
     <!--=================================
+			Init of Core library
+		=================================-->
+    <target name="core-lib.init">
+        <property name="core-lib.dir" value="${basedir}${fs}core"/>
+        <property name="core-lib.dir.lib" value="${basedir}${fs}lib"/>
+        <property name="core-lib.dir.src" value="${core-lib.dir}${fs}src${fs}main${fs}scala"/>
+        <property name="core-lib.dir.dest" value="${core-lib.dir}${fs}target"/>
+        <property name="core-lib.dir.dest.classes" value="${core-lib.dir.dest}${fs}classes"/>
+        <mkdir dir="${core-lib.dir.lib}"/>
+        <mkdir dir="${core-lib.dir.dest}"/>
+        <mkdir dir="${core-lib.dir.dest.classes}"/>
+        <ivy:resolve file="${basedir}${fs}ivy.xml"/>
+        <ivy:retrieve pattern="${core-lib.dir.lib}/[artifact]-[type]-[revision].[ext]"/>
+        <path id="core-lib.id">
+            <fileset dir="${core-lib.dir.lib}"/>
+        </path>
+        <taskdef resource="scala/tools/ant/antlib.xml">
+            <classpath>
+                <pathelement location="${core-lib.dir.lib}/scala-compiler-jar-2.10.0.jar"/>
+                <pathelement location="${core-lib.dir.lib}/scala-library-jar-2.10.0.jar"/>
+                <pathelement location="${core-lib.dir.lib}/scala-reflect-jar-2.10.0.jar"/>
+            </classpath>
+        </taskdef>
+    </target>
+
+    <!--=================================
+			Building of core-lib
+		=================================-->
+    <target name="core-lib.build" depends="core-lib.init">
+        <scalac srcdir="${core-lib.dir.src}" destdir="${core-lib.dir.dest.classes}" classpathref="core-lib.id"/>
+        <jar destfile="${core-lib.dir.dest}${fs}core-lib.jar" basedir="${core-lib.dir.dest.classes}"/>
+        <path id="core-lib.id">
+            <fileset dir="${core-lib.dir.lib}"/>
+        </path>
+    </target>
+
+    <target name="core-lib.clean" depends="core-lib.init">
+        <delete dir="${core-lib.dir.dest}"/>
+    </target>
+
+    <!--=================================
 			Building of idp
 		=================================-->
     <target name="idp.init">
