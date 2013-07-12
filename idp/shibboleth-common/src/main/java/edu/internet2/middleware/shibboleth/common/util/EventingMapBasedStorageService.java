@@ -30,7 +30,7 @@ import org.springframework.context.ApplicationEvent;
  * A thread-safe implementation of {@link StorageService} that publishes event when items are added or removed from the
  * service.
  * 
- * An {@link AddEntryEvent} is published after an item has been added to the storage service. A {@link RemoveEntryEvent}
+ * An {@link edu.internet2.middleware.shibboleth.common.util.EventingMapBasedStorageService.AddEntryEvent} is published after an item has been added to the storage service. A {@link edu.internet2.middleware.shibboleth.common.util.EventingMapBasedStorageService.RemoveEntryEvent}
  * is published after an item has been removed from the storage service. These events are published in the root
  * application context, that is the highest ancestor, of the application context presented to this class.
  * 

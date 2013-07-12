@@ -1,10 +1,10 @@
 package com.blitz.idm.idp.netty.config.md.ext;
 
+import com.blitz.idm.idp.netty.config.md.ext.api.OrgType;
 import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.io.AbstractXMLObjectMarshaller;
 import org.opensaml.xml.io.MarshallingException;
 import org.w3c.dom.Element;
-import com.blitz.idm.idp.netty.config.md.ext.api.OrgType;
 
 public class OrgTypeMarshaller extends AbstractXMLObjectMarshaller {
 

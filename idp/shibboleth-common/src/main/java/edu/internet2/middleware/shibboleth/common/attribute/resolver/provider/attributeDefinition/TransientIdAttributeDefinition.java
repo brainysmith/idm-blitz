@@ -63,7 +63,7 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @param store store used to map tokens to principals
      * 
-     * @throws NoSuchAlgorithmException thrown if the SHA1PRNG, used as the default random number generation algorithm,
+     * @throws java.security.NoSuchAlgorithmException thrown if the SHA1PRNG, used as the default random number generation algorithm,
      *             is not supported
      */
     public TransientIdAttributeDefinition(StorageService<String, TransientIdEntry> store)

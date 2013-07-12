@@ -3,10 +3,10 @@ package com.blitz.idm.idp.netty.authn;
 import com.blitz.idm.idp.config.AssuranceLevelEnum;
 import com.blitz.idm.idp.config.AuthnMethodEnum;
 import com.blitz.idm.idp.config.OrganizationTypeEnum;
+import com.blitz.idm.idp.netty.md.ExtMetadataFilter;
 import org.opensaml.saml2.metadata.EntityDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.blitz.idm.idp.netty.md.ExtMetadataFilter;
 
 
 /**

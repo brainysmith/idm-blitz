@@ -74,7 +74,7 @@ public abstract class AbstractCachedDataConnector extends BaseDataConnector {
      * @param peerEntityId    {@link String}  peer service provider entity id
      *
      * @return populated attribute map {@link java.util.Map<String, Object> }
-     * @throws AttributeResolutionException thrown if there is a problem in generating the token
+     * @throws edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException thrown if there is a problem in generating the token
      */
     protected abstract Map<String, Object> populateAttributes(AttributeGroup grp, IdpPrincipal principal, String sessionId, String peerEntityId)
             throws AttributeResolutionException;
@@ -140,11 +140,11 @@ public abstract class AbstractCachedDataConnector extends BaseDataConnector {
     }
 
     /**
-     * Build single-value attribute {@link BasicAttribute}.
+     * Build single-value attribute {@link edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttribute}.
      *
      * @param attrName  {@link String} attribute name
      * @param attrValue {@link Object} attribute value
-     * @return built base attribute {@link BaseAttribute<Object>}
+     * @return built base attribute {@link edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute<Object>}
      */
     private BaseAttribute<Object> buildAttribute(String attrName, Object attrValue) {
         BaseAttribute<Object> attribute = new BasicAttribute<Object>(attrName);
@@ -153,10 +153,10 @@ public abstract class AbstractCachedDataConnector extends BaseDataConnector {
     }
 
     /**
-     * Build single-value attribute map {@link java.util.Map<String, BaseAttribute>}.
+     * Build single-value attribute map {@link java.util.Map<String,  edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute>}.
      *
      * @param name2ValueMap {@link java.util.Map<String, Object>} attribute name  to value map
-     * @return built base attribute map {@link BaseAttribute<Object>}
+     * @return built base attribute map {@link edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute<Object>}
      */
     private Map<String, BaseAttribute> buildAttributeMap(Map<String, Object> name2ValueMap) {
         Map<String, BaseAttribute> attributeMap = new HashMap<String, BaseAttribute>(name2ValueMap.size());

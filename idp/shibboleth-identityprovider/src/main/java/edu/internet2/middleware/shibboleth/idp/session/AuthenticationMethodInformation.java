@@ -37,7 +37,7 @@ public interface AuthenticationMethodInformation extends Serializable {
     public Subject getAuthenticationSubject();
 
     /**
-     * Gets the principal, for the {@link Subject} of the session, created by this authentication method.
+     * Gets the principal, for the {@link javax.security.auth.Subject} of the session, created by this authentication method.
      * 
      * @return principal created by this authentication method
      */

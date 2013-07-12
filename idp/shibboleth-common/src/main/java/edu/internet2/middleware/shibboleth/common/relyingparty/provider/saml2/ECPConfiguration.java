@@ -17,8 +17,6 @@
 
 package edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml2;
 
-import edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml2.SSOConfiguration;
-
 /** ECP SAML 2 SSO configuration settings. */
 public class ECPConfiguration extends SSOConfiguration {
 

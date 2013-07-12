@@ -22,7 +22,7 @@ import java.security.Principal;
 
 import org.opensaml.xml.util.DatatypeHelper;
 
-/** A basic implementation of {@link Principal}. */
+/** A basic implementation of {@link java.security.Principal}. */
 public class UsernamePrincipal implements Principal, Serializable {
 
     /** Serial version UID. */

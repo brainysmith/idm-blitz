@@ -155,7 +155,7 @@ public class ShibbolethSSOProfileHandler extends AbstractSAML1ProfileHandler {
      * @param inTransport inbound message transport
      * @param outTransport outbound message transport
      * 
-     * @throws ProfileException thrown if there is a problem creating the login context and transferring control to the
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if there is a problem creating the login context and transferring control to the
      *             authentication manager
      */
     protected void performAuthentication(HTTPInTransport inTransport, HTTPOutTransport outTransport)
@@ -210,7 +210,7 @@ public class ShibbolethSSOProfileHandler extends AbstractSAML1ProfileHandler {
      * @param outTransport outbound message transport
      * @param requestContext the request context to which decoded information should be added
      * 
-     * @throws ProfileException throw if there is a problem decoding the request
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException throw if there is a problem decoding the request
      */
     protected void decodeRequest(ShibbolethSSORequestContext requestContext, HTTPInTransport inTransport,
             HTTPOutTransport outTransport) throws ProfileException {
@@ -271,7 +271,7 @@ public class ShibbolethSSOProfileHandler extends AbstractSAML1ProfileHandler {
      * @param inTransport inbound message transport
      * @param outTransport outbound message transport
      * 
-     * @throws ProfileException thrown if the response can not be created and sent back to the relying party
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if the response can not be created and sent back to the relying party
      */
     protected void completeAuthenticationRequest(ShibbolethSSOLoginContext loginContext, HTTPInTransport inTransport,
             HTTPOutTransport outTransport) throws ProfileException {
@@ -334,7 +334,7 @@ public class ShibbolethSSOProfileHandler extends AbstractSAML1ProfileHandler {
      * 
      * @return created authentication request context
      * 
-     * @throws ProfileException thrown if there is a problem creating the context
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if there is a problem creating the context
      */
     protected ShibbolethSSORequestContext buildRequestContext(ShibbolethSSOLoginContext loginContext,
             HTTPInTransport in, HTTPOutTransport out) throws ProfileException {
@@ -436,7 +436,7 @@ public class ShibbolethSSOProfileHandler extends AbstractSAML1ProfileHandler {
      * 
      * @return the created statement
      * 
-     * @throws ProfileException thrown if the authentication statement can not be created
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if the authentication statement can not be created
      */
     protected AuthenticationStatement buildAuthenticationStatement(ShibbolethSSORequestContext requestContext)
             throws ProfileException {

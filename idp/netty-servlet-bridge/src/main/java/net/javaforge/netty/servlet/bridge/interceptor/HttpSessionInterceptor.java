@@ -24,11 +24,12 @@ import net.javaforge.netty.servlet.bridge.util.Utils;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
-import org.jboss.netty.handler.codec.http.*;
+import org.jboss.netty.handler.codec.http.Cookie;
+import org.jboss.netty.handler.codec.http.CookieEncoder;
+import org.jboss.netty.handler.codec.http.HttpRequest;
+import org.jboss.netty.handler.codec.http.HttpResponse;
 
 import java.util.Collection;
-
-import static org.jboss.netty.handler.codec.http.HttpHeaders.Names.SET_COOKIE;
 
 public class HttpSessionInterceptor implements ServletBridgeInterceptor {
 

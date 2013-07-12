@@ -417,7 +417,7 @@ public class RDBMSDataConnector extends BaseDataConnector {
      * @param resultSet result set, on the current row, to extract the value from
      * @param columnIndex index of the column from which to extract the attribute
      * 
-     * @throws SQLException thrown if value can not retrieved from the result set
+     * @throws java.sql.SQLException thrown if value can not retrieved from the result set
      */
     protected void addValueByType(Collection values, DATA_TYPES type, ResultSet resultSet, int columnIndex)
             throws SQLException {

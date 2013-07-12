@@ -36,7 +36,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.da
 import edu.internet2.middleware.shibboleth.common.profile.provider.SAMLProfileRequestContext;
 
 /**
- * A principal connector that resolved ID created by {@link StoredIDPrincipalConnector}s into principals.
+ * A principal connector that resolved ID created by {@link edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.principalConnector.StoredIDPrincipalConnector}s into principals.
  */
 public class StoredIDPrincipalConnector extends BasePrincipalConnector {
 

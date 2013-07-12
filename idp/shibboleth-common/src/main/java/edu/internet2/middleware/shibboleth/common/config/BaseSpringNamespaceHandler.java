@@ -48,26 +48,26 @@ public abstract class BaseSpringNamespaceHandler implements NamespaceHandler {
     private final Logger log = LoggerFactory.getLogger(BaseSpringNamespaceHandler.class);
 
     /**
-     * Stores the {@link BeanDefinitionParser} implementations keyed by the local name of the {@link Element Elements}
+     * Stores the {@link BeanDefinitionParser} implementations keyed by the local name of the {@link org.w3c.dom.Element Elements}
      * they handle.
      */
     private Map<QName, BeanDefinitionParser> parsers = new HashMap<QName, BeanDefinitionParser>();
 
     /**
      * Stores the {@link BeanDefinitionDecorator} implementations keyed by the local name of the
-     * {@link Element Elements} they handle.
+     * {@link org.w3c.dom.Element Elements} they handle.
      */
     private Map<QName, BeanDefinitionDecorator> decorators = new HashMap<QName, BeanDefinitionDecorator>();
 
     /**
-     * Stores the {@link BeanDefinitionParser} implementations keyed by the local name of the {@link Attr Attrs} they
+     * Stores the {@link BeanDefinitionParser} implementations keyed by the local name of the {@link org.w3c.dom.Attr Attrs} they
      * handle.
      */
     private Map<QName, BeanDefinitionDecorator> attributeDecorators = new HashMap<QName, BeanDefinitionDecorator>();
 
     /**
-     * Decorates the supplied {@link Node} by delegating to the {@link BeanDefinitionDecorator} that is registered to
-     * handle that {@link Node}.
+     * Decorates the supplied {@link org.w3c.dom.Node} by delegating to the {@link BeanDefinitionDecorator} that is registered to
+     * handle that {@link org.w3c.dom.Node}.
      * 
      * @param node the node decorating a the given bean definition
      * @param definition the bean being decorated
@@ -80,8 +80,8 @@ public abstract class BaseSpringNamespaceHandler implements NamespaceHandler {
     }
 
     /**
-     * Parses the supplied {@link Element} by delegating to the {@link BeanDefinitionParser} that is registered for that
-     * {@link Element}.
+     * Parses the supplied {@link org.w3c.dom.Element} by delegating to the {@link BeanDefinitionParser} that is registered for that
+     * {@link org.w3c.dom.Element}.
      * 
      * @param element the element to be parsed into a bean definition
      * @param parserContext the context within which the bean definition is created
@@ -94,7 +94,7 @@ public abstract class BaseSpringNamespaceHandler implements NamespaceHandler {
 
     /**
      * Locates the {@link BeanDefinitionParser} from the register implementations using the local name of the supplied
-     * {@link Element}.
+     * {@link org.w3c.dom.Element}.
      * 
      * @param element the element to locate the bean definition parser for
      * 
@@ -126,7 +126,7 @@ public abstract class BaseSpringNamespaceHandler implements NamespaceHandler {
 
     /**
      * Locates the {@link BeanDefinitionParser} from the register implementations using the local name of the supplied
-     * {@link Node}. Supports both {@link Element Elements} and {@link Attr Attrs}.
+     * {@link org.w3c.dom.Node}. Supports both {@link org.w3c.dom.Element Elements} and {@link org.w3c.dom.Attr Attrs}.
      * 
      * @param node the node to locate the decorator for
      * 

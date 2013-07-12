@@ -18,7 +18,6 @@
 package edu.internet2.middleware.shibboleth.common.profile;
 
 import java.io.IOException;
-import java.net.URLEncoder;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;

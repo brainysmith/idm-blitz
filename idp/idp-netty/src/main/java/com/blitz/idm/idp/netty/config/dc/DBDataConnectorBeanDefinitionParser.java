@@ -16,7 +16,7 @@ import javax.xml.namespace.QName;
 import java.util.List;
 import java.util.Map;
 
-public class DBDataConnectorBeanDefinitionParser extends BaseDataConnectorBeanDefinitionParser{
+public class DBDataConnectorBeanDefinitionParser extends BaseDataConnectorBeanDefinitionParser {
 
     private static Logger log = LoggerFactory.getLogger(DBDataConnectorBeanDefinitionParser.class);
 

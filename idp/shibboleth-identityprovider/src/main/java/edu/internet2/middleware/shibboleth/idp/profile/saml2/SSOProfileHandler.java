@@ -198,7 +198,7 @@ public class SSOProfileHandler extends AbstractSAML2ProfileHandler {
      * @param inTransport inbound request transport
      * @param outTransport outbound response transport
      * 
-     * @throws ProfileException thrown if there is a problem creating the login context and transferring control to the
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if there is a problem creating the login context and transferring control to the
      *             authentication manager
      */
     protected void performAuthentication(HTTPInTransport inTransport, HTTPOutTransport outTransport)
@@ -266,7 +266,7 @@ public class SSOProfileHandler extends AbstractSAML2ProfileHandler {
      * @param inTransport inbound message transport
      * @param outTransport outbound message transport
      * 
-     * @throws ProfileException thrown if the response can not be created and sent back to the relying party
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if the response can not be created and sent back to the relying party
      */
     protected void completeAuthenticationRequest(Saml2LoginContext loginContext, HTTPInTransport inTransport,
             HTTPOutTransport outTransport) throws ProfileException {
@@ -363,7 +363,7 @@ public class SSOProfileHandler extends AbstractSAML2ProfileHandler {
      * @param outTransport outbound transport
      * @param requestContext request context to which decoded information should be added
      * 
-     * @throws ProfileException thrown if the incoming message failed decoding
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if the incoming message failed decoding
      */
     protected void decodeRequest(SSORequestContext requestContext, HTTPInTransport inTransport,
             HTTPOutTransport outTransport) throws ProfileException {
@@ -419,7 +419,7 @@ public class SSOProfileHandler extends AbstractSAML2ProfileHandler {
      * 
      * @param requestContext current request context
      * 
-     * @throws ProfileException thrown if there the request is not a member of the affiliation or if there was a problem
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if there the request is not a member of the affiliation or if there was a problem
      *             determining membership
      */
     protected void checkNameIDPolicy(SSORequestContext requestContext) throws ProfileException {
@@ -475,7 +475,7 @@ public class SSOProfileHandler extends AbstractSAML2ProfileHandler {
      * 
      * @return created authentication request context
      * 
-     * @throws ProfileException thrown if there is a problem creating the context
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if there is a problem creating the context
      */
     protected SSORequestContext buildRequestContext(Saml2LoginContext loginContext, HTTPInTransport in,
             HTTPOutTransport out) throws ProfileException {
@@ -539,7 +539,7 @@ public class SSOProfileHandler extends AbstractSAML2ProfileHandler {
      * 
      * @param requestContext current request context
      * 
-     * @throws ProfileException thrown if the inbound SAML message or subject identifier is null
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if the inbound SAML message or subject identifier is null
      */
     @SuppressWarnings("unchecked")
     protected void populateSAMLMessageInformation(BaseSAMLProfileRequestContext requestContext) throws ProfileException {

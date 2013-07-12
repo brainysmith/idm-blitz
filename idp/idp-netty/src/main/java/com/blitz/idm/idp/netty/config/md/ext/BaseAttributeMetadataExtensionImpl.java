@@ -1,8 +1,8 @@
 package com.blitz.idm.idp.netty.config.md.ext;
 
+import com.blitz.idm.idp.netty.config.md.ext.api.BaseAttributeMetadataExtension;
 import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.validation.AbstractValidatingXMLObject;
-import com.blitz.idm.idp.netty.config.md.ext.api.BaseAttributeMetadataExtension;
 
 import java.util.List;
 

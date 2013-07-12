@@ -105,7 +105,7 @@ public class StoredIDStore {
      * 
      * @return the number of identifiers
      * 
-     * @throws SQLException thrown if there is a problem communication with the database
+     * @throws java.sql.SQLException thrown if there is a problem communication with the database
      */
     public int getNumberOfPersistentIdEntries(String localEntity, String peerEntity, String localId)
             throws SQLException {
@@ -156,7 +156,7 @@ public class StoredIDStore {
      * 
      * @return the active identifier
      * 
-     * @throws SQLException thrown if there is a problem communication with the database
+     * @throws java.sql.SQLException thrown if there is a problem communication with the database
      */
     public List<PersistentIdEntry> getPersistentIdEntries(String localEntity, String peerEntity, String localId)
             throws SQLException {
@@ -199,7 +199,7 @@ public class StoredIDStore {
      * 
      * @return the ID entry for the given ID
      * 
-     * @throws SQLException thrown if there is a problem communication with the database
+     * @throws java.sql.SQLException thrown if there is a problem communication with the database
      */
     public PersistentIdEntry getActivePersistentIdEntry(String persistentId) throws SQLException {
         return getPersistentIdEntry(persistentId, true);
@@ -213,7 +213,7 @@ public class StoredIDStore {
      * 
      * @return the ID entry for the given ID
      * 
-     * @throws SQLException thrown if there is a problem communication with the database
+     * @throws java.sql.SQLException thrown if there is a problem communication with the database
      */
     public PersistentIdEntry getPersistentIdEntry(String persistentId, boolean onlyActiveId) throws SQLException {
         StringBuilder sqlBuilder = new StringBuilder(idEntrySelectSQL);
@@ -313,7 +313,7 @@ public class StoredIDStore {
      * 
      * @return the active identifier
      * 
-     * @throws SQLException thrown if there is a problem communication with the database
+     * @throws java.sql.SQLException thrown if there is a problem communication with the database
      */
     public PersistentIdEntry getActivePersistentIdEntry(String localEntity, String peerEntity, String localId)
             throws SQLException {
@@ -369,7 +369,7 @@ public class StoredIDStore {
      * 
      * @return list of deactivated identifiers
      * 
-     * @throws SQLException thrown if there is a problem communication with the database
+     * @throws java.sql.SQLException thrown if there is a problem communication with the database
      */
     public List<PersistentIdEntry> getDeactivatedPersistentIdEntries(String localEntity, String peerEntity,
             String localId) throws SQLException {
@@ -417,7 +417,7 @@ public class StoredIDStore {
      * 
      * @param entry entry to persist
      * 
-     * @throws SQLException thrown is there is a problem writing to the database
+     * @throws java.sql.SQLException thrown is there is a problem writing to the database
      */
     public void storePersistentIdEntry(PersistentIdEntry entry) throws SQLException {
 
@@ -480,7 +480,7 @@ public class StoredIDStore {
      * @param persistentId ID to deactivate
      * @param deactivation deactivation time, if null the current time is used
      * 
-     * @throws SQLException thrown if there is a problem communication with the database
+     * @throws java.sql.SQLException thrown if there is a problem communication with the database
      */
     public void deactivatePersistentId(String persistentId, Timestamp deactivation) throws SQLException {
         Timestamp deactivationTime = deactivation;
@@ -508,13 +508,13 @@ public class StoredIDStore {
     }
 
     /**
-     * Builds a list of {@link PersistentIdEntry}s from a result set.
+     * Builds a list of {@link edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.StoredIDStore.PersistentIdEntry}s from a result set.
      * 
      * @param resultSet the result set
      * 
-     * @return list of {@link PersistentIdEntry}s
+     * @return list of {@link edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.StoredIDStore.PersistentIdEntry}s
      * 
-     * @throws SQLException thrown if there is a problem reading the information from the database
+     * @throws java.sql.SQLException thrown if there is a problem reading the information from the database
      */
     protected List<PersistentIdEntry> buildIdentifierEntries(ResultSet resultSet) throws SQLException {
         ArrayList<PersistentIdEntry> entries = new ArrayList<PersistentIdEntry>();

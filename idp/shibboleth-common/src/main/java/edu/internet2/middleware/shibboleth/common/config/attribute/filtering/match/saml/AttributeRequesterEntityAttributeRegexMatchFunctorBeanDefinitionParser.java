@@ -21,7 +21,6 @@ import javax.xml.namespace.QName;
 
 import org.w3c.dom.Element;
 
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match.saml.AttributeIssuerEntityAttributeRegexMatchFunctor;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match.saml.AttributeRequesterEntityAttributeRegexMatchFunctor;
 
 /** Bean definition parser for {@link AttributeRequesterEntityAttributeRegexMatchFunctor}. */

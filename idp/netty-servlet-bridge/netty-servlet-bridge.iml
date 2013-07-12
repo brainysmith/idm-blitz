@@ -10,6 +10,10 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="idp-config" />
+    <orderEntry type="library" name="idp-libs" level="project" />
+    <orderEntry type="library" name="lib" level="project" />
+    <orderEntry type="library" name="SBT: io.netty:netty:3.6.3.Final" level="project" />
+    <orderEntry type="library" name="SBT: oauth.signpost:signpost-core:1.2.1.2" level="project" />
   </component>
 </module>
 

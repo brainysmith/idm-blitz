@@ -44,7 +44,7 @@ public class SessionManagerImpl implements SessionManager<Session> {
     /** Number of random bits within a session ID. */
     private final int sessionIDSize = 32;
 
-    /** A {@link SecureRandom} PRNG to generate session IDs. */
+    /** A {@link java.security.SecureRandom} PRNG to generate session IDs. */
     private final SecureRandom prng = new SecureRandom();
 
     /** Backing service used to store sessions. */

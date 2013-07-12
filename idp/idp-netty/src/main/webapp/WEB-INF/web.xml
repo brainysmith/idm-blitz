@@ -120,7 +120,7 @@
     <servlet-mapping>
         <servlet-name>ProfileRequestDispatcher</servlet-name>
         <url-pattern>/profile/*</url-pattern>
-    </servlet-mapping>
+     </servlet-mapping>
 
     <!-- Authentication Engine Entry Point -->
     <servlet>

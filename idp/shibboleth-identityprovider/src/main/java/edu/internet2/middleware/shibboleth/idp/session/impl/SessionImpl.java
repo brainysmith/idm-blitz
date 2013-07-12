@@ -93,7 +93,7 @@ public class SessionImpl extends AbstractSession implements Session {
     }
 
     /**
-     * This method will return the first, in an unordered list of principal names registered with the {@link Subject} of
+     * This method will return the first, in an unordered list of principal names registered with the {@link javax.security.auth.Subject} of
      * the session. If one or more {@link UsernamePrincipal} principals is registered with the subject the returned
      * value will be the string form of one of those.
      * 

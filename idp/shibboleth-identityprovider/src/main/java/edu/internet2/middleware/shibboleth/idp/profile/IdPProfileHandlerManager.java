@@ -37,7 +37,7 @@ import edu.internet2.middleware.shibboleth.common.service.ServiceException;
 import edu.internet2.middleware.shibboleth.idp.authn.LoginHandler;
 
 /**
- * Implementation of a {@link ProfileHandlerManager} that maps the request path, without the servlet context, to a
+ * Implementation of a {@link edu.internet2.middleware.shibboleth.common.profile.ProfileHandlerManager} that maps the request path, without the servlet context, to a
  * profile handler and adds support for authentication handlers.
  */
 public class IdPProfileHandlerManager extends BaseReloadableService implements ProfileHandlerManager {

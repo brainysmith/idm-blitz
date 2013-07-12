@@ -1,12 +1,5 @@
 package com.blitz.idm.idp.netty.authn.provider;
 
-import edu.internet2.middleware.shibboleth.common.profile.AbstractErrorHandler;
-import net.javaforge.netty.servlet.bridge.impl.ServletBridgeWebapp;
-import net.javaforge.netty.servlet.bridge.util.Utils;
-import org.jboss.netty.channel.Channel;
-import org.jboss.netty.handler.codec.http.DefaultHttpResponse;
-import org.jboss.netty.handler.codec.http.HttpRequest;
-import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +8,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.IOException;
 
 
 public class StaticResourceServlet extends HttpServlet {
@@ -32,7 +25,7 @@ public class StaticResourceServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 /*        String uri = Utils.sanitizeUri(request.getRequestURI());
-        final String path = ("D:/src_esia/netty_idp/idp-netty/src/main/webapp" + uri);
+        final String path = ("D:/src_esia/netty_idp/idp-com.blitz.idm.idp.netty/src/main/webapp" + uri);
         File file = new File(path);
         if (file.isHidden() || !file.exists()) {
             //sendError(ctx, NOT_FOUND);

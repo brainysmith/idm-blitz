@@ -1,23 +1,10 @@
-/*
- * Copyright 2013 by Maxim Kalina
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
- */
-
-package net.javaforge.netty.servlet.bridge.impl;
+package com.blitz.idm.servlet.impl;
 
 import net.javaforge.netty.servlet.bridge.ChannelThreadLocal;
 import net.javaforge.netty.servlet.bridge.HttpSessionThreadLocal;
+import net.javaforge.netty.servlet.bridge.impl.HttpSessionImpl;
+import net.javaforge.netty.servlet.bridge.impl.ServletInputStreamImpl;
+import net.javaforge.netty.servlet.bridge.impl.URIParser;
 import net.javaforge.netty.servlet.bridge.util.Utils;
 import org.jboss.netty.handler.codec.http.CookieDecoder;
 import org.jboss.netty.handler.codec.http.HttpHeaders;
@@ -63,16 +50,27 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
     private String characterEncoding;
 
+    private ServletContext servletContext;
+
     public HttpServletRequestImpl(HttpRequest request, FilterChainImpl chain) {
         this.originalRequest = request;
+        this.servletContext = chain.getServletContext();
         this.inputStream = new ServletInputStreamImpl(request);
         this.reader = new BufferedReader(new InputStreamReader(inputStream));
-        this.queryStringDecoder = new QueryStringDecoder(request.getUri());
+        String uri = request.getUri().substring(servletContext.getContextPath().length());
+        this.queryStringDecoder = new QueryStringDecoder(uri);
         this.uriParser = new URIParser(chain);
-        this.uriParser.parse(request.getUri());
+        this.uriParser.parse(uri);
         this.characterEncoding = Utils
                 .getCharsetFromContentType(getContentType());
 
+
+        log.debug("Http servlet request created :");
+        log.debug("contextPath = " + getContextPath());
+        log.debug("queryString = " + getQueryString());
+        log.debug("pathInfo = " + getPathInfo());
+        log.debug("servletPath = " + getServletPath());
+        log.debug("requestURL = " + getRequestURL().toString());
     }
 
     public HttpRequest getOriginalRequest() {
@@ -81,7 +79,7 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
     @Override
     public String getContextPath() {
-        return ServletContextImpl.get().getContextPath();
+        return servletContext.getContextPath();
     }
 
     @Override
@@ -154,7 +152,7 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
     @Override
     public String getRequestURI() {
-        return this.uriParser.getRequestUri();
+        return getContextPath() + this.uriParser.getRequestUri();
     }
 
     @Override
@@ -460,7 +458,7 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
     @Override
     public RequestDispatcher getRequestDispatcher(String path) {
-        return ServletContextImpl.get().getRequestDispatcher(path);
+        return servletContext.getRequestDispatcher(path);
     }
 
 // --------------------------------------------------------------------------------------
@@ -503,9 +501,7 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
     @Override
     public ServletContext getServletContext() {
-        log.error("Method 'getServletContext' not yet implemented!");
-        throw new IllegalStateException(
-                "Method 'getServletContext' not yet implemented!");
+        return servletContext;
     }
 
     @Override

@@ -25,7 +25,6 @@ import junit.framework.TestCase;
 
 import org.opensaml.DefaultBootstrap;
 import org.opensaml.saml2.metadata.provider.FilesystemMetadataProvider;
-import org.opensaml.saml2.metadata.provider.MetadataProvider;
 import org.opensaml.xml.ConfigurationException;
 import org.opensaml.xml.parse.BasicParserPool;
 

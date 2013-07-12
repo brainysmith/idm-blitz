@@ -1,23 +1,7 @@
-/*
- * Copyright 2013 by Maxim Kalina
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
- */
+package com.blitz.idm.handler;
 
-package net.javaforge.netty.servlet.bridge;
-
-import net.javaforge.netty.servlet.bridge.config.WebappConfiguration;
-import net.javaforge.netty.servlet.bridge.impl.ServletBridgeWebapp;
+import com.blitz.idm.servlet.config.WebApp;
+import com.blitz.idm.ssl.SslContextFactory;
 import net.javaforge.netty.servlet.bridge.interceptor.ChannelInterceptor;
 import net.javaforge.netty.servlet.bridge.interceptor.HttpSessionInterceptor;
 import net.javaforge.netty.servlet.bridge.session.DefaultServletBridgeHttpSessionStore;
@@ -27,21 +11,24 @@ import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelPipelineFactory;
 import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.channel.group.DefaultChannelGroup;
-import org.jboss.netty.handler.codec.http.*;
+import org.jboss.netty.handler.codec.http.HttpContentDecompressor;
+import org.jboss.netty.handler.codec.http.HttpRequestDecoder;
+import org.jboss.netty.handler.codec.http.HttpResponseEncoder;
 import org.jboss.netty.handler.ssl.SslHandler;
 import org.jboss.netty.handler.timeout.IdleStateHandler;
 import org.jboss.netty.util.HashedWheelTimer;
 import org.jboss.netty.util.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.blitz.idm.ssl.SslContextFactory;
 
-import javax.net.ssl.*;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
+import java.util.Map;
 
 import static org.jboss.netty.channel.Channels.pipeline;
 
-public class ServletBridgeChannelPipelineFactory implements ChannelPipelineFactory {
-    private static Logger log = LoggerFactory.getLogger(ServletBridgeChannelPipelineFactory.class);
+public abstract class AbstractServletBridgeChannelPipelineFactory implements ChannelPipelineFactory {
+    protected static Logger log = LoggerFactory.getLogger(AbstractServletBridgeChannelPipelineFactory.class);
     private static final String TRUST_STORE_TYPE = System.getProperty("https.trustStore");
 
 
@@ -53,30 +40,28 @@ public class ServletBridgeChannelPipelineFactory implements ChannelPipelineFacto
 
     private Timer timer;
 
-    public ServletBridgeChannelPipelineFactory(WebappConfiguration config) {
+    public AbstractServletBridgeChannelPipelineFactory(String serverName, String configDir, Map<String,WebApp> webAppMap) {
 
         this.timer = new HashedWheelTimer();
-        this.idleStateHandler = new IdleStateHandler(this.timer, 60, 30, 0); // timer
-        // must
-        // be
-        // shared.
+        this.idleStateHandler = new IdleStateHandler(this.timer, 60, 30, 0);
 
-        ServletBridgeWebapp webapp = ServletBridgeWebapp.get();
-        webapp.init(config, allChannels);
+        ServletBridgeConfig webapp = ServletBridgeConfig.get();
+        webapp.init(serverName, configDir, webAppMap, allChannels);
 
         new Thread(this.watchdog = new HttpSessionWatchdog()).start();
     }
 
     public void shutdown() {
         this.watchdog.stopWatching();
-        ServletBridgeWebapp.get().destroy();
+        ServletBridgeConfig.get().destroy();
         this.timer.stop();
         this.allChannels.close().awaitUninterruptibly();
     }
 
     @Override
-    public ChannelPipeline getPipeline() {
-        boolean secure = true;
+    public abstract ChannelPipeline getPipeline();
+
+    protected ChannelPipeline getPipeline(boolean secure) {
         // Create a default pipeline implementation.
         ChannelPipeline pipeline = pipeline();
 
@@ -90,24 +75,6 @@ public class ServletBridgeChannelPipelineFactory implements ChannelPipelineFacto
         pipeline.addLast("encoder", new HttpResponseEncoder());
         pipeline.addLast("decompressor", new HttpContentDecompressor());
         pipeline.addLast("handler", this.getServletBridgeHandler());
-
-
-/*
-        SslHandler sslHandler = new SslHandler(getSslEngine());
-        //sslHandler.setIssueHandshake(true);
-        pipeline.addLast("ssl", sslHandler);
-*//*        // On top of the SSL handler, add the text line codec.
-        pipeline.addLast("framer", new DelimiterBasedFrameDecoder(
-                  8192, Delimiters.lineDelimiter()));*//*
-        pipeline.addLast("decoder", new HttpRequestDecoder());
-        pipeline.addLast("aggregator", new HttpChunkAggregator(1048576));
-        pipeline.addLast("encoder", new HttpResponseEncoder());
-
-        // Remove the following line if you don't want automatic content
-        // compression.
-        pipeline.addLast("deflater", new HttpContentCompressor());
-        pipeline.addLast("idle", this.idleStateHandler);*/
-
         return pipeline;
     }
 

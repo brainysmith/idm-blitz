@@ -155,7 +155,7 @@ public class AttributeAuthorityCLI {
      * 
      * @return loaded application context
      * 
-     * @throws IOException throw if there is an error loading the configuration files
+     * @throws java.io.IOException throw if there is an error loading the configuration files
      * @throws ResourceException if there is an error loading the configuration files
      */
     private static ApplicationContext loadConfigurations(String configDir, String springExts)

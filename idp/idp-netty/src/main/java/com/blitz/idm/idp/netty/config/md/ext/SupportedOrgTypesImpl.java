@@ -1,12 +1,12 @@
 package com.blitz.idm.idp.netty.config.md.ext;
 
 import com.blitz.idm.idp.config.OrganizationTypeEnum;
+import com.blitz.idm.idp.netty.config.md.ext.api.OrgType;
+import com.blitz.idm.idp.netty.config.md.ext.api.SupportedOrgTypes;
 import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.validation.AbstractValidatingXMLObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.blitz.idm.idp.netty.config.md.ext.api.OrgType;
-import com.blitz.idm.idp.netty.config.md.ext.api.SupportedOrgTypes;
 
 import java.util.ArrayList;
 import java.util.List;

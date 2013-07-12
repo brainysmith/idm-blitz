@@ -30,7 +30,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.S
 import edu.internet2.middleware.shibboleth.common.config.service.AbstractReloadableServiceBeanDefinitionParser;
 
 /**
- * Spring bean definition parser for {@link ShibbolethAttributeFilteringEngineBeanDefinitionParser} services.
+ * Spring bean definition parser for {@link edu.internet2.middleware.shibboleth.common.config.attribute.filtering.ShibbolethAttributeFilteringEngineBeanDefinitionParser} services.
  */
 public class ShibbolethAttributeFilteringEngineBeanDefinitionParser extends
         AbstractReloadableServiceBeanDefinitionParser {

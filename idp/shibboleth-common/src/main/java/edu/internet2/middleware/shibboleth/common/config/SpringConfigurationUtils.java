@@ -90,7 +90,7 @@ public final class SpringConfigurationUtils {
 
     /**
      * Parses a bean definition using an xsi:type aware version of
-     * {@link BeanDefinitionParserDelegate#parseCustomElement(Element)}.
+     * {@link BeanDefinitionParserDelegate#parseCustomElement(org.w3c.dom.Element)}.
      * 
      * @param element configuration element
      * @param parserContext current parser context
@@ -103,7 +103,7 @@ public final class SpringConfigurationUtils {
 
     /**
      * Parser a list of bean definitions using an xsi:type aware version of
-     * {@link BeanDefinitionParserDelegate#parseCustomElement(Element)}.
+     * {@link BeanDefinitionParserDelegate#parseCustomElement(org.w3c.dom.Element)}.
      * 
      * @param elements configuration elements
      * @param parserContext current parser context

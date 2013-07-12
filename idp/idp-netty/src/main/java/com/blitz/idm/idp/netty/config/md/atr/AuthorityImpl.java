@@ -8,8 +8,8 @@ package com.blitz.idm.idp.netty.config.md.atr;
  * To change this template use File | Settings | File Templates.
  */
 
-import org.opensaml.xml.schema.impl.XSAnyImpl;
 import com.blitz.idm.idp.netty.config.md.atr.api.Authority;
+import org.opensaml.xml.schema.impl.XSAnyImpl;
 
 public class AuthorityImpl extends XSAnyImpl implements Authority {
 

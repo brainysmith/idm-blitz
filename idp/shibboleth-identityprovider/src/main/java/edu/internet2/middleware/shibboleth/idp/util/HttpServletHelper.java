@@ -56,10 +56,10 @@ public class HttpServletHelper {
     /** Name of the key to the current authentication login context: {@value} . */
     public static final String LOGIN_CTX_KEY_NAME = "_idp_authn_lc_key";
 
-    /** {@link ServletContext} parameter name bearing the ID of the {@link AttributeFilteringEngine} service: {@value} . */
+    /** {@link ServletContext} parameter name bearing the ID of the {@link edu.internet2.middleware.shibboleth.common.attribute.filtering.AttributeFilteringEngine} service: {@value} . */
     public static final String ATTRIBUTE_FILTER_ENGINE_SID_CTX_PARAM = "AttributeFilterEngineId";
 
-    /** {@link ServletContext} parameter name bearing the ID of the {@link AttributeResolver} service: {@value} . */
+    /** {@link ServletContext} parameter name bearing the ID of the {@link edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolver} service: {@value} . */
     public static final String ATTRIBUTE_RESOLVER_SID_CTX_PARAM = "AttributeResolverId";
 
     /**
@@ -72,27 +72,27 @@ public class HttpServletHelper {
     public static final String PROFILE_HANDLER_MNGR_SID_CTX_PARAM = "ProfileHandlerMngrId";
 
     /**
-     * {@link ServletContext} parameter name bearing the ID of the {@link RelyingPartyConfigurationManager} service: * *
+     * {@link ServletContext} parameter name bearing the ID of the {@link edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfigurationManager} service: * *
      * * {@value} .
      */
     public static final String RP_CONFIG_MNGR_SID_CTX_PARAM = "RelyingPartyConfigurationManagerId";
 
-    /** {@link ServletContext} parameter name bearing the ID of the {@link SAML1AttributeAuthority} service: {@value} . */
+    /** {@link ServletContext} parameter name bearing the ID of the {@link edu.internet2.middleware.shibboleth.common.attribute.provider.SAML1AttributeAuthority} service: {@value} . */
     public static final String SAML1_AA_SID_CTX_PARAM = "SAML1AttributeAuthorityId";
 
-    /** {@link ServletContext} parameter name bearing the ID of the {@link SAML2AttributeAuthority} service: {@value} . */
+    /** {@link ServletContext} parameter name bearing the ID of the {@link edu.internet2.middleware.shibboleth.common.attribute.provider.SAML2AttributeAuthority} service: {@value} . */
     public static final String SAML2_AA_SID_CTX_PARAM = "SAML2AttributeAuthorityId";
 
-    /** {@link ServletContext} parameter name bearing the ID of the {@link SessionManager} service: {@value} . */
+    /** {@link ServletContext} parameter name bearing the ID of the {@link edu.internet2.middleware.shibboleth.common.session.SessionManager} service: {@value} . */
     public static final String SESSION_MNGR_SID_CTX_PARAM = "SessionManagerId";
 
-    /** {@link ServletContext} parameter name bearing the ID of the {@link SAML1AttributeAuthority} service: {@value} . */
+    /** {@link ServletContext} parameter name bearing the ID of the {@link edu.internet2.middleware.shibboleth.common.attribute.provider.SAML1AttributeAuthority} service: {@value} . */
     public static final String STORAGE_SERVICE_SID_CTX_PARAM = "StorageServiceId";
 
-    /** Default ID by which the {@link AttributeFilteringEngine} is know within the Servlet context: {@value} . */
+    /** Default ID by which the {@link edu.internet2.middleware.shibboleth.common.attribute.filtering.AttributeFilteringEngine} is know within the Servlet context: {@value} . */
     public static final String DEFAULT_ATTRIBUTE_FILTER_ENGINE_SID = "shibboleth.AttributeFilterEngine";
 
-    /** Default ID by which the {@link AttributeResolver} is know within the Servlet context: {@value} . */
+    /** Default ID by which the {@link edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolver} is know within the Servlet context: {@value} . */
     public static final String DEFAULT_ATTRIBUTE_RESOLVER_SID = "shibboleth.AttributeResolver";
 
     /** Default name for the {@link StorageService} partition which holds {@link LoginContext}s: {@value} . */
@@ -101,16 +101,16 @@ public class HttpServletHelper {
     /** Default ID by which the {@link IdPProfileHandlerManager} is know within the Servlet context: {@value} . */
     public static final String DEFAULT_PROFILE_HANDLER_MNGR_SID = "shibboleth.HandlerManager";
 
-    /** Default ID by which the {@link RelyingPartyConfigurationManager} is know within the Servlet context: {@value} . */
+    /** Default ID by which the {@link edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfigurationManager} is know within the Servlet context: {@value} . */
     public static final String DEFAULT_RP_CONFIG_MNGR_SID = "shibboleth.RelyingPartyConfigurationManager";
 
-    /** Default ID by which the {@link SAML1AttributeAuthority} is know within the Servlet context: {@value} . */
+    /** Default ID by which the {@link edu.internet2.middleware.shibboleth.common.attribute.provider.SAML1AttributeAuthority} is know within the Servlet context: {@value} . */
     public static final String DEFAULT_SAML1_AA_SID = "shibboleth.SAML1AttributeAuthority";
 
-    /** Default ID by which the {@link SAML2AttributeAuthority} is know within the Servlet context: {@value} . */
+    /** Default ID by which the {@link edu.internet2.middleware.shibboleth.common.attribute.provider.SAML2AttributeAuthority} is know within the Servlet context: {@value} . */
     public static final String DEFAULT_SAML2_AA_SID = "shibboleth.SAML2AttributeAuthority";
 
-    /** Default ID by which the {@link SessionManager} is know within the Servlet context: {@value} . */
+    /** Default ID by which the {@link edu.internet2.middleware.shibboleth.common.session.SessionManager} is know within the Servlet context: {@value} . */
     public static final String DEFAULT_SESSION_MNGR_SID = "shibboleth.SessionManager";
 
     /** Default ID by which the {@link StorageService} is know within the Servlet context: {@value} . */
@@ -205,7 +205,7 @@ public class HttpServletHelper {
     }
 
     /**
-     * Gets the {@link AttributeFilteringEngine} service bound to the Servlet context.
+     * Gets the {@link edu.internet2.middleware.shibboleth.common.attribute.filtering.AttributeFilteringEngine} service bound to the Servlet context.
      * 
      * @param context the Servlet context
      * 
@@ -217,7 +217,7 @@ public class HttpServletHelper {
     }
 
     /**
-     * Gets the {@link AttributeFilteringEngine} bound to the Servlet context.
+     * Gets the {@link edu.internet2.middleware.shibboleth.common.attribute.filtering.AttributeFilteringEngine} bound to the Servlet context.
      * 
      * @param context the Servlet context
      * @param serviceId the ID under which the service bound
@@ -229,7 +229,7 @@ public class HttpServletHelper {
     }
 
     /**
-     * Gets the {@link AttributeResolver} service bound to the Servlet context.
+     * Gets the {@link edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolver} service bound to the Servlet context.
      * 
      * @param context the Servlet context
      * 
@@ -241,7 +241,7 @@ public class HttpServletHelper {
     }
 
     /**
-     * Gets the {@link AttributeResolver} bound to the Servlet context.
+     * Gets the {@link edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolver} bound to the Servlet context.
      * 
      * @param context the Servlet context
      * @param serviceId the ID under which the service bound
@@ -401,7 +401,7 @@ public class HttpServletHelper {
     }
 
     /**
-     * Gets the {@link RelyingPartyConfigurationManager} service bound to the Servlet context.
+     * Gets the {@link edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfigurationManager} service bound to the Servlet context.
      * 
      * @param context the Servlet context
      * 
@@ -413,7 +413,7 @@ public class HttpServletHelper {
     }
 
     /**
-     * Gets the {@link RelyingPartyConfigurationManager} bound to the Servlet context.
+     * Gets the {@link edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfigurationManager} bound to the Servlet context.
      * 
      * @param context the Servlet context
      * @param serviceId the ID under which the service bound
@@ -426,7 +426,7 @@ public class HttpServletHelper {
     }
 
     /**
-     * Gets the {@link RelyingPartyConfigurationManager} service bound to the Servlet context.
+     * Gets the {@link edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfigurationManager} service bound to the Servlet context.
      * 
      * @param context the Servlet context
      * 
@@ -440,7 +440,7 @@ public class HttpServletHelper {
     }
 
     /**
-     * Gets the {@link RelyingPartyConfigurationManager} bound to the Servlet context.
+     * Gets the {@link edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfigurationManager} bound to the Servlet context.
      * 
      * @param context the Servlet context
      * @param serviceId the ID under which the service bound
@@ -478,7 +478,7 @@ public class HttpServletHelper {
     }
 
     /**
-     * Gets the {@link SAML1AttributeAuthority} service bound to the Servlet context.
+     * Gets the {@link edu.internet2.middleware.shibboleth.common.attribute.provider.SAML1AttributeAuthority} service bound to the Servlet context.
      * 
      * @param context the Servlet context
      * 
@@ -490,7 +490,7 @@ public class HttpServletHelper {
     }
 
     /**
-     * Gets the {@link SAML1AttributeAuthority} bound to the Servlet context.
+     * Gets the {@link edu.internet2.middleware.shibboleth.common.attribute.provider.SAML1AttributeAuthority} bound to the Servlet context.
      * 
      * @param context the Servlet context
      * @param serviceId the ID under which the service bound
@@ -502,7 +502,7 @@ public class HttpServletHelper {
     }
 
     /**
-     * Gets the {@link SAML2AttributeAuthority} service bound to the Servlet context.
+     * Gets the {@link edu.internet2.middleware.shibboleth.common.attribute.provider.SAML2AttributeAuthority} service bound to the Servlet context.
      * 
      * @param context the Servlet context
      * 
@@ -514,7 +514,7 @@ public class HttpServletHelper {
     }
 
     /**
-     * Gets the {@link SAML2AttributeAuthority} bound to the Servlet context.
+     * Gets the {@link edu.internet2.middleware.shibboleth.common.attribute.provider.SAML2AttributeAuthority} bound to the Servlet context.
      * 
      * @param context the Servlet context
      * @param serviceId the ID under which the service bound
@@ -526,7 +526,7 @@ public class HttpServletHelper {
     }
 
     /**
-     * Gets the {@link SessionManager} service bound to the Servlet context.
+     * Gets the {@link edu.internet2.middleware.shibboleth.common.session.SessionManager} service bound to the Servlet context.
      * 
      * @param context the Servlet context
      * 
@@ -538,7 +538,7 @@ public class HttpServletHelper {
     }
 
     /**
-     * Gets the {@link SessionManager} bound to the Servlet context.
+     * Gets the {@link edu.internet2.middleware.shibboleth.common.session.SessionManager} bound to the Servlet context.
      * 
      * @param context the Servlet context
      * @param serviceId the ID under which the service bound

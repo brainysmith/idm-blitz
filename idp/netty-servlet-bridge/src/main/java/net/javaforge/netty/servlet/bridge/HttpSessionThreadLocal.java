@@ -16,8 +16,8 @@
 
 package net.javaforge.netty.servlet.bridge;
 
+import com.blitz.idm.handler.ServletBridgeConfig;
 import net.javaforge.netty.servlet.bridge.impl.HttpSessionImpl;
-import net.javaforge.netty.servlet.bridge.impl.ServletBridgeWebapp;
 import net.javaforge.netty.servlet.bridge.session.ServletBridgeHttpSessionStore;
 
 public class HttpSessionThreadLocal {
@@ -52,8 +52,9 @@ public class HttpSessionThreadLocal {
     public static HttpSessionImpl getOrCreate() {
         if (HttpSessionThreadLocal.get() == null) {
             HttpSessionImpl newSession = sessionStore.createSession();
-            newSession.setMaxInactiveInterval(ServletBridgeWebapp.get()
-                    .getWebappConfig().getSessionTimeout());
+            newSession.setMaxInactiveInterval(ServletBridgeConfig.get()
+                    // TODO
+                    .getWebapp("idp").getSessionTimeout());
             sessionThreadLocal.set(sessionStore.createSession());
         }
         return get();

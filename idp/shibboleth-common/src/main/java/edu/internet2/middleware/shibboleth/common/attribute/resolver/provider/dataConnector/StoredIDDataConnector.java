@@ -51,7 +51,7 @@ import edu.internet2.middleware.shibboleth.common.profile.provider.SAMLProfileRe
  * If a salt is supplied at construction time the generated IDs will be the Base64-encoded SHA-1 hash of the user's
  * principal name, the peer entity ID, and the salt.
  * 
- * If a {@link DataSource} is supplied the IDs are created and managed as described by {@link StoredIDStore}.
+ * If a {@link javax.sql.DataSource} is supplied the IDs are created and managed as described by {@link StoredIDStore}.
  */
 public class StoredIDDataConnector extends BaseDataConnector {
 
@@ -317,7 +317,7 @@ public class StoredIDDataConnector extends BaseDataConnector {
      * 
      * @return the created identifier
      * 
-     * @throws SQLException thrown if there is a problem communication with the database
+     * @throws java.sql.SQLException thrown if there is a problem communication with the database
      */
     protected PersistentIdEntry createPersistentId(String principalName, String localEntityId, String peerEntityId,
             String localId) throws SQLException {

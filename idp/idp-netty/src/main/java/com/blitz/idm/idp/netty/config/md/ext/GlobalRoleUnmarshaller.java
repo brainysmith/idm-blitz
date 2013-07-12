@@ -1,14 +1,14 @@
 package com.blitz.idm.idp.netty.config.md.ext;
 
 import com.blitz.idm.idp.config.GlobalRoleEnum;
+import com.blitz.idm.idp.netty.config.md.ext.api.GlobalRole;
+import com.blitz.idm.idp.netty.config.md.ext.api.SupportedOrgTypes;
 import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.io.AbstractXMLObjectUnmarshaller;
 import org.opensaml.xml.io.UnmarshallingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
-import com.blitz.idm.idp.netty.config.md.ext.api.GlobalRole;
-import com.blitz.idm.idp.netty.config.md.ext.api.SupportedOrgTypes;
 
 public class GlobalRoleUnmarshaller extends AbstractXMLObjectUnmarshaller {
 

@@ -12,7 +12,7 @@ import javax.xml.namespace.QName;
 import java.util.List;
 import java.util.Map;
 
-public class PrincipalDataConnectorBeanDefinitionParser extends BaseDataConnectorBeanDefinitionParser{
+public class PrincipalDataConnectorBeanDefinitionParser extends BaseDataConnectorBeanDefinitionParser {
 
     private static Logger log = LoggerFactory.getLogger(PrincipalDataConnectorBeanDefinitionParser.class);
 

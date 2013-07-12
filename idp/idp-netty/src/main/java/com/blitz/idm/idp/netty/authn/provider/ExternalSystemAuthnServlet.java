@@ -1,8 +1,12 @@
 package com.blitz.idm.idp.netty.authn.provider;
 
-import com.blitz.idm.idp.config.*;
+import com.blitz.idm.idp.config.AuthnMethodEnum;
+import com.blitz.idm.idp.config.IdpConfig;
+import com.blitz.idm.idp.config.IdpConfigParam;
+import com.blitz.idm.idp.config.OrganizationTypeEnum;
 import com.blitz.idm.idp.netty.authn.ExtIdpPrincipal;
 import com.blitz.idm.idp.netty.authn.ExtIdpPrincipalImpl;
+import com.blitz.idm.idp.netty.dc.TestValueEnum;
 import edu.internet2.middleware.shibboleth.idp.authn.AuthenticationEngine;
 import edu.internet2.middleware.shibboleth.idp.authn.LoginContextEntry;
 import edu.internet2.middleware.shibboleth.idp.authn.LoginHandler;
@@ -12,7 +16,6 @@ import org.opensaml.util.storage.StorageService;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.blitz.idm.idp.netty.dc.TestValueEnum;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;

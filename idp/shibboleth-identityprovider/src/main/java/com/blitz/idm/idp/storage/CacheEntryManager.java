@@ -46,7 +46,7 @@ public class CacheEntryManager {
      *
      * @param storageService {@link StorageService<String,    AttributesEntry  >} attribute name
      * @param key            {@link String} cache entry key
-     * @param attributes     {@link Map<String, Object>} cached attributes map
+     * @param attributes     {@link java.util.Map<String, Object>} cached attributes map
      */
     public static void cacheAttributes(StorageService<String, AttributesEntry> storageService, String key, Map<String, Object> attributes) {
         if (attributes != null && !attributes.isEmpty()) {
@@ -61,7 +61,7 @@ public class CacheEntryManager {
      *
      * @param storageService {@link StorageService<String, AttributesEntry>} storage service object
      * @param key            {@link String} cache entry key
-     * @return {@link Map<String, Object>} cached attributes map
+     * @return {@link java.util.Map<String, Object>} cached attributes map
      */
     public static Map<String, Object> retrieveAttributes(StorageService<String, AttributesEntry> storageService, String key) {
         AttributesEntry entry = storageService.get(ATTRIBUTES_CACHE_NAME, key);

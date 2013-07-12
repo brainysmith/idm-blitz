@@ -48,7 +48,7 @@ public interface Session extends Serializable {
     public void setSubject(Subject newSubject);
 
     /**
-     * A convenience method that gets the first principal retrieved from the {@link Subject}.
+     * A convenience method that gets the first principal retrieved from the {@link javax.security.auth.Subject}.
      * 
      * @return principal ID of the user, or null
      */

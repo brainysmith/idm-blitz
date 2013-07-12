@@ -3,12 +3,12 @@ package com.blitz.idm.idp.netty.md;
 import com.blitz.idm.idp.config.AssuranceLevelEnum;
 import com.blitz.idm.idp.config.GlobalRoleEnum;
 import com.blitz.idm.idp.config.OrganizationTypeEnum;
+import com.blitz.idm.idp.netty.config.md.ext.api.*;
 import org.opensaml.saml2.common.Extensions;
 import org.opensaml.saml2.metadata.EntityDescriptor;
 import org.opensaml.xml.XMLObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.blitz.idm.idp.netty.config.md.ext.api.*;
 
 import java.util.*;
 
@@ -26,7 +26,7 @@ public class ExtMetadataFilter {
 
     public ExtMetadataFilter(EntityDescriptor entityDescriptor) {
         Extensions extensions = entityDescriptor.getExtensions();
-        AssuranceLevelEnum  assuranceLevel = null;
+        AssuranceLevelEnum assuranceLevel = null;
         Set<GlobalRoleEnum> globalRoles = null;
         Set<OrganizationTypeEnum>  orgTypes = null;
         if (extensions != null) {

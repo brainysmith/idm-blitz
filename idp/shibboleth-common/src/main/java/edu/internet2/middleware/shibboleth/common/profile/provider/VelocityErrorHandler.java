@@ -90,7 +90,7 @@ public class VelocityErrorHandler extends AbstractErrorHandler {
     /**
      * Initializes this error handler by loading the velocity template into the engine.
      * 
-     * @throws IOException thrown if there is a problem reading the template file
+     * @throws java.io.IOException thrown if there is a problem reading the template file
      */
     public void initialize() throws IOException {
         String templateString = DatatypeHelper.inputstreamToString(getClass().getResourceAsStream(templatePath), null);

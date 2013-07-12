@@ -197,7 +197,7 @@ public abstract class AbstractSAML1ProfileHandler extends AbstractSAMLProfileHan
      * 
      * @param requestContext current request context containing the SAML message
      * 
-     * @throws ProfileException thrown if the major version of the SAML request is not 1
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if the major version of the SAML request is not 1
      */
     protected void checkSamlVersion(BaseSAML1ProfileRequestContext<?, ?, ?> requestContext) throws ProfileException {
         SAMLObject samlObject = requestContext.getInboundSAMLMessage();
@@ -224,7 +224,7 @@ public abstract class AbstractSAML1ProfileHandler extends AbstractSAMLProfileHan
      * 
      * @return the built response
      * 
-     * @throws ProfileException thrown if there is a problem creating the SAML response
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if there is a problem creating the SAML response
      */
     protected Response buildResponse(BaseSAML1ProfileRequestContext<?, ?, ?> requestContext, List<Statement> statements)
             throws ProfileException {
@@ -318,7 +318,7 @@ public abstract class AbstractSAML1ProfileHandler extends AbstractSAMLProfileHan
      * 
      * @return SAML subject for the user for the service provider
      * 
-     * @throws ProfileException thrown if a NameID can not be created either because there was a problem encoding the
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if a NameID can not be created either because there was a problem encoding the
      *             name ID attribute or because there are no supported name formats
      */
     protected Subject buildSubject(BaseSAML1ProfileRequestContext<?, ?, ?> requestContext, String confirmationMethod)
@@ -353,7 +353,7 @@ public abstract class AbstractSAML1ProfileHandler extends AbstractSAMLProfileHan
      * 
      * @return the NameIdentifier appropriate for this request
      * 
-     * @throws ProfileException thrown if a NameIdentifier can not be created either because there was a problem
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if a NameIdentifier can not be created either because there was a problem
      *             encoding the name ID attribute or because there are no supported name formats
      */
     protected NameIdentifier buildNameId(BaseSAML1ProfileRequestContext<?, ?, ?> requestContext)
@@ -472,7 +472,7 @@ public abstract class AbstractSAML1ProfileHandler extends AbstractSAMLProfileHan
      * 
      * @param requestContext current request context
      * 
-     * @throws ProfileException thrown if there is a problem resolving the attributes for the subject.
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if there is a problem resolving the attributes for the subject.
      */
     protected void resolveAttributes(BaseSAML1ProfileRequestContext<?, ?, ?> requestContext) throws ProfileException {
         AbstractSAML1ProfileConfiguration profileConfiguration = requestContext.getProfileConfiguration();
@@ -500,7 +500,7 @@ public abstract class AbstractSAML1ProfileHandler extends AbstractSAMLProfileHan
      * 
      * @return attribute statement resulting from the query
      * 
-     * @throws ProfileException thrown if there is a problem making the query
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if there is a problem making the query
      */
     protected AttributeStatement buildAttributeStatement(BaseSAML1ProfileRequestContext<?, ?, ?> requestContext,
             String subjectConfMethod) throws ProfileException {
@@ -543,7 +543,7 @@ public abstract class AbstractSAML1ProfileHandler extends AbstractSAMLProfileHan
      * 
      * @param requestContext current request context
      * 
-     * @throws ProfileException thrown if the principal name can not be resolved
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if the principal name can not be resolved
      */
     protected void resolvePrincipal(BaseSAML1ProfileRequestContext<?, ?, ?> requestContext) throws ProfileException {
         AbstractSAML1ProfileConfiguration profileConfiguration = requestContext.getProfileConfiguration();
@@ -572,7 +572,7 @@ public abstract class AbstractSAML1ProfileHandler extends AbstractSAMLProfileHan
      * @param requestContext current request context
      * @param assertion assertion to sign
      * 
-     * @throws ProfileException thrown if the metadata can not be located for the relying party or, if signing is
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if the metadata can not be located for the relying party or, if signing is
      *             required, if a signing credential is not configured
      */
     protected void signAssertion(BaseSAML1ProfileRequestContext<?, ?, ?> requestContext, Assertion assertion)
@@ -646,7 +646,7 @@ public abstract class AbstractSAML1ProfileHandler extends AbstractSAMLProfileHan
      * 
      * @param requestContext the current request context
      * @return true if assertions should be signed, false otherwise
-     * @throws ProfileException if there is a problem determining whether assertions should be signed
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException if there is a problem determining whether assertions should be signed
      */
     protected boolean isSignAssertion(BaseSAML1ProfileRequestContext<?, ?, ?> requestContext) throws ProfileException {
 

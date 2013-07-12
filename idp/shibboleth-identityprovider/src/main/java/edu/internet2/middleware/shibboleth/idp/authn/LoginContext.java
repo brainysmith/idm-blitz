@@ -39,15 +39,15 @@ import edu.internet2.middleware.shibboleth.idp.session.AuthenticationMethodInfor
  * <li><code>passiveAuth</code> - Should user authentication not control the UI (default value: false).</li>
  * </ul>
  * 
- * A {@link Map}&lt;String, Object&gt; is provided to store other properties. Alternatively, a profile handler may
+ * A {@link java.util.Map}&lt;String, Object&gt; is provided to store other properties. Alternatively, a profile handler may
  * create a subclass of LoginContext with extra fields.
  * 
  * LoginContexts should be created by a profile handler when authentication is needed. Once control has returned to the
  * profile handler, it should remove the LoginContext from the HttpSession.
  * 
- * The {@link AuthenticationEngine} should set the {@link LoginContext#setAuthenticationAttempted()},
- * {@link LoginContext#setPrincipalAuthenticated(boolean)},
- * {@link LoginContext#setAuthenticationFailure(AuthenticationException)}, appropriately.
+ * The {@link AuthenticationEngine} should set the {@link edu.internet2.middleware.shibboleth.idp.authn.LoginContext#setAuthenticationAttempted()},
+ * {@link edu.internet2.middleware.shibboleth.idp.authn.LoginContext#setPrincipalAuthenticated(boolean)},
+ * {@link edu.internet2.middleware.shibboleth.idp.authn.LoginContext#setAuthenticationFailure(AuthenticationException)}, appropriately.
  */
 public class LoginContext implements Serializable {
 

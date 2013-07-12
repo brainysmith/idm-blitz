@@ -1,6 +1,6 @@
 package com.blitz.idm.ssl;
 
-import com.blitz.idm.idp.config.IdpConfig;
+import com.blitz.idm.handler.ServletBridgeConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +60,7 @@ public class SslContextFactory {
         } else {
             // Load a generated key store
             log.warn("Using generated key with self signed certificate for HTTPS. This should not be used in production.");
-            return FakeKeyStore.getKeyManagerFactory(IdpConfig.getConfigDir());
+            return FakeKeyStore.getKeyManagerFactory(ServletBridgeConfig.get().getConfigDir());
         }
     }
 
@@ -100,7 +100,7 @@ public class SslContextFactory {
         KeyStore ks = KeyStore.getInstance("JCEKS");
         FileInputStream fis = null;
         try {
-            fis = new java.io.FileInputStream(storePath);
+            fis = new FileInputStream(storePath);
             ks.load(fis, passPhrase);
             return ks;
         } finally {

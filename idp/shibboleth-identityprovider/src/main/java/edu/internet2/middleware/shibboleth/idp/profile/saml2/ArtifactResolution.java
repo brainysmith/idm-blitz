@@ -161,7 +161,7 @@ public class ArtifactResolution extends AbstractSAML2ProfileHandler {
      * @param outTransport outbound message transport
      * @param requestContext request context to which decoded information should be added
      * 
-     * @throws ProfileException throw if there is a problem decoding the request
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException throw if there is a problem decoding the request
      */
     protected void decodeRequest(ArtifactResolutionRequestContext requestContext, HTTPInTransport inTransport,
             HTTPOutTransport outTransport) throws ProfileException {
@@ -237,7 +237,7 @@ public class ArtifactResolution extends AbstractSAML2ProfileHandler {
      * 
      * @param requestContext current request context
      * 
-     * @throws ProfileException thrown if the inbound SAML message or subject identifier is null
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if the inbound SAML message or subject identifier is null
      */
     protected void populateSAMLMessageInformation(BaseSAMLProfileRequestContext requestContext) throws ProfileException {
         ArtifactResolve samlMessage = (ArtifactResolve) requestContext.getInboundSAMLMessage();

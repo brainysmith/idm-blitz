@@ -525,15 +525,15 @@ public class DataSealer {
 
     /**
      * Load keys based on bean properties.
-     * @throws GeneralSecurityException if the keys fail due to a security-related issue
-     * @throws IOException if the load process fails
+     * @throws java.security.GeneralSecurityException if the keys fail due to a security-related issue
+     * @throws java.io.IOException if the load process fails
      */
     private void loadKeys() throws GeneralSecurityException, IOException {
         if (cipherKey == null || macKey == null) {
             KeyStore ks = KeyStore.getInstance(keystoreType);
             FileInputStream fis = null;
             try {
-                fis = new java.io.FileInputStream(keystorePath);
+                fis = new FileInputStream(keystorePath);
                 ks.load(fis, keystorePassword.toCharArray());
             } finally {
                 if (fis != null) {

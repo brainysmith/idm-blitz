@@ -5,18 +5,20 @@ package com.blitz.idm.idp.netty.dc;
  * Date: 11.12.12
  */
 
+import com.blitz.idm.idp.authn.principal.IdpPrincipal;
 import com.blitz.idm.idp.config.IdpConfig;
 import com.blitz.idm.idp.config.IdpConfigParam;
-import com.blitz.idm.idp.netty.authn.ExtIdpPrincipal;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.blitz.idm.idp.authn.principal.IdpPrincipal;
 import com.blitz.idm.idp.dc.AbstractCachedDataConnector;
 import com.blitz.idm.idp.dc.AttributeGroup;
+import com.blitz.idm.idp.netty.authn.ExtIdpPrincipal;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class PrincipalDataConnector extends AbstractCachedDataConnector {
 
@@ -121,8 +123,8 @@ public class PrincipalDataConnector extends AbstractCachedDataConnector {
      * Get attributes which value based on IDToken.
      * @param isEmployee    current principal role
      * @param principal    {@link com.blitz.idm.idp.netty.authn.ExtIdpPrincipal} actual principal
-     * @param sessionId    {@link ShibbolethResolutionContext} id of current idp session
-     * @param peerEntityId {@link ShibbolethResolutionContext} peer sp entity id
+     * @param sessionId    {@link edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext} id of current idp session
+     * @param peerEntityId {@link edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext} peer sp entity id
      * @throws {@link }AttributeResolutionException} if there is a problem in populating the attributes
      */
     private Map<String, Object> getIdTokenAttributes(boolean isEmployee, ExtIdpPrincipal principal, String sessionId, String peerEntityId) throws AttributeResolutionException {
@@ -139,7 +141,7 @@ public class PrincipalDataConnector extends AbstractCachedDataConnector {
      * @param peerEntityId {@link String} peer sp entity Id
      * @param principal    {@link com.blitz.idm.idp.netty.authn.ExtIdpPrincipal} actual principal
      * @param sessionId    {@link String} current session id
-     * @throws AttributeResolutionException thrown if there is a problem in generating the token
+     * @throws edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException thrown if there is a problem in generating the token
      */
     private String generateIDToken(boolean  isEmployee, String peerEntityId, ExtIdpPrincipal principal,
                                    String sessionId) throws AttributeResolutionException {

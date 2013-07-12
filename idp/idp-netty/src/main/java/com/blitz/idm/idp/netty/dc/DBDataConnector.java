@@ -5,15 +5,18 @@ package com.blitz.idm.idp.netty.dc;
  * Date: 11.12.12
  */
 
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.blitz.idm.idp.authn.principal.IdpPrincipal;
 import com.blitz.idm.idp.dc.AbstractCachedDataConnector;
 import com.blitz.idm.idp.dc.AttributeGroup;
 import com.blitz.idm.idp.netty.authn.ExtIdpPrincipal;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class DBDataConnector extends AbstractCachedDataConnector {
 
@@ -146,9 +149,9 @@ public class DBDataConnector extends AbstractCachedDataConnector {
     /**
      * Get attributes which value based on person data.
      *
-     * @param person {@link PersonEntity} actual principal person
+     * @param {@link PersonEntity} actual principal person
      * @return {@link java.util.Map<String, Object>} populated attribute map
-     * @throws {@link AttributeResolutionException} if there is a problem in populating the attributes
+     * @throws {@link edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException} if there is a problem in populating the attributes
      */
     private Map<String, Object> getPersonBriefAttributes(/*PersonEntity person*/) throws AttributeResolutionException {
 /*        if (person == null) {
@@ -173,9 +176,9 @@ public class DBDataConnector extends AbstractCachedDataConnector {
     /**
      * Populate attributes which value based on person children objects data.
      *
-     * @param person {@link PersonEntity} actual principal person
+     * @param  {@link PersonEntity} actual principal person
      * @return {@link java.util.Map<String, Object>} populated attribute map
-     * @throws {@link AttributeResolutionException} if there is a problem in populating the attributes
+     * @throws {@link edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException} if there is a problem in populating the attributes
      */
     private Map<String, Object> getPersonFullAttributes(/*PersonEntity person*/) throws AttributeResolutionException {
 /*        if (person == null) {
@@ -198,9 +201,9 @@ public class DBDataConnector extends AbstractCachedDataConnector {
     /**
      * Get main attributes which value based on principal staff unit data.
      *
-     * @param stu {@link StaffUnitEntity} actual principal staff unit
+     * @param  {@link StaffUnitEntity} actual principal staff unit
      * @return {@link java.util.Map<String, Object>} populated attribute map
-     * @throws {@link AttributeResolutionException} if there is a problem in populating the attributes
+     * @throws {@link edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException} if there is a problem in populating the attributes
      */
     private Map<String, Object> getStaffUnitBriefAttributes(/*StaffUnitEntity stu*/) throws AttributeResolutionException {
 /*        if (stu == null) {
@@ -227,9 +230,9 @@ public class DBDataConnector extends AbstractCachedDataConnector {
     /**
      * Populate all attributes which value based on principal staff unit data.
      *
-     * @param stu {@link StaffUnitEntity} actual principal staff unit
+     * @param  {@link StaffUnitEntity} actual principal staff unit
      * @return {@link java.util.Map<String, Object>} populated attribute map
-     * @throws {@link AttributeResolutionException} if there is a problem in populating the attributes
+     * @throws {@link edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException} if there is a problem in populating the attributes
      */
     private Map<String, Object> getStaffUnitFullAttributes(/*StaffUnitEntity stu*/) throws AttributeResolutionException {
 /*        if (stu == null) {
@@ -250,7 +253,7 @@ public class DBDataConnector extends AbstractCachedDataConnector {
      *
      * @param principalAuthorities {@link java.util.List<AccountAuthorityEntity>} actual principal
      * @return {@link java.util.Map<String, Object>} populated attribute map
-     * @throws {@link AttributeResolutionException} if there is a problem in populating the attributes
+     * @throws {@link edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException} if there is a problem in populating the attributes
      *//*
     private Map<String, Object> getAuthorityInfoAttributes(*//*List<AccountAuthorityEntity> principalAuthorities*//*) throws AttributeResolutionException {
         return new HashMap<String, Object>();

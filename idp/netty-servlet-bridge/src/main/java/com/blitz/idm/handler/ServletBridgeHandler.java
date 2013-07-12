@@ -1,25 +1,12 @@
-/*
- * Copyright 2013 by Maxim Kalina
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
- */
+package com.blitz.idm.handler;
 
-package net.javaforge.netty.servlet.bridge;
-
-import net.javaforge.netty.servlet.bridge.impl.FilterChainImpl;
-import net.javaforge.netty.servlet.bridge.impl.HttpServletRequestImpl;
+import com.blitz.idm.servlet.config.WebApp;
+import com.blitz.idm.servlet.impl.FilterChainImpl;
+import com.blitz.idm.servlet.impl.HttpServletRequestImpl;
+import com.blitz.idm.servlet.impl.ServletContextImpl;
+import net.javaforge.netty.servlet.bridge.ServletBridgeInterceptor;
+import net.javaforge.netty.servlet.bridge.ServletBridgeRuntimeException;
 import net.javaforge.netty.servlet.bridge.impl.HttpServletResponseImpl;
-import net.javaforge.netty.servlet.bridge.impl.ServletBridgeWebapp;
 import net.javaforge.netty.servlet.bridge.util.Utils;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.*;
@@ -33,6 +20,7 @@ import org.jboss.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.ServletContext;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
@@ -69,7 +57,7 @@ public class ServletBridgeHandler extends IdleStateAwareChannelHandler {
     public void channelOpen(ChannelHandlerContext ctx, ChannelStateEvent e)
             throws Exception {
         log.debug("Opening new channel: {}", e.getChannel().getId());
-        ServletBridgeWebapp.get().getSharedChannelGroup().add(e.getChannel());
+        ServletBridgeConfig.get().getSharedChannelGroup().add(e.getChannel());
     }
 
     @Override
@@ -87,16 +75,23 @@ public class ServletBridgeHandler extends IdleStateAwareChannelHandler {
             e.getChannel().write(new DefaultHttpResponse(HTTP_1_1, CONTINUE));
         }
 
-        FilterChainImpl chain = ServletBridgeWebapp.get().initializeChain(
-                request.getUri());
+        WebApp webapp = ServletBridgeConfig.get().getMatchedWebapp(request.getUri());
+        if (webapp == null) {
+            log.warn("Web app not found for request uri: {}", request.getUri());
+            throw new ServletBridgeRuntimeException(
+                    "Web app found for request uri: " + request.getUri());
+        }
 
-        if (chain != null && chain.isValid()) {
+        ServletContext servletContext = ServletContextImpl.getInstance(webapp);
+        FilterChainImpl chain = webapp.initializeChain(servletContext, false, webapp.getRelativePath(request.getUri()));
 
-            handleHttpServletRequest(ctx, e, chain);
+        if (chain != null) {
 
-        } else if (ServletBridgeWebapp.get().getStaticResourcesFolder() != null) {
+            handleHttpServletRequest(webapp, ctx, e, chain);
 
-            handleStaticResourceRequest(ctx, e);
+        } else if (webapp.getStaticResourcesFolder() != null) {
+
+            handleStaticResourceRequest(webapp, ctx, e);
 
         } else {
             log.warn("No handler found for uri: {}", request.getUri());
@@ -105,7 +100,7 @@ public class ServletBridgeHandler extends IdleStateAwareChannelHandler {
         }
     }
 
-    protected void handleHttpServletRequest(ChannelHandlerContext ctx,
+    protected void handleHttpServletRequest(WebApp webapp, ChannelHandlerContext ctx,
                                             MessageEvent e, FilterChainImpl chain) throws Exception {
 
         interceptOnRequestReceived(ctx, e);
@@ -113,8 +108,13 @@ public class ServletBridgeHandler extends IdleStateAwareChannelHandler {
         HttpRequest request = (HttpRequest) e.getMessage();
         HttpResponse response = new DefaultHttpResponse(HTTP_1_1, OK);
 
-        HttpServletResponseImpl resp = buildHttpServletResponse(response);
+
+
         HttpServletRequestImpl req = buildHttpServletRequest(request, chain);
+
+        HttpServletResponseImpl resp = buildHttpServletResponse(response);
+
+
 
         chain.doFilter(req, resp);
 
@@ -143,7 +143,7 @@ public class ServletBridgeHandler extends IdleStateAwareChannelHandler {
 
     }
 
-    protected void handleStaticResourceRequest(ChannelHandlerContext ctx,
+    protected void handleStaticResourceRequest(WebApp webapp, ChannelHandlerContext ctx,
                                                MessageEvent e) throws Exception {
 
         HttpRequest request = (HttpRequest) e.getMessage();
@@ -153,8 +153,7 @@ public class ServletBridgeHandler extends IdleStateAwareChannelHandler {
         }
 
         String uri = Utils.sanitizeUri(request.getUri());
-        final String path = (uri != null ? ServletBridgeWebapp.get()
-                .getStaticResourcesFolder().getAbsolutePath()+ uri : null);
+        final String path = (uri != null ? webapp.getStaticResourcesFolder().getAbsolutePath()+ uri : null);
 
         if (path == null) {
             sendError(ctx, FORBIDDEN);
@@ -284,8 +283,7 @@ public class ServletBridgeHandler extends IdleStateAwareChannelHandler {
         return new HttpServletResponseImpl(response);
     }
 
-    protected HttpServletRequestImpl buildHttpServletRequest(
-            HttpRequest request, FilterChainImpl chain) {
+    protected HttpServletRequestImpl buildHttpServletRequest(HttpRequest request, FilterChainImpl chain) {
         return new HttpServletRequestImpl(request, chain);
     }
 

@@ -224,7 +224,7 @@ public abstract class AbstractSAML2ProfileHandler extends AbstractSAMLProfileHan
      * 
      * @param requestContext current request context containing the SAML message
      * 
-     * @throws ProfileException thrown if the major version of the SAML request is not 2
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if the major version of the SAML request is not 2
      */
     protected void checkSamlVersion(BaseSAML2ProfileRequestContext<?, ?, ?> requestContext) throws ProfileException {
         SAMLVersion version = requestContext.getInboundSAMLMessage().getVersion();
@@ -248,7 +248,7 @@ public abstract class AbstractSAML2ProfileHandler extends AbstractSAMLProfileHan
      * 
      * @return the built response
      * 
-     * @throws ProfileException thrown if there is a problem creating the SAML response
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if there is a problem creating the SAML response
      */
     protected Response buildResponse(BaseSAML2ProfileRequestContext<?, ?, ?> requestContext,
             String subjectConfirmationMethod, List<Statement> statements) throws ProfileException {
@@ -314,7 +314,7 @@ public abstract class AbstractSAML2ProfileHandler extends AbstractSAMLProfileHan
      * 
      * @param requestContext the current request context
      * @return true if assertions should be encrypted, false otherwise
-     * @throws ProfileException if there is a problem determining whether assertions should be encrypted
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException if there is a problem determining whether assertions should be encrypted
      */
     protected boolean isEncryptAssertion(BaseSAML2ProfileRequestContext<?, ?, ?> requestContext)
             throws ProfileException {
@@ -339,7 +339,7 @@ public abstract class AbstractSAML2ProfileHandler extends AbstractSAMLProfileHan
      * @param requestContext the current request context
      * @param samlResponse the SAML Response being built
      * 
-     * @throws ProfileException if there was an error processing the response
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException if there was an error processing the response
      */
     protected void postProcessResponse(BaseSAML2ProfileRequestContext<?, ?, ?> requestContext, Response samlResponse)
             throws ProfileException {
@@ -351,7 +351,7 @@ public abstract class AbstractSAML2ProfileHandler extends AbstractSAMLProfileHan
      * @param requestContext the current request context
      * @param assertion the SAML Assertion being built
      * 
-     * @throws ProfileException if there is an error processing the assertion
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException if there is an error processing the assertion
      */
     protected void postProcessAssertion(BaseSAML2ProfileRequestContext<?, ?, ?> requestContext, Assertion assertion)
             throws ProfileException {
@@ -465,7 +465,7 @@ public abstract class AbstractSAML2ProfileHandler extends AbstractSAMLProfileHan
      * 
      * @param requestContext current request context
      * 
-     * @throws ProfileException thrown if there is a problem resolved attributes
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if there is a problem resolved attributes
      */
     protected void resolveAttributes(BaseSAML2ProfileRequestContext<?, ?, ?> requestContext) throws ProfileException {
         AbstractSAML2ProfileConfiguration profileConfiguration = requestContext.getProfileConfiguration();
@@ -490,7 +490,7 @@ public abstract class AbstractSAML2ProfileHandler extends AbstractSAMLProfileHan
      * 
      * @return attribute statement resulting from the query
      * 
-     * @throws ProfileException thrown if there is a problem making the query
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if there is a problem making the query
      */
     protected AttributeStatement buildAttributeStatement(BaseSAML2ProfileRequestContext<?, ?, ?> requestContext)
             throws ProfileException {
@@ -523,7 +523,7 @@ public abstract class AbstractSAML2ProfileHandler extends AbstractSAMLProfileHan
      * 
      * @param requestContext current request context
      * 
-     * @throws ProfileException thrown if the principal name can not be resolved
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if the principal name can not be resolved
      */
     protected void resolvePrincipal(BaseSAML2ProfileRequestContext<?, ?, ?> requestContext) throws ProfileException {
         AbstractSAML2ProfileConfiguration profileConfiguration = requestContext.getProfileConfiguration();
@@ -560,7 +560,7 @@ public abstract class AbstractSAML2ProfileHandler extends AbstractSAMLProfileHan
      * @param requestContext current request context
      * @param assertion assertion to sign
      * 
-     * @throws ProfileException thrown if the metadata can not be located for the relying party or, if signing is
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if the metadata can not be located for the relying party or, if signing is
      *             required, if a signing credential is not configured
      */
     protected void signAssertion(BaseSAML2ProfileRequestContext<?, ?, ?> requestContext, Assertion assertion)
@@ -634,7 +634,7 @@ public abstract class AbstractSAML2ProfileHandler extends AbstractSAMLProfileHan
      * 
      * @param requestContext the current request context
      * @return true if assertions should be signed, false otherwise
-     * @throws ProfileException if there is a problem determining whether assertions should be signed
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException if there is a problem determining whether assertions should be signed
      */
     protected boolean isSignAssertion(BaseSAML2ProfileRequestContext<?, ?, ?> requestContext) throws ProfileException {
 
@@ -709,7 +709,7 @@ public abstract class AbstractSAML2ProfileHandler extends AbstractSAMLProfileHan
      * 
      * @return SAML subject for the user for the service provider
      * 
-     * @throws ProfileException thrown if a NameID can not be created either because there was a problem encoding the
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if a NameID can not be created either because there was a problem encoding the
      *             name ID attribute or because there are no supported name formats
      */
     protected Subject buildSubject(BaseSAML2ProfileRequestContext<?, ?, ?> requestContext, String confirmationMethod,
@@ -753,7 +753,7 @@ public abstract class AbstractSAML2ProfileHandler extends AbstractSAMLProfileHan
      * 
      * @param requestContext the current request context
      * @return true if NameID's should be encrypted, false otherwise
-     * @throws ProfileException if there is a problem determining whether NameID's should be encrypted
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException if there is a problem determining whether NameID's should be encrypted
      */
     protected boolean isEncryptNameID(BaseSAML2ProfileRequestContext<?, ?, ?> requestContext) throws ProfileException {
 
@@ -840,7 +840,7 @@ public abstract class AbstractSAML2ProfileHandler extends AbstractSAMLProfileHan
      * 
      * @return the NameID appropriate for this request
      * 
-     * @throws ProfileException thrown if a NameID can not be created either because there was a problem encoding the
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if a NameID can not be created either because there was a problem encoding the
      *             name ID attribute or because there are no supported name formats
      */
     protected NameID buildNameId(BaseSAML2ProfileRequestContext<?, ?, ?> requestContext) throws ProfileException {

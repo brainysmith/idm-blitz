@@ -58,9 +58,9 @@ import javax.servlet.http.HttpServletResponse;
  * The handler <strong>MAY</strong> also:
  * <ul>
  * <li>Bind an error message, if an error occurred during authentication to the request attribute identified by
- * {@link LoginHandler#AUTHENTICATION_ERROR_KEY}.</li>
+ * {@link edu.internet2.middleware.shibboleth.idp.authn.LoginHandler#AUTHENTICATION_ERROR_KEY}.</li>
  * <li>Bind a {@link AuthenticationException}, if an exception occurred during authentication to the request attribute
- * identified by {@link LoginHandler#AUTHENTICATION_EXCEPTION_KEY}.</li>
+ * identified by {@link edu.internet2.middleware.shibboleth.idp.authn.LoginHandler#AUTHENTICATION_EXCEPTION_KEY}.</li>
  * </ul>
  * 
  * Finally, the handler must return control to the authentication engine by invoking

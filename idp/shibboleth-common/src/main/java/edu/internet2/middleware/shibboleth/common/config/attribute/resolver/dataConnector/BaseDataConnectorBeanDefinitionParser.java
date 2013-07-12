@@ -35,7 +35,7 @@ import edu.internet2.middleware.shibboleth.common.config.attribute.resolver.Attr
 /**
  * Base spring bean definition parser for data connectors. DataConnector implementations should provide a custom
  * BeanDefinitionParser by extending this class and overriding the
- * {@link #doParse(String, Element, Map, BeanDefinitionBuilder, ParserContext)} method to parse any additional
+ * {@link #doParse(String, org.w3c.dom.Element, java.util.Map, BeanDefinitionBuilder, ParserContext)} method to parse any additional
  * attributes or elements it requires. Standard attributes and elements defined by the ResolutionPlugIn and
  * DataConnector schemas will automatically attempt to be parsed.
  */

@@ -67,13 +67,13 @@ import com.blitz.idm.idp.storage.CacheEntryManager;
 public class AuthenticationEngine extends HttpServlet {
 
     /**
-     * Name of the Servlet config init parameter that indicates whether the public credentials of a {@link Subject} are
+     * Name of the Servlet config init parameter that indicates whether the public credentials of a {@link javax.security.auth.Subject} are
      * retained after authentication.
      */
     public static final String RETAIN_PUBLIC_CREDENTIALS = "retainSubjectsPublicCredentials";
 
     /**
-     * Name of the Servlet config init parameter that indicates whether the private credentials of a {@link Subject} are
+     * Name of the Servlet config init parameter that indicates whether the private credentials of a {@link javax.security.auth.Subject} are
      * retained after authentication.
      */
     public static final String RETAIN_PRIVATE_CREDENTIALS = "retainSubjectsPrivateCredentials";
@@ -102,10 +102,10 @@ public class AuthenticationEngine extends HttpServlet {
     /** Storage service used to store {@link LoginContext}s while authentication is in progress. */
     private static StorageService<String, LoginContextEntry> storageService;
 
-    /** Whether the public credentials of a {@link Subject} are retained after authentication. */
+    /** Whether the public credentials of a {@link javax.security.auth.Subject} are retained after authentication. */
     private boolean retainSubjectsPublicCredentials;
 
-    /** Whether the private credentials of a {@link Subject} are retained after authentication. */
+    /** Whether the private credentials of a {@link javax.security.auth.Subject} are retained after authentication. */
     private boolean retainSubjectsPrivateCredentials;
 
     /** Profile handler manager. */
@@ -671,7 +671,7 @@ public class AuthenticationEngine extends HttpServlet {
      * 
      * @param httpRequest request coming back from the login handler
      * 
-     * @return the {@link Subject} created from the request
+     * @return the {@link javax.security.auth.Subject} created from the request
      * 
      * @throws AuthenticationException thrown if no subject can be retrieved from the request
      */
@@ -786,7 +786,7 @@ public class AuthenticationEngine extends HttpServlet {
     }
 
     /**
-     * Merges the two {@link Subject}s in to a new {@link Subject}. The new subjects contains all the {@link Principal}s
+     * Merges the two {@link javax.security.auth.Subject}s in to a new {@link javax.security.auth.Subject}. The new subjects contains all the {@link java.security.Principal}s
      * from both subjects. If {@link #retainSubjectsPrivateCredentials} is true then the new subject will contain all
      * the private credentials from both subjects, if not the new subject will not contain private credentials. If
      * {@link #retainSubjectsPublicCredentials} is true then the new subject will contain all the public credentials

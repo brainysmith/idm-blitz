@@ -51,7 +51,7 @@ import org.tmatesoft.svn.core.wc.SVNStatus;
  * not the new revision will be retrieved.</li>
  * </ul>
  * 
- * The behavior of multiple {@link SVNResource} operating on the same local copy are undefined.
+ * The behavior of multiple {@link edu.internet2.middleware.shibboleth.common.resource.SVNResource} operating on the same local copy are undefined.
  * 
  * @since 1.1
  */
@@ -163,7 +163,7 @@ public class SVNResource extends AbstractFilteredResource {
     }
 
     /**
-     * Gets {@link File} for the resource.
+     * Gets {@link java.io.File} for the resource.
      * 
      * @return file for the resource
      * 

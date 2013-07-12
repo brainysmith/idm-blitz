@@ -45,7 +45,7 @@ import edu.internet2.middleware.shibboleth.idp.authn.LoginHandler;
 import edu.internet2.middleware.shibboleth.idp.authn.UsernamePrincipal;
 
 /**
- * This Servlet authenticates a user via JAAS. The user's credential is always added to the returned {@link Subject} as
+ * This Servlet authenticates a user via JAAS. The user's credential is always added to the returned {@link javax.security.auth.Subject} as
  * a {@link UsernamePasswordCredential} within the subject's private credentials.
  * 
  * By default, this Servlet assumes that the authentication method
@@ -163,7 +163,7 @@ public class UsernamePasswordLoginServlet extends HttpServlet {
      * @param username the principal name of the user to be authenticated
      * @param password the password of the user to be authenticated
      * 
-     * @throws LoginException thrown if there is a problem authenticating the user
+     * @throws javax.security.auth.login.LoginException thrown if there is a problem authenticating the user
      */
     protected void authenticateUser(HttpServletRequest request, String username, String password) throws LoginException {
         try {
@@ -207,7 +207,7 @@ public class UsernamePasswordLoginServlet extends HttpServlet {
     /**
      * A callback handler that provides static name and password data to a JAAS loging process.
      * 
-     * This handler only supports {@link NameCallback} and {@link PasswordCallback}.
+     * This handler only supports {@link javax.security.auth.callback.NameCallback} and {@link javax.security.auth.callback.PasswordCallback}.
      */
     protected class SimpleCallbackHandler implements CallbackHandler {
 
@@ -233,8 +233,8 @@ public class UsernamePasswordLoginServlet extends HttpServlet {
          * 
          * @param callbacks The list of callbacks to process.
          * 
-         * @throws UnsupportedCallbackException If callbacks has a callback other than {@link NameCallback} or
-         *             {@link PasswordCallback}.
+         * @throws javax.security.auth.callback.UnsupportedCallbackException If callbacks has a callback other than {@link javax.security.auth.callback.NameCallback} or
+         *             {@link javax.security.auth.callback.PasswordCallback}.
          */
         public void handle(final Callback[] callbacks) throws UnsupportedCallbackException {
 

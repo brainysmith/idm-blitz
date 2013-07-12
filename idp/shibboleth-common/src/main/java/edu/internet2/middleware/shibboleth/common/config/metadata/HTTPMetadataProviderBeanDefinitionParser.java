@@ -123,7 +123,7 @@ public class HTTPMetadataProviderBeanDefinitionParser extends AbstractReloadingM
     }
 
     /**
-     * Builds a {@link X509TrustManager} which bypasses all X.509 validation steps.
+     * Builds a {@link javax.net.ssl.X509TrustManager} which bypasses all X.509 validation steps.
      * 
      * @return the trustless trust manager
      */

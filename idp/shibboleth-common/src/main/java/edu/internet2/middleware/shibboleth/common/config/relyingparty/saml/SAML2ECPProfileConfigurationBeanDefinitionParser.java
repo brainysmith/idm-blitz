@@ -23,8 +23,6 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-import edu.internet2.middleware.shibboleth.common.config.relyingparty.saml.SAML2SSOProfileConfigurationBeanDefinitionParser;
-
 /** Spring configuration parser for ecp SAML 2 SSO profile configurations. */
 public class SAML2ECPProfileConfigurationBeanDefinitionParser extends
         SAML2SSOProfileConfigurationBeanDefinitionParser {

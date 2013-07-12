@@ -1,12 +1,12 @@
 package com.blitz.idm.idp.netty.config.md.ext;
 
 import com.blitz.idm.idp.config.AssuranceLevelEnum;
+import com.blitz.idm.idp.netty.config.md.ext.api.AssuranceLevel;
+import com.blitz.idm.idp.netty.config.md.ext.api.SupportedAssuranceLevels;
 import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.validation.AbstractValidatingXMLObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.blitz.idm.idp.netty.config.md.ext.api.AssuranceLevel;
-import com.blitz.idm.idp.netty.config.md.ext.api.SupportedAssuranceLevels;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -8,12 +8,12 @@ package com.blitz.idm.idp.netty.config.md.atr;
  * To change this template use File | Settings | File Templates.
  */
 
+import com.blitz.idm.idp.netty.config.md.atr.api.Authorities;
+import com.blitz.idm.idp.netty.config.md.atr.api.Authority;
 import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.io.AbstractXMLObjectUnmarshaller;
 import org.opensaml.xml.io.UnmarshallingException;
 import org.w3c.dom.Attr;
-import com.blitz.idm.idp.netty.config.md.atr.api.Authorities;
-import com.blitz.idm.idp.netty.config.md.atr.api.Authority;
 
 public class AuthoritiesUnmarshaller extends AbstractXMLObjectUnmarshaller {
 

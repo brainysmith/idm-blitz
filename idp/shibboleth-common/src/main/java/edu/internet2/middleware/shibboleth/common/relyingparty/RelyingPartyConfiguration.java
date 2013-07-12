@@ -170,7 +170,7 @@ public class RelyingPartyConfiguration {
     }
 
     /**
-     * Convenience method for retrieving a given profile configuration from the {@link Map} returned by
+     * Convenience method for retrieving a given profile configuration from the {@link java.util.Map} returned by
      * {@link #getProfileConfigurations()}.
      * 
      * @param profileId unique Id of the profile

@@ -18,11 +18,11 @@ public class AtrResolutionCtxHelper {
     private static Logger log = LoggerFactory.getLogger(AtrResolutionCtxHelper.class);
 
     /**
-     * Get current session {@link Session} .
+     * Get current session {@link edu.internet2.middleware.shibboleth.common.session.Session} .
      *
-     * @param resolutionCtx {@link ShibbolethResolutionContext} attribute resolution context
+     * @param resolutionCtx {@link edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext} attribute resolution context
      *
-     * @throws {@link AttributeResolutionException} if there is a problem in getting the current user
+     * @throws {@link edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException} if there is a problem in getting the current user
      */
     public static Session getUserSession(ShibbolethResolutionContext resolutionCtx) throws AttributeResolutionException {
         Session userSession = resolutionCtx.getAttributeRequestContext().getUserSession();
@@ -37,9 +37,9 @@ public class AtrResolutionCtxHelper {
     /**
      * Get current session principal name {@link String} .
      *
-     * @param resolutionCtx {@link ShibbolethResolutionContext} attribute resolution context
+     * @param resolutionCtx {@link edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext} attribute resolution context
      *
-     * @throws {@link AttributeResolutionException} if there is a problem in getting the principal name
+     * @throws {@link edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException} if there is a problem in getting the principal name
      */
     public static String getPrincipalName(ShibbolethResolutionContext resolutionCtx) throws AttributeResolutionException {
         String principalName = resolutionCtx.getAttributeRequestContext().getPrincipalName();
@@ -53,7 +53,7 @@ public class AtrResolutionCtxHelper {
     /**
      * Get peer service provider entity Id {@link String}.
      *
-     * @param resolutionCtx {@link ShibbolethResolutionContext} attribute resolution context
+     * @param resolutionCtx {@link edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext} attribute resolution context
      *
      * @throws {@link }AttributeResolutionException} if there is a problem in getting the peer sp entity Id
      */
@@ -70,9 +70,9 @@ public class AtrResolutionCtxHelper {
     /**
      * Get current session Id {@link String}.
      *
-     * @param resolutionCtx {@link ShibbolethResolutionContext} attribute resolution context
+     * @param resolutionCtx {@link edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext} attribute resolution context
      *
-     * @throws {@link AttributeResolutionException} if there is a problem in getting the session Id
+     * @throws {@link edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException} if there is a problem in getting the session Id
      */
     public static String getSessionId(ShibbolethResolutionContext resolutionCtx) throws AttributeResolutionException {
         String sessionId = resolutionCtx.getAttributeRequestContext().getUserSession().getSessionID();
@@ -87,11 +87,11 @@ public class AtrResolutionCtxHelper {
     /**
      * Get peer service provider entity metadata.
      *
-     * @param resolutionCtx {@link ShibbolethResolutionContext} attribute resolution context
+     * @param resolutionCtx {@link edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext} attribute resolution context
      *
      * @return {@link org.opensaml.saml2.metadata.EntityDescriptor } the metadata
      *
-     * @throws {@link AttributeResolutionException} if there is a problem in getting the metadata
+     * @throws {@link edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException} if there is a problem in getting the metadata
      */
     public static EntityDescriptor getPeerEntityMetadata(ShibbolethResolutionContext resolutionCtx) throws AttributeResolutionException {
         return resolutionCtx.getAttributeRequestContext().getPeerEntityMetadata();

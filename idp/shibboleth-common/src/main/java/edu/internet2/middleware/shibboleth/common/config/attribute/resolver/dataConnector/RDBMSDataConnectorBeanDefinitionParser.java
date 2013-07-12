@@ -97,7 +97,7 @@ public class RDBMSDataConnectorBeanDefinitionParser extends BaseDataConnectorBea
     }
 
     /**
-     * Builds a JDBC {@link DataSource} from a ContainerManagedConnection configuration element.
+     * Builds a JDBC {@link javax.sql.DataSource} from a ContainerManagedConnection configuration element.
      * 
      * @param pluginId ID of this data connector
      * @param cmc the container managed configuration element
@@ -130,7 +130,7 @@ public class RDBMSDataConnectorBeanDefinitionParser extends BaseDataConnectorBea
     }
 
     /**
-     * Builds a JDBC {@link DataSource} from an ApplicationManagedConnection configuration element.
+     * Builds a JDBC {@link javax.sql.DataSource} from an ApplicationManagedConnection configuration element.
      * 
      * @param pluginId ID of this data connector
      * @param amc the application managed configuration element

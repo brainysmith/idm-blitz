@@ -263,7 +263,7 @@ public class SAML2ECPProfileHandler extends SSOProfileHandler {
      * @param outTransport outbound transport
      * @param requestContext request context to which decoded information should be added
      * 
-     * @throws ProfileException thrown if the incoming message failed decoding
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if the incoming message failed decoding
      */
     protected void decodeRequest(ECPRequestContext requestContext, HTTPInTransport inTransport,
             HTTPOutTransport outTransport) throws ProfileException {
@@ -313,7 +313,7 @@ public class SAML2ECPProfileHandler extends SSOProfileHandler {
      * 
      * @return created authentication request context
      * 
-     * @throws ProfileException thrown if there is a problem creating the context
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if there is a problem creating the context
      */
     protected ECPRequestContext buildRequestContext(HTTPInTransport in, HTTPOutTransport out)
             throws ProfileException {

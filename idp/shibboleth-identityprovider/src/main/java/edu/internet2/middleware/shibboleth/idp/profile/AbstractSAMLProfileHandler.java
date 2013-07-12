@@ -314,7 +314,7 @@ public abstract class AbstractSAMLProfileHandler extends
      * issuer, local entity metadata
      * 
      * @param requestContext current request context
-     * @throws ProfileException thrown if there is a problem looking up the relying party's metadata
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if there is a problem looking up the relying party's metadata
      */
     protected void populateRequestContext(BaseSAMLProfileRequestContext requestContext) throws ProfileException {
         populateRelyingPartyInformation(requestContext);
@@ -333,7 +333,7 @@ public abstract class AbstractSAMLProfileHandler extends
      * relying party configuration
      * 
      * @param requestContext current request context
-     * @throws ProfileException thrown if there is a problem looking up the relying party's metadata
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if there is a problem looking up the relying party's metadata
      */
     protected void populateRelyingPartyInformation(BaseSAMLProfileRequestContext requestContext)
             throws ProfileException {
@@ -361,8 +361,8 @@ public abstract class AbstractSAMLProfileHandler extends
 
     /**
      * Populates the request context with information about the asserting party. Unless overridden,
-     * {@link #populateRequestContext(BaseSAMLProfileRequestContext)} has already invoked
-     * {@link #populateRelyingPartyInformation(BaseSAMLProfileRequestContext)} has already been invoked and the
+     * {@link #populateRequestContext(edu.internet2.middleware.shibboleth.common.profile.provider.BaseSAMLProfileRequestContext)} has already invoked
+     * {@link #populateRelyingPartyInformation(edu.internet2.middleware.shibboleth.common.profile.provider.BaseSAMLProfileRequestContext)} has already been invoked and the
      * properties it provides are available in the request context.
      * 
      * This method requires the the following request context properties to be populated: metadata provider, relying
@@ -372,7 +372,7 @@ public abstract class AbstractSAMLProfileHandler extends
      * entity metadata
      * 
      * @param requestContext current request context
-     * @throws ProfileException thrown if there is a problem looking up the asserting party's metadata
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if there is a problem looking up the asserting party's metadata
      */
     protected void populateAssertingPartyInformation(BaseSAMLProfileRequestContext requestContext)
             throws ProfileException {
@@ -394,25 +394,25 @@ public abstract class AbstractSAMLProfileHandler extends
 
     /**
      * Populates the request context with information from the inbound SAML message. Unless overridden,
-     * {@link #populateRequestContext(BaseSAMLProfileRequestContext)} has already invoked
-     * {@link #populateRelyingPartyInformation(BaseSAMLProfileRequestContext)},and
-     * {@link #populateAssertingPartyInformation(BaseSAMLProfileRequestContext)} have already been invoked and the
+     * {@link #populateRequestContext(edu.internet2.middleware.shibboleth.common.profile.provider.BaseSAMLProfileRequestContext)} has already invoked
+     * {@link #populateRelyingPartyInformation(edu.internet2.middleware.shibboleth.common.profile.provider.BaseSAMLProfileRequestContext)},and
+     * {@link #populateAssertingPartyInformation(edu.internet2.middleware.shibboleth.common.profile.provider.BaseSAMLProfileRequestContext)} have already been invoked and the
      * properties they provide are available in the request context.
      * 
      * 
      * @param requestContext current request context
      * 
-     * @throws ProfileException thrown if there is a problem populating the request context with information
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if there is a problem populating the request context with information
      */
     protected abstract void populateSAMLMessageInformation(BaseSAMLProfileRequestContext requestContext)
             throws ProfileException;
 
     /**
      * Populates the request context with the information about the profile. Unless overridden,
-     * {@link #populateRequestContext(BaseSAMLProfileRequestContext)} has already invoked
-     * {@link #populateRelyingPartyInformation(BaseSAMLProfileRequestContext)},
-     * {@link #populateAssertingPartyInformation(BaseSAMLProfileRequestContext)}, and
-     * {@link #populateSAMLMessageInformation(BaseSAMLProfileRequestContext)} have already been invoked and the
+     * {@link #populateRequestContext(edu.internet2.middleware.shibboleth.common.profile.provider.BaseSAMLProfileRequestContext)} has already invoked
+     * {@link #populateRelyingPartyInformation(edu.internet2.middleware.shibboleth.common.profile.provider.BaseSAMLProfileRequestContext)},
+     * {@link #populateAssertingPartyInformation(edu.internet2.middleware.shibboleth.common.profile.provider.BaseSAMLProfileRequestContext)}, and
+     * {@link #populateSAMLMessageInformation(edu.internet2.middleware.shibboleth.common.profile.provider.BaseSAMLProfileRequestContext)} have already been invoked and the
      * properties they provide are available in the request context.
      * 
      * This method requires the the following request context properties to be populated: relying party configuration
@@ -422,7 +422,7 @@ public abstract class AbstractSAMLProfileHandler extends
      * 
      * @param requestContext current request context
      * 
-     * @throws ProfileException thrown if there is a problem populating the profile information
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if there is a problem populating the profile information
      */
     @SuppressWarnings("unchecked")
     protected void populateProfileInformation(BaseSAMLProfileRequestContext requestContext) throws ProfileException {
@@ -444,7 +444,7 @@ public abstract class AbstractSAMLProfileHandler extends
     /**
      * Attempts to select the most fitting name identifier attribute, and associated encoder, for a request. If no
      * attributes for the request subject are available no name identifier is constructed. If a specific name format is
-     * required, as returned by {@link #getRequiredNameIDFormat(BaseSAMLProfileRequestContext)}, then either an
+     * required, as returned by {@link #getRequiredNameIDFormat(edu.internet2.middleware.shibboleth.common.profile.provider.BaseSAMLProfileRequestContext)}, then either an
      * attribute with an encoder supporting that format is selected or an exception is thrown. If no specific format is
      * required then an attribute supporting a format listed as supported by the relying party is used. If the relying
      * party does not list any supported formats then any attribute supporting the correct name identifier type is used.
@@ -455,7 +455,7 @@ public abstract class AbstractSAMLProfileHandler extends
      * 
      * @return the select attribute, and its encoder, to be used to build the name identifier
      * 
-     * @throws ProfileException thrown if a specific name identifier format was required but not supported
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if a specific name identifier format was required but not supported
      */
     @SuppressWarnings("unchecked")
     protected <T extends SAMLNameIdentifierEncoder> Pair<BaseAttribute, T> selectNameIDAttributeAndEncoder(
@@ -607,7 +607,7 @@ public abstract class AbstractSAMLProfileHandler extends
      * @return list of formats, in preference order, that may be used with the relying party, or an empty list for no
      *         preference
      * 
-     * @throws ProfileException thrown if there is a problem determining the name identifier format to use
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if there is a problem determining the name identifier format to use
      */
     protected List<String> getSupportedNameFormats(BaseSAMLProfileRequestContext requestContext)
             throws ProfileException {
@@ -724,18 +724,18 @@ public abstract class AbstractSAMLProfileHandler extends
 
     /**
      * Populates the request context with the information about the user if they have an existing session. Unless
-     * overridden, {@link #populateRequestContext(BaseSAMLProfileRequestContext)} has already invoked
-     * {@link #populateRelyingPartyInformation(BaseSAMLProfileRequestContext)},
-     * {@link #populateAssertingPartyInformation(BaseSAMLProfileRequestContext)},
-     * {@link #populateProfileInformation(BaseSAMLProfileRequestContext)}, and
-     * {@link #populateSAMLMessageInformation(BaseSAMLProfileRequestContext)} have already been invoked and the
+     * overridden, {@link #populateRequestContext(edu.internet2.middleware.shibboleth.common.profile.provider.BaseSAMLProfileRequestContext)} has already invoked
+     * {@link #populateRelyingPartyInformation(edu.internet2.middleware.shibboleth.common.profile.provider.BaseSAMLProfileRequestContext)},
+     * {@link #populateAssertingPartyInformation(edu.internet2.middleware.shibboleth.common.profile.provider.BaseSAMLProfileRequestContext)},
+     * {@link #populateProfileInformation(edu.internet2.middleware.shibboleth.common.profile.provider.BaseSAMLProfileRequestContext)}, and
+     * {@link #populateSAMLMessageInformation(edu.internet2.middleware.shibboleth.common.profile.provider.BaseSAMLProfileRequestContext)} have already been invoked and the
      * properties they provide are available in the request context.
      * 
      * This method should populate: user's session, user's principal name, and service authentication method
      * 
      * @param requestContext current request context
      * 
-     * @throws ProfileException thrown if there is a problem populating the user's information
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if there is a problem populating the user's information
      */
     protected abstract void populateUserInformation(BaseSAMLProfileRequestContext requestContext)
             throws ProfileException;
@@ -747,7 +747,7 @@ public abstract class AbstractSAMLProfileHandler extends
      * 
      * @return Endpoint selected from the information provided in the request context
      * 
-     * @throws ProfileException thrown if there is a problem selecting a response endpoint
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if there is a problem selecting a response endpoint
      */
     protected abstract Endpoint selectEndpoint(BaseSAMLProfileRequestContext requestContext) throws ProfileException;
 
@@ -756,7 +756,7 @@ public abstract class AbstractSAMLProfileHandler extends
      * 
      * @param requestContext current request context
      * 
-     * @throws ProfileException thrown if no message encoder is registered for this profiles binding
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException thrown if no message encoder is registered for this profiles binding
      */
     protected void encodeResponse(BaseSAMLProfileRequestContext requestContext) throws ProfileException {
         try {
@@ -801,7 +801,7 @@ public abstract class AbstractSAMLProfileHandler extends
      * 
      * @param requestContext the current request context
      * @return true if responses should be signed, false otherwise
-     * @throws ProfileException if there is a problem determining whether responses should be signed
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException if there is a problem determining whether responses should be signed
      */
     protected boolean isSignResponse(BaseSAMLProfileRequestContext requestContext) throws ProfileException {
 
@@ -843,7 +843,7 @@ public abstract class AbstractSAMLProfileHandler extends
      * 
      * @param requestContext current request context
      * @return the message encoder to use
-     * @throws ProfileException if the encoder to use can not be resolved based on the request context
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException if the encoder to use can not be resolved based on the request context
      */
     protected SAMLMessageEncoder getOutboundMessageEncoder(BaseSAMLProfileRequestContext requestContext)
             throws ProfileException {
@@ -881,7 +881,7 @@ public abstract class AbstractSAMLProfileHandler extends
      * 
      * @param requestContext current request context
      * @return the message decoder to use
-     * @throws ProfileException if the decoder to use can not be resolved based on the request context
+     * @throws edu.internet2.middleware.shibboleth.common.profile.ProfileException if the decoder to use can not be resolved based on the request context
      */
     protected SAMLMessageDecoder getInboundMessageDecoder(BaseSAMLProfileRequestContext requestContext)
             throws ProfileException {

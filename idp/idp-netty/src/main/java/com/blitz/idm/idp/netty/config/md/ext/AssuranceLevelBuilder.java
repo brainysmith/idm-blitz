@@ -1,7 +1,7 @@
 package com.blitz.idm.idp.netty.config.md.ext;
 
-import org.opensaml.xml.AbstractXMLObjectBuilder;
 import com.blitz.idm.idp.netty.config.md.ext.api.AssuranceLevel;
+import org.opensaml.xml.AbstractXMLObjectBuilder;
 
 import javax.xml.XMLConstants;
 
