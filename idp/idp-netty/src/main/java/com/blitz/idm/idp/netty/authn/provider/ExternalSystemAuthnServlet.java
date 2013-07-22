@@ -1,9 +1,6 @@
 package com.blitz.idm.idp.netty.authn.provider;
 
-import com.blitz.idm.idp.config.AuthnMethodEnum;
-import com.blitz.idm.idp.config.IdpConfig;
-import com.blitz.idm.idp.config.IdpConfigParam;
-import com.blitz.idm.idp.config.OrganizationTypeEnum;
+import com.blitz.idm.idp.config.*;
 import com.blitz.idm.idp.netty.authn.ExtIdpPrincipal;
 import com.blitz.idm.idp.netty.authn.ExtIdpPrincipalImpl;
 import com.blitz.idm.idp.netty.dc.TestValueEnum;
@@ -73,7 +70,7 @@ public class ExternalSystemAuthnServlet extends HttpServlet {
             throw new IllegalArgumentException("Storage service may not be null");
         }
 
-        loginEndpointUrl = IdpConfig.getStringProperty(IdpConfigParam.WEBLOGIN_URL);
+        loginEndpointUrl = IdpApp.javaProxyConf().web_webloginUrl();
     }
 
     @Override
