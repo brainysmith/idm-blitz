@@ -85,7 +85,7 @@ public class SingleLogoutContextStorageHelper {
 
         SingleLogoutContext sloContext = getSingleLogoutContext(httpRequest);
         if (sloContext == null) {
-            log.debug("LoginContext not bound to HTTP request, retrieving it from storage service");
+            log.debug("SingleLogoutContext not bound to HTTP request, retrieving it from storage service");
             Cookie sloContextKeyCookie =
                     HttpServletHelper.getCookie(httpRequest, SLO_CTX_KEY_NAME);
             if (sloContextKeyCookie == null) {
@@ -177,7 +177,7 @@ public class SingleLogoutContextStorageHelper {
 
         log.debug("SingleLogoutContext key: {}", sloContext.getContextKey());
         Cookie contextKeyCookie = new Cookie(SLO_CTX_KEY_NAME, sloContext.getContextKey());
-        contextKeyCookie.setPath("/");
+        contextKeyCookie.setPath("".equals(httpRequest.getContextPath()) ? "/" : httpRequest.getContextPath());
 
         /* BLITZ patch (added) : Security reason */
         contextKeyCookie.setSecure(true);
