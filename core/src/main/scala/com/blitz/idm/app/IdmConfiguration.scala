@@ -4,8 +4,8 @@ package com.blitz.idm.app
  *
  */
 
-class IdmConfiguration extends MainConfiguration("idm-conf") {
+class IdmConfiguration(confFile: String) extends MainConfiguration(confFile ,"idm-conf") {
 
-  val idmHome = appConf.getString("idp-home")
+  val idmHome = conf.getString("idm-home")
 
 }

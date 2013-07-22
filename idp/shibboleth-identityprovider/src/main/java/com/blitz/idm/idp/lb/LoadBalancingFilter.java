@@ -1,7 +1,6 @@
 package com.blitz.idm.idp.lb;
 
-import com.blitz.idm.idp.config.IdpConfig;
-import com.blitz.idm.idp.config.IdpConfigParam;
+import com.blitz.idm.idp.config.IdpApp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.servlet.*;
@@ -15,7 +14,7 @@ public class LoadBalancingFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-      isLoadBalancingFilterEnabled = IdpConfig.getBooleanProperty(IdpConfigParam.IS_LOAD_BALANCING_ENABLED);
+      isLoadBalancingFilterEnabled = IdpApp.javaProxyConf().loadBalancingEnabled();
     }
 
     @Override

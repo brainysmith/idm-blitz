@@ -2,7 +2,7 @@ error.required=This field is required
 
 main.copyright=&copy;&nbsp;Identity Blitz, 2013
 main.errPP.title=Error
-main.errPP.button.close=close
+main.errPP.defaultError=Unknown error.
 
 #Login page
 login.head.title=Login

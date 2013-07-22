@@ -11,6 +11,14 @@
     <property name="sbt.launch.jar" value="${sbt.dir}${fs}sbt-launch.jar"/>
 
     <ivy:configure id="basic.settings" file="${basedir}${fs}ivysettings-basic.xml"/>
+
+    <!--=================================
+        Global tasks
+        =================================-->
+    <target name="clean" description="cleaning" depends="core-lib.clean, idp.clean, web-login.clean">
+        <echo>Started cleaning of the whole project</echo>
+    </target>
+
     <!--=================================
 		Building of database adapter
 		=================================-->
@@ -40,7 +48,7 @@
         <mkdir dir="${core-lib.dir.dest.classes}"/>
         <ivy:resolve file="${basedir}${fs}ivy.xml"/>
         <ivy:retrieve pattern="${core-lib.dir.lib}/[artifact]-[type]-[revision].[ext]"/>
-        <path id="core-lib.id">
+        <path id="core-lib.id.int">
             <fileset dir="${core-lib.dir.lib}"/>
         </path>
         <taskdef resource="scala/tools/ant/antlib.xml">
@@ -56,15 +64,19 @@
 			Building of core-lib
 		=================================-->
     <target name="core-lib.build" depends="core-lib.init">
-        <scalac srcdir="${core-lib.dir.src}" destdir="${core-lib.dir.dest.classes}" classpathref="core-lib.id"/>
+        <scalac srcdir="${core-lib.dir.src}" destdir="${core-lib.dir.dest.classes}" classpathref="core-lib.id.int"/>
         <jar destfile="${core-lib.dir.dest}${fs}core-lib.jar" basedir="${core-lib.dir.dest.classes}"/>
-        <path id="core-lib.id">
-            <fileset dir="${core-lib.dir.lib}"/>
-        </path>
     </target>
 
     <target name="core-lib.clean" depends="core-lib.init">
         <delete dir="${core-lib.dir.dest}"/>
+    </target>
+
+    <target name="core-lib" depends="core-lib.build">
+        <path id="core-lib.id">
+            <fileset dir="${core-lib.dir.lib}"/>
+            <file file="${core-lib.dir.dest}${fs}core-lib.jar"/>
+        </path>
     </target>
 
     <!--=================================
@@ -78,6 +90,7 @@
         <ivy:retrieve pattern="${idp.dir.lib}/[artifact]-[type]-[revision].[ext]"/>
         <path id="idp.dir.lib.id">
             <fileset dir="${idp.dir.lib}"/>
+            <path refid="core-lib.id"/>
         </path>
     </target>
 
@@ -86,7 +99,8 @@
 		=================================-->
     <target name="idp-config.init" depends="idp.init">
         <property name="idp-config.dir" value="${idp.dir}${fs}idp-config"/>
-        <property name="idp-config.dir.src" value="${idp-config.dir}${fs}src${fs}main${fs}java"/>
+        <property name="idp-config.dir.src.java" value="${idp-config.dir}${fs}src${fs}main${fs}java"/>
+        <property name="idp-config.dir.src.scala" value="${idp-config.dir}${fs}src${fs}main${fs}scala"/>
         <property name="idp-config.dir.dest" value="${idp-config.dir}${fs}target"/>
         <property name="idp-config.dir.dest.classes" value="${idp-config.dir.dest}${fs}classes"/>
         <property name="idp-config.dir.lib" value="${idp-config.dir}${fs}lib"/>
@@ -94,9 +108,17 @@
         <mkdir dir="${idp-config.dir.dest.classes}"/>
     </target>
 
-    <target name="idp-config.build" depends="idp-config.init">
-        <javac srcdir="${idp-config.dir.src}" destdir="${idp-config.dir.dest.classes}" classpathref="idp.dir.lib.id"
-               includeantruntime="true"/>
+    <target name="idp-config.build" depends="idp-config.init, core-lib">
+        <scalac destdir="${idp-config.dir.dest.classes}" classpathref="idp.dir.lib.id">
+            <src>
+                <pathelement location="${idp-config.dir.src.scala}"/>
+                <pathelement location="${idp-config.dir.src.java}"/>
+            </src>
+        </scalac>
+        <javac srcdir="${idp-config.dir.src.java}" destdir="${idp-config.dir.dest.classes}">
+            <classpath refid="idp.dir.lib.id"/>
+            <classpath location="${idp-config.dir.dest.classes}"/>
+        </javac>
         <jar destfile="${idp-config.dir.dest}${fs}idp-config.jar" basedir="${idp-config.dir.dest.classes}"/>
     </target>
 
@@ -220,6 +242,10 @@
 
     <target name="idp.build" description="builds idp" depends="idp-netty.build">
         <echo>Started building of IdP</echo>
+    </target>
+
+    <target name="idp.clean" description="cleans idp" depends="idp-config.clean, nsb.clean, sbc.clean, sip.clean, idp-netty.clean">
+        <echo>Started cleaning of IdP</echo>
     </target>
 
     <target name="idp.test" description="test idp" depends="idp.build">

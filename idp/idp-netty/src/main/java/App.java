@@ -1,6 +1,5 @@
 import com.blitz.idm.handler.HttpsServletBridgeChannelPipelineFactory;
-import com.blitz.idm.idp.config.IdpConfig;
-import com.blitz.idm.idp.config.IdpConfigParam;
+import com.blitz.idm.idp.config.IdpApp;
 import com.blitz.idm.idp.lb.LoadBalancingFilter;
 import com.blitz.idm.idp.netty.authn.provider.*;
 import com.blitz.idm.idp.storage.StorageServiceFilter;
@@ -38,10 +37,10 @@ public class App {
 
     private static final String APP_NAME = "idp";
     private static final String SERVER_NAME = "netty-idp-server";
-    private static final String CONFIG_DIR = IdpConfig.getConfigDir();
-    private static final String WEB_ROOT_PATH = IdpConfig.getStringProperty(IdpConfigParam.WEB_CONTEXT_ROOT);
-    private static final int HTTPS_PORT = IdpConfig.getIntProperty(IdpConfigParam.HTTPS_PORT);
-    private static final String STATUS_PAGE_ALLOWED_IPS = IdpConfig.getStringProperty(IdpConfigParam.STATUS_PAGE_ALLOWED_IPS);
+    private static final String CONFIG_DIR = IdpApp.javaProxyConf().idpHome();
+    private static final String WEB_ROOT_PATH = IdpApp.javaProxyConf().web_ctxRoot();
+    private static final int HTTPS_PORT = IdpApp.javaProxyConf().web_httpsPort();
+    private static final String STATUS_PAGE_ALLOWED_IPS = IdpApp.javaProxyConf().statusPageAllowedIps();
 
 
     public static void main(String[] args) {

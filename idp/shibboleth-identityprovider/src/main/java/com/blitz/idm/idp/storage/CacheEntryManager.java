@@ -1,7 +1,6 @@
 package com.blitz.idm.idp.storage;
 
-import com.blitz.idm.idp.config.IdpConfig;
-import com.blitz.idm.idp.config.IdpConfigParam;
+import com.blitz.idm.idp.config.IdpApp;
 import edu.internet2.middleware.shibboleth.idp.authn.LoginContext;
 import edu.internet2.middleware.shibboleth.idp.authn.LoginContextEntry;
 import edu.internet2.middleware.shibboleth.idp.session.Session;
@@ -35,10 +34,10 @@ public class CacheEntryManager {
     public static final String TRANSIENT_ID_CACHE_NAME = "transientId";
     public static final String ATTRIBUTES_CACHE_NAME = "attributes";
 
-    private static final long attributeContextCacheLifetime = IdpConfig.getLongProperty(IdpConfigParam.ATTRIBUTE_CACHE_LIFETIME) * 1000;
-    private static final long loginContextCacheLifetime = IdpConfig.getLongProperty(IdpConfigParam.LOGIN_CONTEXT_CACHE_LIFETIME) * 1000;
-    private static final long logoutContextCacheLifetime = IdpConfig.getLongProperty(IdpConfigParam.LOGIOUT_CONTEXT_CACHE_LIFETIME) * 1000;
-    private static final long sessionCacheLifetime = IdpConfig.getLongProperty(IdpConfigParam.SESSION_CACHE_LIFETIME) * 1000;
+    private static final long attributeContextCacheLifetime = IdpApp.javaProxyConf().cache_attributeCache() * 1000;
+    private static final long loginContextCacheLifetime = IdpApp.javaProxyConf().cache_loginCtxCache() * 1000;
+    private static final long logoutContextCacheLifetime = IdpApp.javaProxyConf().cache_logoutCtxCache() * 1000;
+    private static final long sessionCacheLifetime = IdpApp.javaProxyConf().cache_sessionCache() * 1000;
 
 
     /**
