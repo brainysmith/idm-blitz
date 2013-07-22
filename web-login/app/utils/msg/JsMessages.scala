@@ -4,7 +4,7 @@ import play.api.i18n._
 import play.api.Application
 import play.api.templates.Html
 
-object JsMessages {
+object jsMessages {
 
   /**
    * Generates a JavaScript function able to compute localized messages filtered by the a prefix.
