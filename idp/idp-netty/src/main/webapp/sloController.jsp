@@ -14,7 +14,7 @@ Boolean sloAttempted = false;
 %>
 <html>
     <head>
-        <link title="style" href="<%= contextPath %>/css/main.css" type="text/css" rel="stylesheet" />
+        <link title="style" href="<%= contextPath %>/webstatic/css/main.css" type="text/css" rel="stylesheet" />
         <title>Shibboleth IdP Logout</title>
         <script language="javascript" type="text/javascript">
             <!--
@@ -119,7 +119,7 @@ Boolean sloAttempted = false;
                 }
 				
                 StringBuilder src = new StringBuilder(contextPath);
-                src.append("/images/");
+                src.append("/webstatic/images/");
                 switch (service.getLogoutStatus()) {
                     case LOGGED_IN:
                         logoutString = true;

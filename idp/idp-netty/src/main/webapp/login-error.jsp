@@ -7,7 +7,7 @@
 <html>
 
 <body>
-	<img src="<%= request.getContextPath() %>/images/logo.jpg" />
+	<img src="<%= request.getContextPath() %>/webstatic/images/logo.jpg" />
 	<h3>ERROR</h3>
 	<%
 	if (error != null) {
