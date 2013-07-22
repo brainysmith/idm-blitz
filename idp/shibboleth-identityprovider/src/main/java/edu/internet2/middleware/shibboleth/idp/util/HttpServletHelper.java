@@ -22,8 +22,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.blitz.idm.idp.config.IdpConfig;
-import com.blitz.idm.idp.config.IdpConfigParam;
+import com.blitz.idm.idp.config.IdpApp;
 import org.opensaml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml2.metadata.provider.MetadataProviderException;
 import org.opensaml.util.URLBuilder;
@@ -683,7 +682,7 @@ public class HttpServletHelper {
         urlBuilder.setHost(httpRequest.getServerName());
 
         // Patch (add) : Load balancing support
-        boolean  isLoadBalancingEnable = IdpConfig.getBooleanProperty(IdpConfigParam.IS_LOAD_BALANCING_ENABLED);
+        boolean  isLoadBalancingEnable = IdpApp.javaProxyConf().loadBalancingEnabled();
         if (!isLoadBalancingEnable) {
          urlBuilder.setPort(httpRequest.getServerPort());// urlBuilder.setPort(httpRequest.getServerPort());
         }

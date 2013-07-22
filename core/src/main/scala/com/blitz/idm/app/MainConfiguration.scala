@@ -1,22 +1,23 @@
 package com.blitz.idm.app
 
-import com.typesafe.config.ConfigFactory
+import com.typesafe.config.{Config, ConfigFactory}
 
 /**
  *
  */
 
-class MainConfiguration(appConfName: String) {
+class NestedConfiguration(private val name: String)(implicit protected val parentConf: NestedConfiguration) {
 
-  val mainConfName = "main-conf"
+  protected val conf: Config = if(parentConf == null) ConfigFactory.load(name) else parentConf.conf.getConfig(name)
 
-  private val config = ConfigFactory.load("idm_blitz")
+  def getSiblingConf(name: String) = parentConf.conf.getConfig(name)
 
-  private val mainConf = config.getConfig(mainConfName)
+}
 
-  val appConf = config.getConfig(appConfName)
+class MainConfiguration(confFile: String, private val appConf: String) extends NestedConfiguration(appConf)(new NestedConfiguration(confFile)(null)) {
 
-
+  //Hack for the root configuration
+  val mainConf = getSiblingConf("main-conf")
 
   val dataDirPath = mainConf.getString("data-dir")
 

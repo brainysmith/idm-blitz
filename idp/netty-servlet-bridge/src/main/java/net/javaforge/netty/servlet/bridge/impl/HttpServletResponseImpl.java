@@ -67,8 +67,8 @@ public class HttpServletResponseImpl implements HttpServletResponse {
         nettyCookie.setComment(cookie.getComment());
         if (cookie.getDomain() != null)
             nettyCookie.setDomain(cookie.getDomain());
-        //if (cookie.getMaxAge() >= 0)
-            nettyCookie.setMaxAge(1000*1000*1000);
+        if (cookie.getMaxAge() >= 0)
+            nettyCookie.setMaxAge(cookie.getMaxAge());
         nettyCookie.setPath(cookie.getPath());
         nettyCookie.setSecure(cookie.getSecure());
         nettyCookie.setVersion(cookie.getVersion());

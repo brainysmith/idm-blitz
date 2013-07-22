@@ -6,8 +6,7 @@ package com.blitz.idm.idp.netty.dc;
  */
 
 import com.blitz.idm.idp.authn.principal.IdpPrincipal;
-import com.blitz.idm.idp.config.IdpConfig;
-import com.blitz.idm.idp.config.IdpConfigParam;
+import com.blitz.idm.idp.config.IdpApp;
 import com.blitz.idm.idp.dc.AbstractCachedDataConnector;
 import com.blitz.idm.idp.dc.AttributeGroup;
 import com.blitz.idm.idp.netty.authn.ExtIdpPrincipal;
@@ -33,8 +32,8 @@ public class PrincipalDataConnector extends AbstractCachedDataConnector {
     public void initialize() {
         initialized = true;
 
-        idpEntityId = IdpConfig.getStringProperty(IdpConfigParam.IDP_ENTITY_ID);
-        idTokenLifetime = IdpConfig.getLongProperty(IdpConfigParam.IDTOKEN_LIFETIME);
+        idpEntityId = IdpApp.javaProxyConf().entityId();
+        idTokenLifetime = IdpApp.javaProxyConf().idTokenLifetime();
     }
 
     /**
