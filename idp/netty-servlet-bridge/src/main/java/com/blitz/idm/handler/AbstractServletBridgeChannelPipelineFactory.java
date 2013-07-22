@@ -11,10 +11,12 @@ import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelPipelineFactory;
 import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.channel.group.DefaultChannelGroup;
+import org.jboss.netty.handler.codec.http.HttpChunkAggregator;
 import org.jboss.netty.handler.codec.http.HttpContentDecompressor;
 import org.jboss.netty.handler.codec.http.HttpRequestDecoder;
 import org.jboss.netty.handler.codec.http.HttpResponseEncoder;
 import org.jboss.netty.handler.ssl.SslHandler;
+import org.jboss.netty.handler.stream.ChunkedWriteHandler;
 import org.jboss.netty.handler.timeout.IdleStateHandler;
 import org.jboss.netty.util.HashedWheelTimer;
 import org.jboss.netty.util.Timer;
@@ -72,9 +74,17 @@ public abstract class AbstractServletBridgeChannelPipelineFactory implements Cha
             pipeline.addLast("ssl", new SslHandler(sslEngine));
         }
         pipeline.addLast("decoder", new HttpRequestDecoder(4096, 8192, 8192));
+        // Uncomment the following line if you don't want to handle
+        // HttpChunks.
+        pipeline.addLast("aggregator", new HttpChunkAggregator(65536));
         pipeline.addLast("encoder", new HttpResponseEncoder());
+        // Remove the following line if you don't want automatic content
+        // compression.
+        // pipeline.addLast("deflater", new HttpContentCompressor());
+        pipeline.addLast("chunkedWriter", new ChunkedWriteHandler());
         pipeline.addLast("decompressor", new HttpContentDecompressor());
         pipeline.addLast("handler", this.getServletBridgeHandler());
+
         return pipeline;
     }
 

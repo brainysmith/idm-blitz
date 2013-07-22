@@ -46,31 +46,83 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
     private Map<String, Object> attributes;
 
-    private CookieDecoder cookieDecoder = new CookieDecoder();
+    private CookieDecoder cookieDecoder;
 
     private String characterEncoding;
 
     private ServletContext servletContext;
 
-    public HttpServletRequestImpl(HttpRequest request, FilterChainImpl chain) {
-        this.originalRequest = request;
+    private HttpServletRequestImpl(HttpRequest originalRequest, String uri,  ServletInputStreamImpl inputStream,
+                                   BufferedReader reader, Map<String, Object> attributes,
+                                   CookieDecoder cookieDecoder, String characterEncoding, FilterChainImpl chain) {
+        if (originalRequest == null) {
+            log.error("Servlet request original request mustn't not be null.");
+            throw new NullPointerException("Servlet request original request mustn't be null.");
+        }
+        this.originalRequest = originalRequest;
+        if (chain == null) {
+            log.error("Servlet request filter chain mustn't be null.");
+            throw new NullPointerException("Servlet request filter chain mustn't be null.");
+        }
         this.servletContext = chain.getServletContext();
-        this.inputStream = new ServletInputStreamImpl(request);
-        this.reader = new BufferedReader(new InputStreamReader(inputStream));
-        String uri = request.getUri().substring(servletContext.getContextPath().length());
-        this.queryStringDecoder = new QueryStringDecoder(uri);
+        String temp_uri = uri;
+        if (uri == null) {
+            temp_uri = originalRequest.getUri().substring(servletContext.getContextPath().length());
+        }
+        if (inputStream == null){
+            this.inputStream = new ServletInputStreamImpl(originalRequest);
+        } else {
+            this.inputStream = inputStream;
+        }
+
+        if (reader == null) {
+            this.reader = new BufferedReader(new InputStreamReader(this.inputStream));
+        } else {
+            this.reader = reader;
+        }
+        this.queryStringDecoder = new QueryStringDecoder(temp_uri);
         this.uriParser = new URIParser(chain);
-        this.uriParser.parse(uri);
-        this.characterEncoding = Utils
-                .getCharsetFromContentType(getContentType());
+        this.uriParser.parse(temp_uri);
+        if (attributes == null){
+            this.attributes = new HashMap<String, Object>();
+        } else {
+            this.attributes = attributes;
+        }
+        if (cookieDecoder == null) {
+            this.cookieDecoder = new CookieDecoder();
+        } else {
+            this.cookieDecoder = cookieDecoder;
+        }
 
+        if (characterEncoding == null) {
+            this.characterEncoding = Utils.getCharsetFromContentType(getContentType());
+        } else {
+            this.characterEncoding = characterEncoding;
+        }
 
+    }
+
+    public HttpServletRequestImpl(HttpRequest request, FilterChainImpl chain) {
+        this(request, null,  null, null, null,  null, null, chain);
         log.debug("Http servlet request created :");
         log.debug("contextPath = " + getContextPath());
         log.debug("queryString = " + getQueryString());
         log.debug("pathInfo = " + getPathInfo());
         log.debug("servletPath = " + getServletPath());
         log.debug("requestURL = " + getRequestURL().toString());
+    }
+
+    public HttpServletRequestImpl(HttpServletRequestImpl servletRequest, String forwardUri, FilterChainImpl chain) {
+        this(servletRequest.getOriginalRequest(), forwardUri, servletRequest.inputStream, servletRequest.reader,
+                servletRequest.attributes, servletRequest.cookieDecoder, servletRequest.characterEncoding, chain);
+
+        log.debug("Http forward servlet request  created :");
+        log.debug("forward contextPath = " + this.getContextPath());
+        log.debug("forward queryString = " + this.getQueryString());
+        log.debug("forward pathInfo = " + this.getPathInfo());
+        log.debug("forward servletPath = " + this.getServletPath());
+        log.debug("requestURL = " + servletRequest.getRequestURL().toString());
+        log.debug("forward URL = " + this.getRequestURL().toString());
     }
 
     public HttpRequest getOriginalRequest() {
@@ -96,11 +148,17 @@ public class HttpServletRequestImpl implements HttpServletRequest {
                     cookie.setComment(c.getComment());
                     if (c.getDomain() != null)
                         cookie.setDomain(c.getDomain());
-                    cookie.setMaxAge(c.getMaxAge());
-                    cookie.setPath(c.getPath());
+                    if (c.getMaxAge() != Integer.MIN_VALUE){
+                        cookie.setMaxAge(c.getMaxAge());
+                    }
+                    if (c.getPath() == null || c.getPath().isEmpty()){
+                        cookie.setPath("/");
+                    } else {
+                        cookie.setPath(c.getPath());
+                    }
                     cookie.setSecure(c.isSecure());
-                    cookie.setVersion(c.getVersion());
                     cookie.setHttpOnly(c.isHttpOnly());
+                    cookie.setVersion(c.getVersion());
                     cookiesArray[indx] = cookie;
                     indx++;
                 }
