@@ -11,6 +11,14 @@
     <property name="sbt.launch.jar" value="${sbt.dir}${fs}sbt-launch.jar"/>
 
     <ivy:configure id="basic.settings" file="${basedir}${fs}ivysettings-basic.xml"/>
+
+    <!--=================================
+        Global tasks
+        =================================-->
+    <target name="clean" description="cleaning" depends="core-lib.clean, idp.clean, web-login.clean">
+        <echo>Started cleaning of the whole project</echo>
+    </target>
+
     <!--=================================
 		Building of database adapter
 		=================================-->
@@ -220,6 +228,10 @@
 
     <target name="idp.build" description="builds idp" depends="idp-netty.build">
         <echo>Started building of IdP</echo>
+    </target>
+
+    <target name="idp.clean" description="cleans idp" depends="idp-config.clean, nsb.clean, sbc.clean, sip.clean, idp-netty.clean">
+        <echo>Started cleaning of IdP</echo>
     </target>
 
     <target name="idp.test" description="test idp" depends="idp.build">
