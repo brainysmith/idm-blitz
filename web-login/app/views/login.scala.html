@@ -1,15 +1,18 @@
 @(loginForm : Form[(String, String)])(implicit request: Request[AnyContent])
 
 @stylesheets = {
-    @helper.requireJs(core = routes.Assets.at("javascripts/require.js").url, module = routes.Assets.at("js/login").url)
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/login.min.css")">
+}
+@scripts = {
+    @utils.js.require("login")
 }
 
 @import helper._
 
 @tmpl.main(
     Messages("login.head.title"),
-    stylesheets = stylesheets
+    stylesheets = stylesheets,
+    scripts = scripts
 ) {
 
     <form id="loginFm" action="@routes.Login.authenticate()" method="post">
