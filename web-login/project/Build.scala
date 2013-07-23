@@ -1,6 +1,8 @@
 import sbt._
 import play.Project._
+import Keys._
 
+import sbt._
 object ApplicationBuild extends Build {
 
   val appName         = "web-login"
@@ -11,8 +13,13 @@ object ApplicationBuild extends Build {
     anorm*/
   )
 
-
-  val main = play.Project(appName, appVersion, appDependencies).settings(
+  val main = play.Project(appName, appVersion, appDependencies, file("."), settings = Defaults.defaultSettings ++ Seq(
+    unmanagedJars in Compile := {
+      Option(System.getProperty("dep.unmanaged")).map(list => {
+        list.split(';').toSeq.map(new File(_))
+      }).getOrElse(Seq.empty).classpath
+    }
+  )).settings(
       {
         requireJsFolder := "js"
         requireJs ++= Seq("main.js", "login.js", "/utils/placeholder.js")

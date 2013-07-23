@@ -288,8 +288,9 @@
         </java>
     </target>
 
-    <target name="web-login.build" description="builds web-login" depends="web-login.init">
+    <target name="web-login.build" description="builds web-login" depends="web-login.init, core-lib">
         <echo>Started building of web-login</echo>
+        <pathconvert refid="core-lib.id" property="dep.unmanaged" pathsep=";" dirsep="/"/>
         <java jar="${sbt.launch.jar}" fork="true" failonerror="true" maxmemory="2048M" dir="${web-login.dir}">
             <jvmarg value="-XX:+UseConcMarkSweepGC"/>
             <jvmarg value="-XX:+CMSClassUnloadingEnabled"/>
@@ -302,6 +303,7 @@
             <jvmarg value="-Dsbt.boot.properties=file:///${sbt.boot.properties}"/>
             <jvmarg value="-Divy.settings.path=file:///${basedir}${fs}ivysettings-basic.xml"/>
             <jvmarg value="-Dplay.home=${play.home}"/>
+            <jvmarg value="-Ddep.unmanaged=${dep.unmanaged}"/>
 
             <arg value="compile"/>
             <arg value="stage"/>
