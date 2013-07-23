@@ -5,8 +5,6 @@
     <file url="file://$PROJECT_DIR$/idp/idp-config/src/main/java/com/blitz/idm/idp/config/AuthnMethodEnum.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/idp/idp-config/src/main/java/com/blitz/idm/idp/config/ContactTypeEnum.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/idp/idp-config/src/main/java/com/blitz/idm/idp/config/GlobalRoleEnum.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/idp/idp-config/src/main/java/com/blitz/idm/idp/config/IdpConfig.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/idp/idp-config/src/main/java/com/blitz/idm/idp/config/IdpConfigParam.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/idp/idp-config/src/main/java/com/blitz/idm/idp/config/OrganizationTypeEnum.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/idp/idp-netty/src/main/java/App.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/idp/idp-netty/src/main/java/com/blitz/idm/idp/netty/authn/ExtIdpPrincipal.java" charset="UTF-8" />
