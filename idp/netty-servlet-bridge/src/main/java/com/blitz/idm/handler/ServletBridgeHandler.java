@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.ServletContext;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,6 +72,10 @@ public class ServletBridgeHandler extends IdleStateAwareChannelHandler {
             throws Exception {
 
         HttpRequest request = (HttpRequest) e.getMessage();
+        if (request.getUri().equals("/favicon.ico")) {
+            sendError(ctx, NOT_FOUND);
+            return;
+        }
         if (HttpHeaders.is100ContinueExpected(request)) {
             e.getChannel().write(new DefaultHttpResponse(HTTP_1_1, CONTINUE));
         }
@@ -108,13 +113,9 @@ public class ServletBridgeHandler extends IdleStateAwareChannelHandler {
         HttpRequest request = (HttpRequest) e.getMessage();
         HttpResponse response = new DefaultHttpResponse(HTTP_1_1, OK);
 
-
-
         HttpServletRequestImpl req = buildHttpServletRequest(request, chain);
 
         HttpServletResponseImpl resp = buildHttpServletResponse(response);
-
-
 
         chain.doFilter(req, resp);
 
@@ -152,13 +153,8 @@ public class ServletBridgeHandler extends IdleStateAwareChannelHandler {
             return;
         }
 
-        String uri = Utils.sanitizeUri(request.getUri());
-        final String path = (uri != null ? webapp.getStaticResourcesFolder().getAbsolutePath()+ uri : null);
-
-        if (path == null) {
-            sendError(ctx, FORBIDDEN);
-            return;
-        }
+        String uri = Utils.sanitizeUri(webapp.getRelativePath(request.getUri()));
+        final String path = (uri != null ? webapp.getStaticResourcesFolder().getAbsolutePath() + uri : null);
 
         File file = new File(path);
         if (file.isHidden() || !file.exists()) {

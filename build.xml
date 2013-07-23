@@ -166,7 +166,7 @@
     </target>
 
     <target name="sbc.build" depends="sbc.init, idp-config.build">
-        <javac srcdir="${sbc.dir.src}" destdir="${sbc.dir.dest.classes}"
+        <javac debug="on" srcdir="${sbc.dir.src}" destdir="${sbc.dir.dest.classes}"
                classpath="${idp-config.dir.dest}${fs}idp-config.jar" classpathref="idp.dir.lib.id"
                includeantruntime="true">
         </javac>
@@ -195,7 +195,7 @@
     </target>
 
     <target name="sip.build" depends="sip.init, sbc.build, idp-config.build">
-        <javac srcdir="${sip.dir.src}" destdir="${sip.dir.dest.classes}"
+        <javac debug="on" srcdir="${sip.dir.src}" destdir="${sip.dir.dest.classes}"
                classpath="${idp-config.dir.dest}${fs}idp-config.jar${ps}${sbc.dir.dest}${fs}shibboleth-common.jar"
                classpathref="idp.dir.lib.id" includeantruntime="true">
         </javac>
@@ -225,7 +225,7 @@
     </target>
 
     <target name="idp-netty.build" depends="idp-netty.init, sip.build, sbc.build, nsb.build, idp-config.build">
-        <javac srcdir="${idp-netty.dir.src}" destdir="${idp-netty.dir.dest.classes}"
+        <javac debug="on" srcdir="${idp-netty.dir.src}" destdir="${idp-netty.dir.dest.classes}"
                classpath="${idp-config.dir.dest}${fs}idp-config.jar${ps}${sbc.dir.dest}${fs}shibboleth-common.jar${ps}${sip.dir.dest}${fs}shibboleth-identityprovider.jar${ps}${nsb.dir.dest}${fs}netty-servlet-bridge.jar"
                classpathref="idp.dir.lib.id" includeantruntime="true">
         </javac>

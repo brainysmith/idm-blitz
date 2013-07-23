@@ -36,7 +36,7 @@ public class MemoryConsumingServlet extends HttpServlet {
 
         out.println("<html>");
         out.println("<head><title>Memory consuming</title></head>");
-
+        out.println("<img src=\"/idp/images/logo.jpg\" />");
         out.println("<h1>Partitions</h1>");
         Iterator<String> itr = storageService.getPartitions();
         if(itr.hasNext()) {

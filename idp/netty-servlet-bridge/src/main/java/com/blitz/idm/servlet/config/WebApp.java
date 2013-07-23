@@ -116,7 +116,7 @@ public class WebApp {
     }
 
     public WebApp setStaticResourcesFolder(String folder) {
-        return this.setStaticResourcesFolder(new File(folder));
+        return this.setStaticResourcesFolder(new File(this.getClass().getResource(folder).getPath()));
     }
 
     public WebApp setStaticResourcesFolder(File folder) {
@@ -212,7 +212,7 @@ public class WebApp {
     }
 
     public FilterChainImpl initializeChain(ServletContext servletContext, boolean isForward, String uri) {
-        WebAppServlet webAppServlet = this.findServlet(uri);
+        WebAppServlet webAppServlet = findServlet(uri);
         if (webAppServlet == null) {
             return null;
         }
@@ -238,11 +238,11 @@ public class WebApp {
 
     private WebAppServlet findServlet(String uri) {
 
-        if (!this.hasServletConfigurations()) {
+        if (!hasServletConfigurations()) {
             return null;
         }
 
-        for (WebAppServlet s : this.getServletConfigurations()) {
+        for (WebAppServlet s : getServletConfigurations()) {
             if (s.matchesUrlPattern(uri))
                 return s;
         }

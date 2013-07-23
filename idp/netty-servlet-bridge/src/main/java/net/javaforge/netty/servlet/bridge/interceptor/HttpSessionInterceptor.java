@@ -24,10 +24,7 @@ import net.javaforge.netty.servlet.bridge.util.Utils;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
-import org.jboss.netty.handler.codec.http.Cookie;
-import org.jboss.netty.handler.codec.http.CookieEncoder;
-import org.jboss.netty.handler.codec.http.HttpRequest;
-import org.jboss.netty.handler.codec.http.HttpResponse;
+import org.jboss.netty.handler.codec.http.*;
 
 import java.util.Collection;
 
@@ -69,7 +66,7 @@ public class HttpSessionInterceptor implements ServletBridgeInterceptor {
         if (s != null && !this.sessionRequestedByCookie) {
             CookieEncoder cookieEncoder = new CookieEncoder(true);
             cookieEncoder.addCookie(HttpSessionImpl.SESSION_ID_KEY, s.getId());
-            //HttpHeaders.addHeader(response, SET_COOKIE, cookieEncoder.encode());
+            HttpHeaders.addHeader(response, HttpHeaders.Names.SET_COOKIE, cookieEncoder.encode());
         }
 
     }
