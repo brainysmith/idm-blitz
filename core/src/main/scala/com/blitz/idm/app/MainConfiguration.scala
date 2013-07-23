@@ -2,7 +2,6 @@ package com.blitz.idm.app
 
 import com.typesafe.config.{Config, ConfigFactory}
 import java.net.URL
-import sun.plugin.dom.exception.InvalidStateException
 
 /**
  *
@@ -12,7 +11,7 @@ class NestedConfiguration(private val name: String)(implicit protected val paren
 
   protected val conf: Config = if(parentConf == null) {
     Option(System.getProperty("blitzConfUrl")).fold[Config](
-      throw new InvalidStateException("Property 'blitzConfUrl' is undefined.")
+      throw new IllegalStateException("Property 'blitzConfUrl' is undefined.")
     )(path => {
       ConfigFactory.parseURL(new URL(path)).resolve()
     })
