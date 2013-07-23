@@ -6,6 +6,8 @@ import org.specs2.mutable._
  */
 class IdpConfigurationTest extends Specification {
 
+  System.setProperty("blitzConfUrl", classOf[MainConfigurationTest].getResource("idm_blitz_idp.conf").toURI.toString)
+
   "Checking of configuration loader " should {
 
     "main-conf.data-dir must be set to '/opt/data'" in {
