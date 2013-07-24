@@ -6,7 +6,7 @@
         	<ivy pattern="${play.home}/repository/local/[organisation]/[module]/(scala_[scalaVersion]/)(sbt_[sbtVersion]/)[revision]/[type]s/[artifact](-[classifier]).[ext]" />
         	<artifact pattern="${play.home}/repository/local/[organisation]/[module]/(scala_[scalaVersion]/)(sbt_[sbtVersion]/)[revision]/[type]s/[artifact](-[classifier]).[ext]" />
     	</filesystem>
-		[<ibiblio name="test" m2compatible="true" root="https://build.shibboleth.net/nexus/content/groups/public/"/>
+		<ibiblio name="test" m2compatible="true" root="https://build.shibboleth.net/nexus/content/groups/public/"/>
 		<chain name="custom" returnFirst="true" checkmodified="true">
 			<resolver ref="playLocal" />
 			<resolver ref="default" />
