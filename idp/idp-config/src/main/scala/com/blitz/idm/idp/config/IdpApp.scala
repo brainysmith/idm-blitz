@@ -1,6 +1,6 @@
 package com.blitz.idm.idp.config
 
-import com.blitz.idm.app.{NestedConfiguration, IdmConfiguration, MainConfiguration}
+import com.blitz.idm.app.{NestedConfiguration, MainConfiguration}
 
 /**
   * The the configuration singleton of IdP application.
@@ -34,7 +34,7 @@ import com.blitz.idm.app.{NestedConfiguration, IdmConfiguration, MainConfigurati
  * }
  */
 
-class IdpConfiguration(confFile: String) extends MainConfiguration(confFile, "idp-conf") {
+class IdpConfiguration extends MainConfiguration("idp-conf") {
   implicit val self = this
 
   val idpHome = conf.getString("idp-home")
@@ -65,7 +65,7 @@ class IdpConfiguration(confFile: String) extends MainConfiguration(confFile, "id
 
 object IdpApp {
 
-  lazy val conf = new IdpConfiguration("idm_blitz_idp")
+  lazy val conf = new IdpConfiguration
 
   lazy val javaProxyConf = IdpConfigurationJavaProxy
 

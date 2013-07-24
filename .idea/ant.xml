@@ -5,7 +5,11 @@
       <antReference name="Apache Ant version 1.9.1" />
       <customJdkName value="1.6" />
       <properties>
+<<<<<<< HEAD
         <property name="play.home" value="$PROJECT_DIR$/../play/play-2.1.1" />
+=======
+        <property name="play.home" value="E:\science\play-2.1.1" />
+>>>>>>> 77c4aa530a1f5605f1d3ed14a7051c350d5ea6c7
       </properties>
     </buildFile>
   </component>

@@ -3,7 +3,10 @@ package controllers
 import play.api.mvc._
 import play.api.data.Forms._
 import play.api.data.Form
+<<<<<<< HEAD
 
+=======
+>>>>>>> 77c4aa530a1f5605f1d3ed14a7051c350d5ea6c7
 
 
 object Login extends Controller {
@@ -15,8 +18,9 @@ object Login extends Controller {
     )
   )
 
-  def getPage = Action {implicit request =>
+  def getPage = Action {implicit request =>{
     Ok(views.html.login(loginForm))
+  }
   }
 
   def authenticate = Action {

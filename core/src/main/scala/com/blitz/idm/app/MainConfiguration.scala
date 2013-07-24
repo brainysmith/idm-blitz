@@ -9,7 +9,7 @@ import java.net.URL
 
 class NestedConfiguration(private val name: String)(implicit protected val parentConf: NestedConfiguration) {
 
-  protected val conf: Config = if(parentConf == null) {
+  val conf: Config = if(parentConf == null) {
     Option(System.getProperty("blitzConfUrl")).fold[Config](
       throw new IllegalStateException("Property 'blitzConfUrl' is undefined.")
     )(path => {
@@ -22,7 +22,7 @@ class NestedConfiguration(private val name: String)(implicit protected val paren
 
 }
 
-class MainConfiguration(confFile: String, private val appConf: String) extends NestedConfiguration(appConf)(new NestedConfiguration(confFile)(null)) {
+class MainConfiguration(private val appConf: String) extends NestedConfiguration(appConf)(new NestedConfiguration(null)(null)) {
 
   //Hack for the root configuration
   val mainConf = getSiblingConf("main-conf")

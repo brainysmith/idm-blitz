@@ -6,6 +6,6 @@ package com.blitz.idm.app
 
 object IdmApp {
 
-  lazy val conf = new IdmConfiguration("idm_blitz")
+  lazy val conf = new IdmConfiguration
 
 }
