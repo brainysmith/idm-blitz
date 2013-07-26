@@ -3,11 +3,13 @@ package controllers
 import play.api.mvc._
 import play.api.data.Forms._
 import play.api.data.Form
+import services.login.LoginContext._
+import services.login.LoginContext
 
 
 object Login extends Controller {
 
-  val loginForm = Form(
+  val basicForm = Form(
     tuple(
       "lgn" -> nonEmptyText,
       "pswd"  -> nonEmptyText
@@ -15,21 +17,32 @@ object Login extends Controller {
   )
 
   def getPage = Action {implicit request =>{
-    Ok(views.html.login(loginForm))
-  }
+      Ok(views.html.login(basicForm))
+    }
   }
 
-  def authenticate = Action {
+  def basicLogin = Action {
     implicit request => {
-      loginForm.bindFromRequest.fold(
+      basicForm.bindFromRequest.fold(
         errorForm => {
           BadRequest(views.html.login(errorForm))
         },
         form => {
-          Ok("Good! Lgn: " + form._1 + ", pswd: " + form._2 + ".")
+          Option(LoginContext(basic(form)))
+            .fold(BadRequest(""))(implicit lc => {
+                Ok("Good! Lgn: " + form._1 + ", pswd: " + form._2 + ".")
+              }
+            )
         }
       )
     }
   }
 
+  def smartCardLogin = Action {
+    implicit request => NotImplemented
+  }
+
+  def otpLogin = Action {
+    implicit request => NotImplemented
+  }
 }
