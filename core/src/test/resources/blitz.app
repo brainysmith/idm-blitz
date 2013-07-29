@@ -1,0 +1,1 @@
+appClass=DefaultApp

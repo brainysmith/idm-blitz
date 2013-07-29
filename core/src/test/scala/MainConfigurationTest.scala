@@ -1,23 +1,24 @@
 /**
  *
  */
-
-import com.blitz.idm.app.{IdmApp}
+import com.blitz.idm.app._
 import org.specs2.mutable._
 
 class MainConfigurationTest extends Specification {
 
   System.setProperty("blitzConfUrl", classOf[MainConfigurationTest].getResource("idm_blitz.conf").toURI.toString)
 
+  appLogDebug("I have been logged!\n")
+
   "Checking of configuration loader " should {
 
     "main-conf.data-dir must be set to '/opt/data'" in {
-      IdmApp.conf.dataDirPath must be equalTo("/opt/data")
+      appConfiguration.main.dataDirPath must be equalTo("./core/target/test-classes")
     }
 
-    "idm-conf.idp-home must be set to '/opt/data/idp'" in {
-      IdmApp.conf.idmHome must be equalTo("/opt/data/idp")
-    }
+    /*"main-conf.logger.conf-file must be set to '/opt/data/log'" in {
+      appConfiguration.main.logger.confFile must be equalTo("/opt/data")
+    }*/
 
   }
 

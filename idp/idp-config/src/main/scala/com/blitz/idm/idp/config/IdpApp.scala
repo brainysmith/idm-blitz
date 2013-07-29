@@ -1,6 +1,6 @@
 package com.blitz.idm.idp.config
 
-import com.blitz.idm.app.{NestedConfiguration, MainConfiguration}
+import com.blitz.idm.app.{NestedConfiguration, MainConfiguration, App}
 
 /**
   * The the configuration singleton of IdP application.
@@ -39,7 +39,7 @@ class IdpConfiguration extends MainConfiguration("idp-conf") {
 
   val idpHome = conf.getString("idp-home")
 
-  val web = new NestedConfiguration("web") {
+  val web = new NestedConfiguration("web")(this) {
 
     val ctxRoot = conf.getString("context-root")
     val httpsPort = conf.getInt("https-port")
@@ -47,7 +47,7 @@ class IdpConfiguration extends MainConfiguration("idp-conf") {
 
   }
 
-  val cache = new NestedConfiguration("cache") {
+  val cache = new NestedConfiguration("cache")(this) {
 
     val sessionCache = conf.getLong("session-cache-sec")
     val loginCtxCache = conf.getLong("login-ctx-cache-sec")
@@ -63,9 +63,11 @@ class IdpConfiguration extends MainConfiguration("idp-conf") {
 
 }
 
-object IdpApp {
+object IdpApp extends App {
 
-  lazy val conf = new IdpConfiguration
+  def name: String = "IdP"
+
+  def configuration[T >: MainConfiguration]: IdpConfiguration = new IdpConfiguration
 
   lazy val javaProxyConf = IdpConfigurationJavaProxy
 
@@ -73,20 +75,20 @@ object IdpApp {
 
 object IdpConfigurationJavaProxy {
 
-  val idpHome = IdpApp.conf.idpHome
+  val idpHome = IdpApp.configuration.idpHome
 
-  val web_ctxRoot = IdpApp.conf.web.ctxRoot
-  val web_httpsPort = IdpApp.conf.web.httpsPort
-  val web_webloginUrl = IdpApp.conf.web.webloginUrl
+  val web_ctxRoot = IdpApp.configuration.web.ctxRoot
+  val web_httpsPort = IdpApp.configuration.web.httpsPort
+  val web_webloginUrl = IdpApp.configuration.web.webloginUrl
 
-  val cache_sessionCache = IdpApp.conf.cache.sessionCache
-  val cache_loginCtxCache = IdpApp.conf.cache.loginCtxCache
-  val cache_logoutCtxCache = IdpApp.conf.cache.logoutCtxCache
-  val cache_attributeCache = IdpApp.conf.cache.attributeCache
+  val cache_sessionCache = IdpApp.configuration.cache.sessionCache
+  val cache_loginCtxCache = IdpApp.configuration.cache.loginCtxCache
+  val cache_logoutCtxCache = IdpApp.configuration.cache.logoutCtxCache
+  val cache_attributeCache = IdpApp.configuration.cache.attributeCache
 
-  val statusPageAllowedIps = IdpApp.conf.statusPageAllowedIps
-  val loadBalancingEnabled = IdpApp.conf.loadBalancingEnabled
-  val idTokenLifetime = IdpApp.conf.idTokenLifetime
-  val entityId = IdpApp.conf.entityId
+  val statusPageAllowedIps = IdpApp.configuration.statusPageAllowedIps
+  val loadBalancingEnabled = IdpApp.configuration.loadBalancingEnabled
+  val idTokenLifetime = IdpApp.configuration.idTokenLifetime
+  val entityId = IdpApp.configuration.entityId
 
 }

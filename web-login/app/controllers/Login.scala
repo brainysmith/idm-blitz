@@ -3,7 +3,8 @@ package controllers
 import play.api.mvc._
 import play.api.data.Forms._
 import play.api.data.Form
-
+import com.blitz.idm.app._
+import org.slf4j.LoggerFactory
 
 object Login extends Controller {
 
@@ -15,6 +16,7 @@ object Login extends Controller {
   )
 
   def getPage = Action {implicit request =>{
+    appLogDebug("Logging...\n")
     Ok(views.html.login(loginForm))
   }
   }

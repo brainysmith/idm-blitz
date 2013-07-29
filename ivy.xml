@@ -4,5 +4,8 @@
         <dependency org="org.scala-lang" name="scala-library" rev="2.10.0"/>
         <dependency org="org.specs2" name="specs2_2.10" rev="1.13"/>
         <dependency org="com.typesafe" name="config" rev="1.0.0"/>
+        <!--<dependency org="com.github.scala-incubator.io" name="scala-io-core_2.10" rev="0.4.2"/>-->
+        <dependency org="org.slf4j" name="jul-to-slf4j" rev="1.6.6"/>
+        <dependency org="ch.qos.logback" name="logback-classic" rev="1.0.7"/>
     </dependencies>
 </ivy-module>

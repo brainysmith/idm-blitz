@@ -41,6 +41,7 @@
         <property name="core-lib.dir" value="${basedir}${fs}core"/>
         <property name="core-lib.dir.lib" value="${basedir}${fs}lib"/>
         <property name="core-lib.dir.src" value="${core-lib.dir}${fs}src${fs}main${fs}scala"/>
+        <property name="core-lib.dir.resources" value="${core-lib.dir}${fs}src${fs}main${fs}resources"/>
         <property name="core-lib.dir.dest" value="${core-lib.dir}${fs}target"/>
         <property name="core-lib.dir.dest.classes" value="${core-lib.dir.dest}${fs}classes"/>
         <mkdir dir="${core-lib.dir.lib}"/>
@@ -65,6 +66,9 @@
 		=================================-->
     <target name="core-lib.build" depends="core-lib.init">
         <scalac srcdir="${core-lib.dir.src}" destdir="${core-lib.dir.dest.classes}" classpathref="core-lib.id.int"/>
+        <copy todir="${core-lib.dir.dest.classes}">
+            <fileset dir="${core-lib.dir.resources}"/>
+        </copy>
         <jar destfile="${core-lib.dir.dest}${fs}core-lib.jar" basedir="${core-lib.dir.dest.classes}"/>
     </target>
 
@@ -101,6 +105,7 @@
         <property name="idp-config.dir" value="${idp.dir}${fs}idp-config"/>
         <property name="idp-config.dir.src.java" value="${idp-config.dir}${fs}src${fs}main${fs}java"/>
         <property name="idp-config.dir.src.scala" value="${idp-config.dir}${fs}src${fs}main${fs}scala"/>
+        <property name="idp-config.dir.resources" value="${idp-config.dir}${fs}src${fs}main${fs}resources"/>
         <property name="idp-config.dir.dest" value="${idp-config.dir}${fs}target"/>
         <property name="idp-config.dir.dest.classes" value="${idp-config.dir.dest}${fs}classes"/>
         <property name="idp-config.dir.lib" value="${idp-config.dir}${fs}lib"/>
@@ -119,6 +124,9 @@
             <classpath refid="idp.dir.lib.id"/>
             <classpath location="${idp-config.dir.dest.classes}"/>
         </javac>
+        <copy todir="${idp-config.dir.dest.classes}">
+            <fileset dir="${idp-config.dir.resources}"/>
+        </copy>
         <jar destfile="${idp-config.dir.dest}${fs}idp-config.jar" basedir="${idp-config.dir.dest.classes}"/>
     </target>
 

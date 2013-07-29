@@ -28,7 +28,7 @@
 			<exclude org="com.sun.jdmk" name="jmxtools"/>
 			<exclude org="com.sun.jmx" name="jmxri"/>
 		</dependency>
-		<dependency org="ch.qos.logback" name="logback-classic" rev="1.0.9"/>
+		<!--<dependency org="ch.qos.logback" name="logback-classic" rev="1.0.9"/>-->
 		<dependency org="org.jgrapht" name="jgrapht-jdk1.5" rev="0.7.3" transitive="false"/>
 		<dependency org="net.sf.ehcache" name="ehcache-core" rev="1.7.2">
 			<exclude org="org.slf4j" name="slf4j-api"/>
