@@ -22,7 +22,7 @@ object Login extends Controller {
       Ok(views.html.login(basicForm))
     }
     appLogDebug("Logging...\n")
-    Ok(views.html.login(loginForm))
+    Ok(views.html.login(basicForm))
   }
 
   def basicLogin = Action {
