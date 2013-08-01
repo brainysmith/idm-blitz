@@ -35,7 +35,6 @@ public class App {
 
     private static final Logger log = LoggerFactory.getLogger(App.class);
 
-    private static final String APP_NAME = "idp";
     private static final String SERVER_NAME = "netty-idp-server";
     private static final String CONFIG_DIR = IdpApp.javaProxyConf().idpHome();
     private static final String WEB_ROOT_PATH = IdpApp.javaProxyConf().web_ctxRoot();
@@ -59,7 +58,7 @@ public class App {
         Spring 2.0 application context files.  Files are loaded in the order they appear with subsequent files
         overwriting same named beans in previous files.
         */
-        contextParameters.put("contextConfigLocation", "file:${IDP_HOME}/conf/internal.xml; file:${IDP_HOME}/conf/service.xml;");
+        contextParameters.put("contextConfigLocation", "file:///" + CONFIG_DIR + "/conf/internal.xml; file:///" + CONFIG_DIR + "/conf/service.xml;");
 
 
         /* LISTENERS */
@@ -67,7 +66,7 @@ public class App {
         /*
          Spring 2.0 listener used to load up the configuration
         */
-        contextListeners.add(new WebAppServletContextListener(APP_NAME, new ContextLoaderListener()));
+        contextListeners.add(new WebAppServletContextListener(IdpApp.name(), new ContextLoaderListener()));
 
 
         /* FILTERS */
@@ -133,7 +132,7 @@ public class App {
         /* Error handler. */
         servlets.add(new WebAppServlet(ErrorJspServlet.class, "/error.jsp"));
 
-        WebApp webapp = new WebApp(APP_NAME, "/idp", 60*60,
+        WebApp webapp = new WebApp(IdpApp.name(), WEB_ROOT_PATH, 60*60,
                 contextParameters, contextListeners, requestFilters, forwardFilters, servlets);
 
         webapp.setStaticResourcesFolder("/webstatic");

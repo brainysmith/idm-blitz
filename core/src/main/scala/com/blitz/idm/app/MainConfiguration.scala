@@ -46,4 +46,9 @@ class MainConfiguration(private val appConf: String, private val root: Config = 
 
   }
 
+  private[app] def lookupConfig(key: String) = root.hasPath(key) match {
+    case true => Option(root.getString(key))
+    case false => None
+  }
+
 }

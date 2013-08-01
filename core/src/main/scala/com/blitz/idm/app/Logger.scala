@@ -30,6 +30,7 @@ object Logger {
       val configurator = new JoranConfigurator
       configurator.setContext(loggerCtx)
       loggerCtx.reset()
+      loggerCtx.putProperty("app.name", appName)
       loggerCtx.putProperty("dir.logs", config.main.logger.dirOfLogs)
 
       try {

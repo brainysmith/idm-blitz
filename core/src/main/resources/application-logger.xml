@@ -1,3 +1,4 @@
+<!--Temporary configuration of play framework. This configuration is overridden later during the application start-->
 <configuration>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>

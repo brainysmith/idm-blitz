@@ -24,6 +24,8 @@ import java.nio.charset.Charset;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.blitz.idm.app.SubstitutionResolver;
+import com.blitz.idm.idp.config.IdpApp;
 import org.opensaml.Configuration;
 import org.opensaml.saml2.metadata.provider.FilesystemMetadataProvider;
 import org.opensaml.ws.transport.InTransport;
@@ -65,7 +67,7 @@ public class SAMLMetadataProfileHandler extends AbstractRequestURIMappedProfileH
      */
     public SAMLMetadataProfileHandler(String metadataFile, ParserPool pool) {
         try {
-            metadataProvider = new FilesystemMetadataProvider(new File(metadataFile));
+            metadataProvider = new FilesystemMetadataProvider(new File(SubstitutionResolver.resolve(metadataFile)));
             metadataProvider.setParserPool(pool);
             metadataProvider.setRequireValidMetadata(false);
             metadataProvider.initialize();
@@ -81,8 +83,8 @@ public class SAMLMetadataProfileHandler extends AbstractRequestURIMappedProfileH
         HttpServletRequest httpRequest = ((HttpServletRequestAdapter) in).getWrappedRequest();
         HttpServletResponse httpResponse = ((HttpServletResponseAdapter) out).getWrappedResponse();
 
-        String acceptHeder = DatatypeHelper.safeTrimOrNullString(httpRequest.getHeader("Accept"));
-        if (acceptHeder != null && !acceptHeder.contains("application/samlmetadata+xml")) {
+        String acceptHeader = DatatypeHelper.safeTrimOrNullString(httpRequest.getHeader("Accept"));
+        if (acceptHeader != null && !acceptHeader.contains("application/samlmetadata+xml")) {
             httpResponse.setContentType("application/xml");
         } else {
             httpResponse.setContentType("application/samlmetadata+xml");

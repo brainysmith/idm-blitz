@@ -148,7 +148,7 @@
     </target>
 
     <target name="nsb.build" depends="nsb.init, idp-config.build">
-        <javac srcdir="${nsb.dir.src}" destdir="${nsb.dir.dest.classes}"
+        <javac debug="on" srcdir="${nsb.dir.src}" destdir="${nsb.dir.dest.classes}"
                classpath="${idp-config.dir.dest}${fs}idp-config.jar" classpathref="idp.dir.lib.id"
                includeantruntime="true">
         </javac>

@@ -1,6 +1,7 @@
 package net.javaforge.netty.servlet.bridge.impl;
 
 import com.blitz.idm.handler.ServletBridgeConfig;
+import com.blitz.idm.idp.config.IdpApp;
 import com.blitz.idm.servlet.config.WebApp;
 import com.blitz.idm.servlet.impl.ServletContextImpl;
 import net.javaforge.netty.servlet.bridge.util.Utils;
@@ -64,7 +65,7 @@ public class HttpSessionImpl implements HttpSession {
     public ServletContext getServletContext() {
 
       // TODO
-        WebApp webApp = ServletBridgeConfig.get().getWebapp("idp");
+        WebApp webApp = ServletBridgeConfig.get().getWebapp(IdpApp.name());
         return ServletContextImpl.getInstance(webApp);
     }
 
