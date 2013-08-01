@@ -41,7 +41,7 @@ public class SloControllerJspServlet extends HttpServlet {
         StringBuilder html = new StringBuilder();
         html.append("<html>");
         html.append("<head>");
-        html.append("<link title=\"style\" href=\"" + contextPath + "/css/main.css\" type=\"text/css\" rel=\"stylesheet\" />");
+        html.append("<link title=\"style\" href=\"" + contextPath + "/webstatic/css/main.css\" type=\"text/css\" rel=\"stylesheet\" />");
         html.append("<title>Shibboleth IdP Logout</title>");
         html.append("<script language=\"javascript\" type=\"text/javascript\">");
         html.append("<!--\n" +
@@ -93,7 +93,7 @@ public class SloControllerJspServlet extends HttpServlet {
                 "        break;\n" +
                 "}\n" +
                 "\n" +
-                "        document.getElementById(entity).src = \"" + contextPath + "/images/\" + src;\n" +
+                "        document.getElementById(entity).src = \"" + contextPath + "/webstatic/images/\" + src;\n" +
                 "}\n" +
                 "\n" +
                 "        if (ready) {\n" +
@@ -145,7 +145,7 @@ public class SloControllerJspServlet extends HttpServlet {
             }
 
             StringBuilder src = new StringBuilder(contextPath);
-            src.append("/images/");
+            src.append("/webstatic/images/");
             switch (service.getLogoutStatus()) {
                 case LOGGED_IN:
                     logoutString = true;

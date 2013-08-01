@@ -37,7 +37,7 @@ public class App {
 
     private static final String APP_NAME = "idp";
     private static final String SERVER_NAME = "netty-idp-server";
-    private static final String CONFIG_DIR = IdpApp.javaProxyConf().idpHome();
+    private static final String IDP_HOME = IdpApp.javaProxyConf().idpHome();
     private static final String WEB_ROOT_PATH = IdpApp.javaProxyConf().web_ctxRoot();
     private static final int HTTPS_PORT = IdpApp.javaProxyConf().web_httpsPort();
     private static final String STATUS_PAGE_ALLOWED_IPS = IdpApp.javaProxyConf().statusPageAllowedIps();
@@ -59,7 +59,7 @@ public class App {
         Spring 2.0 application context files.  Files are loaded in the order they appear with subsequent files
         overwriting same named beans in previous files.
         */
-        contextParameters.put("contextConfigLocation", "file:${IDP_HOME}/conf/internal.xml; file:${IDP_HOME}/conf/service.xml;");
+        contextParameters.put("contextConfigLocation", "file:" + IDP_HOME + "/conf/internal.xml; file:" + IDP_HOME + "/conf/service.xml;");
 
 
         /* LISTENERS */
@@ -141,7 +141,7 @@ public class App {
         webappConfigurationMap.put(webapp.getName(), webapp);
 
         // Set up the event pipeline factory.
-        final HttpsServletBridgeChannelPipelineFactory servletBridgeFactory = new HttpsServletBridgeChannelPipelineFactory(SERVER_NAME, CONFIG_DIR,
+        final HttpsServletBridgeChannelPipelineFactory servletBridgeFactory = new HttpsServletBridgeChannelPipelineFactory(SERVER_NAME, IDP_HOME,
                 webappConfigurationMap);
         bootstrap.setPipelineFactory(servletBridgeFactory);
 
