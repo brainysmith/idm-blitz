@@ -66,7 +66,7 @@ Boolean sloAttempted = false;
                             break;
                     }
                     
-                    document.getElementById(entity).src = "<%= contextPath %>/images/" + src;
+                    document.getElementById(entity).src = "<%= contextPath %>/webstatic/images/" + src;
                 }
 
                 if (ready) {

@@ -65,6 +65,7 @@ public class SLOServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
+
         try {
             SingleLogoutContext sloContext =
                     SingleLogoutContextStorageHelper.getSingleLogoutContext(req);
@@ -78,6 +79,7 @@ public class SLOServlet extends HttpServlet {
             resp.setHeader("Pragma", "no-cache");
 
             if (req.getParameter("status") != null) { //status query, response is JSON
+                log.debug("checkStatus...");
                 sloContext.checkTimeout();
                 PrintWriter writer = resp.getWriter();
                 writer.print("[");
@@ -104,14 +106,21 @@ public class SLOServlet extends HttpServlet {
                 req.getRequestDispatcher(sloContext.getProfileHandlerURL()).forward(req, resp);
             } else if (req.getParameter("logout") != null ||
                     req.getAttribute(SLOProfileHandler.SKIP_LOGOUT_QUESTION_ATTR) != null) {
+
+
                 //respond with SLO Controller
                 sloContext.checkTimeout();
-                req.getRequestDispatcher("/sloController.jsp").forward(req, resp);
+
+                String sloControllerPage = "/sloController.jsp";
+                req.getRequestDispatcher(sloControllerPage).forward(req, resp);        //sloController.jsp
+                return;
             } else { //respond with confirmation dialog
                 req.getRequestDispatcher("/sloQuestion.jsp").forward(req, resp);
+                return;
             }
         } catch (Throwable e) {
-            log.error("Error while processing logout: {} ", e.getStackTrace());
+            log.error("Eror while processing logout: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }
