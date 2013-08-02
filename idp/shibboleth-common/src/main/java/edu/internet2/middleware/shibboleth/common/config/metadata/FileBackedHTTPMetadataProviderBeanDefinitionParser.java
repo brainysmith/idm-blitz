@@ -19,6 +19,7 @@ package edu.internet2.middleware.shibboleth.common.config.metadata;
 
 import javax.xml.namespace.QName;
 
+import com.blitz.idm.app.SubstitutionResolver;
 import org.opensaml.saml2.metadata.provider.FileBackedHTTPMetadataProvider;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.slf4j.Logger;
@@ -48,7 +49,7 @@ public class FileBackedHTTPMetadataProviderBeanDefinitionParser extends HTTPMeta
         
         super.doParse(element, parserContext, builder);
 
-        String backingFile = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "backingFile"));
+        String backingFile = SubstitutionResolver.resolve(DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "backingFile")));
         log.debug("Metadata provider '{}' backing up remote metadata file to: ", providerId, backingFile);
         builder.addConstructorArgValue(backingFile);
     }

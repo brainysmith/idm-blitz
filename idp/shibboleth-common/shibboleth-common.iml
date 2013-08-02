@@ -12,6 +12,7 @@
     <orderEntry type="module" module-name="idp-config" />
     <orderEntry type="library" name="idp-libs" level="project" />
     <orderEntry type="library" name="lib" level="project" />
+    <orderEntry type="module" module-name="core" />
   </component>
 </module>
 
