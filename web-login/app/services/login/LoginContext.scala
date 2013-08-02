@@ -1,11 +1,11 @@
 package services.login
 
-import javax.security.auth.Subject
 import play.api.mvc.{AnyContent, Request}
 import scala.collection.mutable
+import java.security.Principal
 
 /**
- * Context of the authentication process.
+ * Interface of the authentication process.
   */
 trait LoginContext {
 
@@ -15,32 +15,52 @@ trait LoginContext {
    */
   def getRequest: Request[AnyContent]
 
+  /**
+   * Returns the current login method of the authentication process.
+   * See the login's method constants of the current interface.
+   * @return code of the login method.
+   */
+  def getMethod: Int
 
   /**
-   * Returns a subject associated with the current authentication process.
+   * Returns the array of credentials with associated with the current login request.
+   * After a http request has been proceeded the array of credentials is cleared.
+   * @return array of the credentials associated with current http request.
    */
-  def getSubject: Subject
+  def getCredentials: Array[Credentials]
+
+  /**
+   * Appends the specified credential to the credential's array.
+   * @return the current login context.
+   */
+  def +(credentials: Credentials): LoginContext
+
+  /**
+   * Returns the array of principals with associated with the current login request.
+   * After a http request has been proceeded the array of a principal is cleared.
+   * @return array of the principals associated with current http request.
+   */
+  def getPrincipals: Array[Principal]
+
+  /**
+   * Appends the specified principal to the credential's array.
+   * @return the current login context.
+   */
+  def +(principal: Principal): LoginContext
 
   /**
    * Returns of the current status of the authentication process.
    * See the login's status constants of the current interface.
-   * @return
+   * @return the current status of the login process.
    */
   def getStatus: Int
-
-  /**
-   * Returns the current login method of the authentication process.
-   * See the login's method constants of the current interface.
-   @return code of the login method.
-   */
-  def getMethod: Int
 
   /**
    * Returns login methods that have been successfully completed.
    * See the login's method constants of the current interface.
    * @return the bitmask of the login methods.
    */
-  def getCompletedMethods: Int
+  def getCompletedMethods: Option[Int]
 
   /**
    * Returns the authentication which was selected in the current login context.
@@ -54,7 +74,13 @@ trait LoginContext {
    * Each parameter has a name and a value.
    * @return map with parameters.
    */
-  def getParams: mutable.Map[String, String]
+  def getParams: Map[String, String]
+
+  /**
+   * Appends the parameter to the parameter's array.
+   * @return the current login context.
+   */
+  def +(param: (String, String)): LoginContext
 
   /**
    * Returns the obligation which must be executed before the authentication process will be completed.
@@ -63,11 +89,17 @@ trait LoginContext {
   def getObligation: Option[String]
 
   /**
-   * List of the message's keys which will be sent to the client. After message has been shown it is deleted from
-   * the list.
-   * @return list of the message's key.
+   * Array of the message's keys which will be sent to the client.
+   * After message has been shown it will be deleted from the array.
+   * @return array of the message's key.
    * */
-  def getMessages: mutable.ArrayBuffer[String]
+  def getMessages: Array[String]
+
+  /**
+   * Appends the message to the message's array.
+   * @return the current login context.
+   */
+  def +(msg: String): LoginContext
 }
 
 object LoginContext {
@@ -87,59 +119,65 @@ object LoginContext {
   //Obligation`s constants
   val OTP_OBLIGATION = "otp_required"
 
-  def basic(lgnAndPwd: (String, String))(implicit request : Request[AnyContent]): LoginContextBuilder = {
-    new LoginContextBuilder(BASIC_METHOD) + Credentials(lgnAndPwd)
+  def basic(lgnAndPwd: (String, String))(implicit request : Request[AnyContent]): LoginContext = {
+    new LoginContextImpl(BASIC_METHOD) + Credentials(lgnAndPwd)
   }
 
-  def apply(lcb: LoginContextBuilder)(implicit request : Request[AnyContent]): LoginContext = {
-    lcb.build
-  }
-}
-
-class LoginContextBuilder(private val method: Int)(implicit request : Request[AnyContent]) {
-  def +(param: (String, String)): LoginContextBuilder = {
-    //todo: add a parameter to the login context
-    this
-  }
-
-  def +(credentials: Credentials): LoginContextBuilder = {
-    //todo: add credentials to the login context
-    this
-  }
-
-  def build: LoginContext = {
-    //todo: do it
-    new LoginContextImpl(method, new Subject())
+  def apply(method: Int)(implicit request : Request[AnyContent]): LoginContext = {
+    new LoginContextImpl(method)
   }
 }
 
-private class LoginContextImpl(private val method: Int, private val subject: Subject)
-                      (implicit val request: Request[AnyContent]) extends LoginContext {
+private class LoginContextImpl(private val method: Int)(implicit val request: Request[AnyContent]) extends LoginContext {
   import LoginContext._
 
   private val params = new mutable.HashMap[String, String]()
-  private val messages = new mutable.ArrayBuffer[String]()
+  private val msgs = new mutable.ArrayBuffer[String]()
+  private val crls = new mutable.ArrayBuffer[Credentials]()
+  private val prls = new mutable.ArrayBuffer[Principal]()
 
   private var status = INIT_STATUS
-  private var completedMethods = 0
-  private var authenticator = None
-  private var obligation = None
+  private var completedMethods: Option[Int] = None
+  private var authenticator: Option[Authenticator] = None
+  private var obligation: Option[String] = None
 
   def getRequest: Request[AnyContent] = request
-
-  def getSubject: Subject = subject
 
   def getStatus: Int = status
 
   def getMethod: Int = method
 
-  def getCompletedMethods: Int = completedMethods
+  def getCompletedMethods: Option[Int] = completedMethods
 
   def getAuthenticator: Option[Authenticator] = authenticator
 
-  def getParams: mutable.Map[String, String] = params
+  def getCredentials: Array[Credentials] = crls.toArray
+
+  def +(credentials: Credentials): LoginContext = {
+    crls += credentials
+    this
+  }
+
+  def getParams: Map[String, String] = params.toMap
+
+  def +(param: (String, String)): LoginContext = {
+    params += param
+    this
+  }
 
   def getObligation: Option[String] = obligation
 
-  def getMessages: mutable.ArrayBuffer[String] = messages
+  def getMessages: Array[String] = msgs.toArray
+
+  def +(msg: String): LoginContext = {
+    msgs += msg
+    this
+  }
+
+  def getPrincipals: Array[Principal] = prls.toArray
+
+  def +(principal: Principal): LoginContext = {
+    prls += principal
+    this
+  }
 }
