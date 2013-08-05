@@ -39,22 +39,24 @@ trait Authenticator {
   val SUCCESS_WITH_OBLIGATION = 4
 
   /**
-   *
-   * @param options
+   * The method is called by the application to indicate to a authenticator that it is being place into service.
+   * The application calls this method exactly once after instantiating the authenticator.
+   * The method must be completed successfully before the authenticator is asked to do any work.
+   * @param options - array of the options which was specified into the configuration.
    */
-  def init(options: List[(String, String)])
+  def init(options: Array[(String, String)])
 
 
   /**
-   * Defines if the authenticator is acceptable to authenticate against the login context.
-   * @param lc - context of the current authentication process.
+   * The method is called each time a login request has been gotten to defines if the authenticator is acceptable
+   * to authenticate against the input login context.
+   * @param lc - the context of the current authentication process.
    * @return true if the authenticator is acceptable and false otherwise.
    */
   def isYours(lc: LoginContext): Boolean
 
   /**
-   * Perform the authentication of the current subject which available in the login context.
-   * Method authentication and credentials can be accessed by the subject.
+   * The method is called each time need to perform the authentication.
    * The result code controls subsequent authentication process (see the result's constants). The following represents
    * a description their respective semantics:
    *    - SUCCESS - if the subject successfully authenticated. The authentication process continues and all principals
