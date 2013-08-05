@@ -37,29 +37,29 @@ import com.blitz.idm.app.{NestedConfiguration, MainConfiguration, App}
 class IdpConfiguration extends MainConfiguration("idp-conf") {
   implicit val self = this
 
-  val idpHome = conf.getString("idp-home")
+  val idpHome = getString("idp-home")
 
   val web = new NestedConfiguration("web")(this) {
 
-    val ctxRoot = conf.getString("context-root")
-    val httpsPort = conf.getInt("https-port")
-    val webloginUrl = conf.getString("weblogin-url")
+    val ctxRoot = getString("context-root")
+    val httpsPort = getInt("https-port")
+    val webloginUrl = getString("weblogin-url")
 
   }
 
   val cache = new NestedConfiguration("cache")(this) {
 
-    val sessionCache = conf.getLong("session-cache-sec")
-    val loginCtxCache = conf.getLong("login-ctx-cache-sec")
-    val logoutCtxCache = conf.getLong("logout-ctx-cache-sec")
-    val attributeCache = conf.getLong("attribute-cache-sec")
+    val sessionCache = getLong("session-cache-sec")
+    val loginCtxCache = getLong("login-ctx-cache-sec")
+    val logoutCtxCache = getLong("logout-ctx-cache-sec")
+    val attributeCache = getLong("attribute-cache-sec")
 
   }
 
-  val statusPageAllowedIps = conf.getString("status-page-allowed-ips")
-  val loadBalancingEnabled = conf.getBoolean("load-balancing-enabled")
-  val idTokenLifetime = conf.getLong("idtoken-lifetime-sec")
-  val entityId = conf.getString("entity-id")
+  val statusPageAllowedIps = getString("status-page-allowed-ips")
+  val loadBalancingEnabled = getBoolean("load-balancing-enabled")
+  val idTokenLifetime = getLong("idtoken-lifetime-sec")
+  val entityId = getString("entity-id")
 
 }
 

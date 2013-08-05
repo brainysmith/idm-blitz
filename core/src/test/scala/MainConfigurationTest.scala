@@ -18,6 +18,15 @@ class MainConfigurationTest extends Specification {
       appConfiguration.main.logger.dirOfLogs must be equalTo("./core/target/test-classes")
     }
 
+    "main-conf.logger.levels must be set to 'Map(core -> DEBUG, test -> DEBUG)'" in {
+      appConfiguration.main.logger.levels must be equalTo(Map("core" -> "DEBUG", "test" -> "DEBUG"))
+    }
+
+    "main-conf.deeply-nested must be set to 'Map(nested-2 -> Map(key4 -> value4, key6 -> value6, key5 -> value5), nested-1 -> Map(key1 -> value1, key3 -> value3, key2 -> value2))'" in {
+      appConfiguration.main.getDeepMapString("deeply-nested") must be equalTo(Map("nested-2" -> Map("key4" -> "value4", "key6" -> "value6", "key5" -> "value5"),
+        "nested-1" -> Map("key1" -> "value1", "key3" -> "value3", "key2" -> "value2")))
+    }
+
   }
 
 }
