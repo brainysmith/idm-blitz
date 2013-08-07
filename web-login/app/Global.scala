@@ -1,3 +1,4 @@
+import conf.WlApp
 import play.api.{Configuration, Application, GlobalSettings}
 import com.blitz.idm.app._
 

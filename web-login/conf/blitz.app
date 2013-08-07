@@ -1,1 +1,1 @@
-appClass=WlApp
+appClass=conf.WlApp
