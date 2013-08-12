@@ -4,6 +4,7 @@ import org.specs2.mutable._
 
 import play.api.test._
 import play.api.test.Helpers._
+import controllers.routes
 
 /**
  * add your integration spec here.
@@ -11,15 +12,23 @@ import play.api.test.Helpers._
  */
 class IntegrationSpec extends Specification {
   
-  "Application" should {
+  "WEB-LOGIN" should {
     
-    "work from within a browser" in {
-      running(TestServer(3333), HTMLUNIT) { browser =>
+    "base login" in {
+      running(TestServer(3333, FakeApplication()), HTMLUNIT) { browser =>
 
-        browser.goTo("http://localhost:3333/")
+        val call = routes.Login.getPage()
+        browser.goTo("http://localhost:3333" + call.url)
+        browser.title() must ==/("Login")
+        /*browser.takeScreenShot()*/
 
-        browser.pageSource must contain("Your new application is ready.")
-       
+        browser.fill("#lgn").`with`("mike")
+        browser.fill("#pswd").`with`("password")
+        browser.click("#loginFm button")
+
+        /*System.out.println(browser.pageSource())*/
+
+        browser.pageSource must contain("Login")
       }
     }
     

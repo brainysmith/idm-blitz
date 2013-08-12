@@ -22,7 +22,7 @@ object ApplicationBuild extends Build {
   )).settings(
       {
         requireJsFolder := "js"
-        requireJs ++= Seq("main.js", "login.js", "/utils/placeholder.js")
+        requireJs ++= Seq("conf.js", "main.js", "login.js", "/utils/placeholder.js")
         externalIvySettingsURL(url(System.getProperty("ivy.settings.path")))
       }
   )

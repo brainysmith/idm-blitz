@@ -1,7 +1,11 @@
+if(typeof console === "undefined") {
+    console = { log: function() { } };
+}
+
 console.log('start reqConf.js');
 
 var require = {
-    baseUrl: 'assets/js',
+    baseUrl: '/assets/js',
     paths: {
         "main": "main",
         "jquery" : "lib/jquery.min",
@@ -10,9 +14,12 @@ var require = {
         "domReady" : "lib/requirePlugins/domReady"
     },
     shim : {
-        "jquery-ui" : [ 'jquery' ],
+        "jquery-ui" : {
+            depts: [ 'jquery' ],
+            exports: 'jquery-ui'
+        },
         "kendo" : {
-            deps: [ 'jquery' ],
+            deps: [ 'jquery'],
             exports: 'kendo'
         }
     },
