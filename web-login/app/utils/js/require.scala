@@ -6,7 +6,7 @@ import controllers.routes
 
 object require {
 
-  def apply(module: String): Html = {
+  def apply(module: String, folder: String = "/assets/js"): Html = {
     requireJs(module, routes.Assets.at("js/lib/require.min.js").url)
   }
 }

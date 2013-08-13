@@ -4,7 +4,7 @@
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/login.min.css")">
 }
 @scripts = {
-    @helper.scriptMin("login")
+    @utils.js.require("login")
 }
 
 @import helper._
@@ -20,14 +20,12 @@
         <div class="">
 
             @inputText(loginForm("lgn"),
-                '_id -> "lgn",
                 '_label -> Messages("login.loginFm.lgn.label"),
                 '_showErrors -> true,
                 '_showConstraints -> false,
                 'placeholder -> Messages("login.loginFm.lgn.placeholder"))
 
             @inputPassword(loginForm("pswd"),
-                '_id -> "pswd",
                 '_label -> Messages("login.loginFm.pswd.label"),
                 '_showErrors -> true,
                 '_showConstraints -> false,

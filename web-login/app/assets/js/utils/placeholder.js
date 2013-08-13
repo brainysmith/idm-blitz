@@ -1,6 +1,6 @@
 console.log('start placeholder.js');
 
-require(['jquery', 'main'],
+define(['jquery', 'main', 'domReady'],
     function ($) {
         $('input[placeholder]').each(function(){
 
