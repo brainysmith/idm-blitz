@@ -65,6 +65,10 @@ class MainConfiguration(private val appConf: String, private val root: Config = 
 
     }
 
+    val tests = new NestedConfiguration("tests")(this) {
+      val dirOfScreenShots = getOptString("dir-of-screenShots")
+    }
+
   }
 
   private[app] def lookupConfig(key: String) = root.hasPath(key) match {
