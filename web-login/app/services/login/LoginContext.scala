@@ -97,10 +97,7 @@ trait LoginContext {
 }
 
 object LoginContext {
-  //Login`s method constants
-  val BASIC_METHOD = 1
-  val SMART_CARD_METHOD = 2
-  val OTP_METHOD = 4
+  import Authenticator._
 
   //Login`s status constants
   val INIT_STATUS = -1
@@ -108,9 +105,6 @@ object LoginContext {
   val AUTH_FAIL_STATUS = 1
   val DO_PRE_AUTH_STATUS = 2
   val DO_OBLIGATION_STATUS = 3
-
-  //Obligation`s constants
-  val OTP_OBLIGATION = "otp_required"
 
   def basic(lgnAndPwd: (String, String)): LoginContext = {
     new LoginContextImpl(BASIC_METHOD) + Credentials(lgnAndPwd)
@@ -143,7 +137,6 @@ private[login] class LoginContextImpl(private val method: Int) extends LoginCont
   }
 
   def getMethod: Int = method
-
   def getCompletedMethods: Option[Int] = completedMethods
 
   def getAuthenticator: Option[Authenticator] = authenticator
@@ -184,5 +177,18 @@ private[login] class LoginContextImpl(private val method: Int) extends LoginCont
   def +(principal: Principal): LoginContext = {
     prls += principal
     this
+  }
+
+  override def toString: String = {
+    val sb =new StringBuilder("LoginContextImpl(")
+    sb.append("method -> ").append(method)
+    sb.append(", ").append("status -> ").append(status)
+    sb.append(", ").append("authenticator -> ").append(authenticator)
+    sb.append(", ").append("credentials -> ").append(crls.toList)
+    sb.append(", ").append("parameters -> ").append(params.toMap)
+    sb.append(", ").append("obligation -> ").append(obligation)
+    sb.append(", ").append("messages -> ").append(msgs.toList)
+    sb.append(", ").append("principals -> ").append(prls.toList)
+    sb.append(")").toString()
   }
 }

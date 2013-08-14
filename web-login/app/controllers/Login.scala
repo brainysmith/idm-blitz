@@ -4,7 +4,7 @@ import play.api.mvc._
 import play.api.data.Forms._
 import play.api.data.Form
 import services.login.LoginContext._
-import services.login.loginManager
+import services.login.{Credentials, loginManager}
 import com.blitz.idm.app._
 
 object Login extends Controller {

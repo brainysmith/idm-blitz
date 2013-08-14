@@ -46,7 +46,12 @@ trait Authenticator {
 
 object Authenticator {
 
-  //Result`s constants
+  //Login`s method constants
+  val BASIC_METHOD = 1
+  val SMART_CARD_METHOD = 2
+  val OTP_METHOD = 4
+
+  //Authentication result`s constants
   val SUCCESS = 0
   val FAIL = 1
   val PRE_AUTH_IS_REQUIRE = 2
@@ -56,26 +61,37 @@ object Authenticator {
   }
 }
 
-private[login] class AuthenticatorMeta(private val className: String, private val options: Map[String, String]) {
+private[login] class AuthenticatorMeta(private val className: String,
+                                       private val options: Map[String, String]) extends Ordered[AuthenticatorMeta]{
   import AuthenticatorMeta._
   import scala.reflect.runtime.{universe => ru}
 
   private val mirror = ru.runtimeMirror(getClass.getClassLoader)
-  private val clsSymbol = mirror.classSymbol(Class.forName(className))
+  private val clsSymbol = mirror.classSymbol(Class.forName(className.replace('>', '.').replaceAll("\"", ""))) //todo: temporary + if authenticators params not set then it will be ignored
   private val clsMirror = mirror.reflectClass(clsSymbol)
   private val clsConstructor = clsMirror.reflectConstructor(clsSymbol.toType.declaration(ru.nme.CONSTRUCTOR).asMethod)
 
-  private val order = options.get(ORDER_PARAM_NAME)
+  private val order = options.get(ORDER_PARAM_NAME).fold(0)(augmentString(_).toInt)
 
   def newInstance: Authenticator = {
-    val instance: Authenticator = clsConstructor().asInstanceOf
+    val instance: Authenticator = clsConstructor().asInstanceOf[Authenticator]
     instance.init(options)
     instance
   }
 
-  def getClassName = className
+  def getClassName = className.replace('>', '.').replaceAll("\"", "") //todo: temporary
   def getOptions = options
   def getOrder = order
+
+  def compare(that: AuthenticatorMeta): Int = this.getOrder - that.getOrder
+
+  override def toString: String = {
+    val sb =new StringBuilder("AuthenticatorMeta(")
+    sb.append("class -> ").append(getClassName)
+    sb.append(", ").append("order -> ").append(getOrder)
+    sb.append(", ").append("options -> ").append(getOptions)
+    sb.append(")").toString()
+  }
 }
 
 private[login] object AuthenticatorMeta {
