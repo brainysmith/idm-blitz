@@ -71,7 +71,7 @@ private[login] class AuthenticatorMeta(private val className: String,
   private val clsMirror = mirror.reflectClass(clsSymbol)
   private val clsConstructor = clsMirror.reflectConstructor(clsSymbol.toType.declaration(ru.nme.CONSTRUCTOR).asMethod)
 
-  private val order = options.get(ORDER_PARAM_NAME).fold(0)(augmentString(_).toInt)
+  private val order = options.get(ORDER_PARAM_NAME).fold(Int.MaxValue)(augmentString(_).toInt)
 
   def newInstance: Authenticator = {
     val instance: Authenticator = clsConstructor().asInstanceOf[Authenticator]

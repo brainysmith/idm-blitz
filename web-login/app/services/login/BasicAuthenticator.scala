@@ -8,6 +8,8 @@ import Authenticator._
   */
 class BasicAuthenticator extends Authenticator {
 
+  private val ERROR_WRONG_CREDENTIALS = "BasicAuthenticator.wrongUserNameOrPassword"
+
   private var options: Map[String, String] = _
 
   def init(options: Map[String, String]): Authenticator = {
@@ -32,6 +34,7 @@ class BasicAuthenticator extends Authenticator {
             SUCCESS
           } else {
             appLogDebug("the credentials provided are wrong [credentials = {}]", basicCrl)
+            lc + ERROR_WRONG_CREDENTIALS
             FAIL
           }
         }

@@ -21,7 +21,12 @@ object loginManager {
 
   private val authenticatorsMeta =
     (for ((clazz, params) <- conf.authenticators) yield new AuthenticatorMeta(clazz, params)).toArray.sorted
-  appLogTrace("read authenticators from configuration: {}\n", authenticatorsMeta)
+
+  if (authenticatorsMeta.isEmpty) {
+    appLogWarn("authentication may not work: there aren't authenticators found in the configuration\n")
+  } else {
+    appLogTrace("read authenticators from the configuration: {}\n", authenticatorsMeta)
+  }
 
   private val authenticators = authenticatorsMeta.map(_.newInstance)
 
@@ -57,15 +62,22 @@ object loginManager {
           }
           case Success(FAIL) => {
             lcImpl.setStatus(AUTH_FAIL_STATUS)
-            appLogDebug("the authentication process is stopped: authentication is fail [login context = {}]\n", lc)
-            loginFail(lc.getMessages)
+            lc.getAuthenticator.fold[Result]({
+              appLogError("the authentication process is stopped: there aren't authenticators to process the login " +
+                "request [login context = {}]\n", lcImpl)
+              throw new IllegalStateException("there aren't authenticators to process the login request")
+            }
+            )(a => {
+              appLogDebug("the authentication process is stopped: authentication is fail [login context = {}]\n", lc)
+              loginFail(lc.getMessages)
+            })
           }
           case Failure(e) => {
             appLogError("authentication can't be perform [runtime exception = {}]\n", e)
             throw e
           }
           case Success(res) => {
-            appLogError("""authentication can't be perform: unknown authentication result [result = {}], please, email to the technical support\n""", res)
+            appLogError("authentication can't be perform: unknown authentication result [result = {}], please, email to the technical support\n", res)
             throw new RuntimeException("unknown authentication result")
           }
         }
@@ -87,18 +99,21 @@ object loginManager {
           throw new IllegalStateException("the login process has already completed")
         }
       })
+      curAuthenticator <- Try({
+        lcImpl.getAuthenticator
+      })
       result <- Try[Int]({
-        lcImpl.getAuthenticator.fold(authenticators.filter(_.isYours).foldLeft[Int](FAIL)((prevRes, a) => {
+        curAuthenticator.fold(authenticators.filter(_.isYours).foldLeft[Int](FAIL)((prevRes, a) => {
           prevRes match {
             case FAIL => {
-              appLogTrace("selected a new authenticator [authenticator = {}]", a)
+              appLogTrace("selected a new authenticator [authenticator = {}]\n", a)
               lcImpl.setAuthenticator(a)
               a.`do`
             }
             case _ => prevRes
           }
         }))(implicit a => {
-          appLogTrace("got authenticator from the current login context [authenticator = {}]", a)
+          appLogTrace("got authenticator from the current login context [authenticator = {}]\n", a)
           a.`do`
         })
       })
@@ -121,7 +136,7 @@ object loginManager {
             "[login context = {}]\n", lcImpl)
           throw new IllegalStateException("there aren't authenticators to process the login request")
         })(a => {
-          appLogTrace("selected a new authenticator [authenticator = {}]", a)
+          appLogTrace("selected a new authenticator [authenticator = {}]\n", a)
           lcImpl.setAuthenticator(a)
           a
         }))

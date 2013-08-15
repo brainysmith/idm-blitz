@@ -4,8 +4,9 @@ import play.api.mvc._
 import play.api.data.Forms._
 import play.api.data.Form
 import services.login.LoginContext._
-import services.login.{Credentials, loginManager}
+import services.login.loginManager
 import com.blitz.idm.app._
+import play.api.i18n.Messages
 
 object Login extends Controller {
 
@@ -34,7 +35,9 @@ object Login extends Controller {
             .fold[Result](BadRequest(""))(implicit lc => {
                 loginManager(call => {
                   Ok("Good! Lgn: " + form._1 + ", pswd: " + form._2 + ".")
-                })(errors => BadRequest(""))
+                })(errors => {
+                  BadRequest(views.html.login(errors.foldLeft(basicForm.fill((form._1, "")))((frm, msg) => frm.withGlobalError(Messages(msg)))))
+                })
               }
             )
         }
