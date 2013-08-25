@@ -6,6 +6,7 @@ import play.api.test._
 import play.api.test.Helpers._
 import controllers.routes
 import utils.IntegrationTestUtil
+import org.openqa.selenium.chrome.ChromeDriver
 
 /**
  * add your integration spec here.
@@ -13,10 +14,12 @@ import utils.IntegrationTestUtil
  */
 class IntegrationSpec extends Specification with IntegrationTestUtil {
 
+  val CHROME = classOf[ChromeDriver]
+
   "WEB-LOGIN" should {
     
     "base login" in {
-      running(TestServer(3333, FakeApplication()), FIREFOX) { browser =>
+      running(TestServer(3333, FakeApplication()), CHROME) { browser =>
 
         val call = routes.Login.getPage()
         browser.goTo("http://localhost:3333" + call.url)
