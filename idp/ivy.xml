@@ -43,5 +43,6 @@
 		<dependency org="io.netty" name="netty" rev="3.6.6.Final" conf="runtime"/>
 		<dependency org="net.jcip" name="jcip-annotations" rev="1.0" conf="runtime"/>
 		<dependency org="javax.servlet.jsp" name="jsp-api" rev="2.1"/>
+		<dependency org="org.apache.xerces" name="xml-apis" rev="2.10.0"/>
 	</dependencies>
 </ivy-module>
