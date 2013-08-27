@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="unboundid-ldapsdk-2.3.4">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/com.unboundid/unboundid-ldapsdk/jars/unboundid-ldapsdk-2.3.4.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

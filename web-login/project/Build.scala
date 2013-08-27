@@ -9,7 +9,8 @@ object ApplicationBuild extends Build {
   val appVersion      = "1.0-SNAPSHOT"
 
   val appDependencies = Seq(
-    "com.google.guava" % "guava" % "13.0.1" % "test"
+    "com.google.guava" % "guava" % "13.0.1" % "test",
+    "com.unboundid" % "unboundid-ldapsdk" % "2.3.4"
 /*    jdbc,
     anorm*/
   )
