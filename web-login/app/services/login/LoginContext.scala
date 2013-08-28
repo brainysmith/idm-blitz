@@ -8,6 +8,7 @@ import java.security.Principal
  * Interface of the authentication process.
   */
 trait LoginContext {
+  import LoginErrors._
 
   /**
    * Returns the current login method of the authentication process.
@@ -83,17 +84,27 @@ trait LoginContext {
   def getObligation: Option[Call]
 
   /**
-   * Array of the message's keys which will be sent to the client.
+   * Array of the message's keys associated with the current login context. In common case it's errors.
    * After message has been shown it will be deleted from the array.
    * @return array of the message's key.
    * */
   def getMessages: Array[String]
 
   /**
-   * Appends the message to the message's array.
+   * Appends the message to the message's array of the current login context.
+   * @param msg - message's key which will be able to the login controller.
    * @return the current login context.
    */
   def +(msg: String): LoginContext
+
+
+  /**
+   * Appends the common login error to the message's array of the current login context.
+   * The message key is defined as: LoginErrors + "." + error's name.
+   * @param error - common login error.
+   * @return the current login context
+   */
+  def +(error: LoginErrors): LoginContext
 }
 
 object LoginContext {
@@ -117,6 +128,7 @@ object LoginContext {
 
 private[login] class LoginContextImpl(private val method: Int) extends LoginContext {
   import LoginContext._
+  import LoginErrors._
 
   private val params = new mutable.HashMap[String, String]()
   private val msgs = new mutable.ArrayBuffer[String]()
@@ -169,6 +181,11 @@ private[login] class LoginContextImpl(private val method: Int) extends LoginCont
 
   def +(msg: String): LoginContext = {
     msgs += msg
+    this
+  }
+
+  def +(error: LoginErrors): LoginContext = {
+    msgs += "LoginErrors." + error.toString
     this
   }
 

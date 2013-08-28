@@ -76,8 +76,8 @@ object loginManager {
             appLogError("authentication can't be perform [runtime exception = {}]\n", e)
             throw e
           }
-          case Success(res) => {
-            appLogError("authentication can't be perform: unknown authentication result [result = {}], please, email to the technical support\n", res)
+          case Success(unknownRes) => {
+            appLogError("authentication can't be perform: unknown authentication result [result = {}], please, email to the technical support\n", unknownRes)
             throw new RuntimeException("unknown authentication result")
           }
         }
@@ -119,30 +119,4 @@ object loginManager {
       })
     } yield result
   }
-
-  //chain to perform the main authentication process
-  private def chainOld(lcImplIn: LoginContextImpl)(implicit request: Request[AnyContent]): Try[Int] = {
-    implicit val lcImpl = lcImplIn
-    for {
-      dummy <- Try({
-        if (lcImpl.getStatus == AUTH_SUCCESS_STATUS || lcImpl.getStatus == AUTH_FAIL_STATUS) {
-          appLogError("the authentication process is stopped: the login process has already completed [login context = {}]\n", lcImpl)
-          throw new IllegalStateException("the login process has already completed")
-        }
-      })
-      authenticator <- Try({
-        lcImpl.getAuthenticator.getOrElse(authenticators.filter(_.isYours).headOption.fold[Authenticator]({
-          appLogError("the authentication process is stopped: there aren't authenticators to process the login request " +
-            "[login context = {}]\n", lcImpl)
-          throw new IllegalStateException("there aren't authenticators to process the login request")
-        })(a => {
-          appLogTrace("selected a new authenticator [authenticator = {}]\n", a)
-          lcImpl.setAuthenticator(a)
-          a
-        }))
-      })
-      result <- Try(authenticator.`do`)
-    } yield result
-  }
-
 }

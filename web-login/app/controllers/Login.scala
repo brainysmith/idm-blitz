@@ -20,7 +20,7 @@ object Login extends Controller {
   def getPage = Action {implicit request =>{
       Ok(views.html.login(basicForm))
     }
-    appLogDebug("Logging...\n")
+    appLogDebug("Logging...")
     Ok(views.html.login(basicForm))
   }
 
@@ -34,6 +34,8 @@ object Login extends Controller {
           Option(basic(form))
             .fold[Result](BadRequest(""))(implicit lc => {
                 loginManager(call => {
+                  //authentication is successful
+
                   Ok("Good! Lgn: " + form._1 + ", pswd: " + form._2 + ".")
                 })(errors => {
                   BadRequest(views.html.login(errors.foldLeft(basicForm.fill((form._1, "")))((frm, msg) => frm.withGlobalError(Messages(msg)))))

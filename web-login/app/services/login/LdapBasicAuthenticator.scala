@@ -5,17 +5,21 @@ import com.blitz.idm.app._
 import Authenticator._
 
 import com.unboundid.util.ssl.{TrustAllTrustManager, SSLUtil}
-import com.unboundid.ldap.sdk.{BindResult, LDAPConnectionOptions, LDAPConnectionPool, LDAPConnection}
+import com.unboundid.ldap.sdk._
 import scala.util.Try
+import scala.util.Failure
+import scala.util.Success
+import com.unboundid.ldap.sdk.controls.{PasswordExpiredControl, PasswordExpiringControl}
 
 /**
   */
 class LdapBasicAuthenticator extends Authenticator {
+  import LdapBasicAuthenticator._
 
   private var options: Map[String, String] = _
   private var pool: LDAPConnectionPool = _
 
-  //configurable options
+  //configurable options //todo: thinking about it
   private var host: String = _
   private var port: Int = _
   private var useSSL: Boolean = _
@@ -26,7 +30,7 @@ class LdapBasicAuthenticator extends Authenticator {
 
 
 
-  //todo: do it
+  //todo: change implementation
   @Override
   def init(options: Map[String, String]): Authenticator = {
     appLogTrace("initializing the ldap authenticator [options={}]", options)
@@ -34,6 +38,7 @@ class LdapBasicAuthenticator extends Authenticator {
 
     host = options.getOrElse("host", null)
     port = 1636
+    useSSL = true
     autoReconnect = true
 
     var connection: LDAPConnection = null
@@ -65,46 +70,104 @@ class LdapBasicAuthenticator extends Authenticator {
 
   @Override
   def `do`(implicit lc: LoginContext, request: Request[AnyContent]): Int = {
-    appLogTrace("doing the basic authentication by ldap [login context={}]", lc)
+    appLogTrace("attempting to authenticate user by LDAP server [login context: {}]", lc)
 
     //perform login for all credentials
-    lc.getCredentials.foldLeft(FAIL)((prevRes, crl) => {
-      (prevRes, crl) match {
-        case (FAIL, basicCrl: BasicCredentials) => {
 
-          val entry = for {
-            connection <- Try({pool.getConnection})
-            userDn <- Try({
-              interpolate(userDnPattern, Map("USERNAME" -> basicCrl.lgn))
-            })
-            bindRes <- Try({
-              connection.bind(userDn, basicCrl.pswd)
-            })
-            dummy <- Try({
-              //todo check result
-              if (!bindRes.getResultCode.isConnectionUsable) {
-                throw new RuntimeException("change me")
-              }
-            })
-            entry <- Try({
-              //todo: add attributes
-              connection.getEntry(userDn)
-            })
-          } yield entry
+    Try(pool.getConnection) match {
+      case Success(connection) => {
+        appLogTrace("got a ldap connection from the pool")
 
-          entry
+        val authRes = lc.getCredentials.foldLeft(FAIL)((prevRes, crl) => {
+          (prevRes, crl) match {
+            case (FAIL, basicCrl: BasicCredentials) => {
+                  val userDn = interpolate(userDnPattern, Map("USERNAME" -> basicCrl.lgn))
+                  val tEntry = for {
+                    tBind <- Try({
+                      appLogTrace("try to bind to LDAP server [userDn: {}]", userDn)
+                      val bindReq = new SimpleBindRequest(userDn, basicCrl.pswd)
+                      connection.bind(bindReq)
+                    })
+                    dummy <- Try({
+                      if (!tBind.getResultCode.isConnectionUsable) {
+                        appLogError("cannot bind to LDAP server: the connection isn't usable [resultCode: {}]", tBind.getResultCode)
+                        throw new RuntimeException("cannot bind to LDAP server: the connection isn't usable")
+                      }
+                    })
+                    tEntry <- Try({
+                      appLogTrace("getting the user's entry [userDn: {}]", userDn)
 
+                      //todo: add needed attributes
+                      connection.getEntry(userDn)
+                    })
+                  } yield tEntry
 
+                  //analise the result
+                  tEntry match {
+                    case Success(resEntity) => {
+                      //todo: add user attributes to lc
 
-          2
-        }
-        case _ => prevRes
+                      val authRes = SUCCESS
+                      resEntity.getControls.foreach(control => {
+                        appLogTrace("got a control [name={}, oid={}]", control.getControlName, control.getOID)
+                        control match {
+                          case expiringControl: PasswordExpiringControl => {
+                            appLogTrace("the user's password will expire in the near future [after {} sec]",
+                              expiringControl.getSecondsUntilExpiration)
+
+                            //todo: do it
+                            throw new UnsupportedOperationException("hasn't realized yet")
+                          }
+                          case expiredControl: PasswordExpiredControl => {
+                            appLogTrace("the user's password has expired")
+
+                            //todo: do it
+                            throw new UnsupportedOperationException("hasn't realized yet")
+                          }
+                          case _ => {
+
+                          }
+                        }
+                      })
+
+                      appLogDebug("authentication by LDAP server is successful [credentials: {}]", basicCrl)
+                      authRes
+                    }
+                    case Failure(e) => {
+                      e match {
+                        case le: LDAPException => {
+                          appLogDebug("authentication by LDAP server fails [credentials: {}, error: {}]", basicCrl, le)
+
+                          //todo: check the controls
+
+                          errorMapper.get(le.getResultCode).fold({
+                            lc + (UNMAPPED_ERROR_MSG_PREFIX + le.getResultCode)
+                          })(lc +)
+                          FAIL
+                        }
+                        case _ => {
+                          appLogError("can't perform authentication be LDAP server. Unknown error has occurred: {}", e)
+                          throw e
+                        }
+                      }
+                    }
+                  }
+            }
+            case _ => prevRes
+          }
+        })
+
+        //release the connection
+        pool.releaseConnection(connection)
+        authRes
       }
-    })
+      case Failure(e) => {
+        //can't get connection
+        appLogError("can't get a ldap connection from the pool")
+        throw e
+      }
+    }
 
-
-    //pool.releaseConnection(connection)
-    1
   }
 
   private def interpolate(text: String, vars: Map[String, String]) =
@@ -115,4 +178,14 @@ class LdapBasicAuthenticator extends Authenticator {
     sb.append("options -> ").append(options)
     sb.append(")").toString()
   }
+}
+
+private object LdapBasicAuthenticator {
+  val UNMAPPED_ERROR_MSG_PREFIX = "LdapBasicAuthenticator.error."
+
+  //todo: add mapper for password expired
+  val errorMapper = Map(ResultCode.NO_SUCH_OBJECT -> LoginErrors.NO_USER_FOUND,
+                        ResultCode.INVALID_CREDENTIALS -> LoginErrors.INVALID_CREDENTIALS,
+                        ResultCode.UNWILLING_TO_PERFORM -> LoginErrors.ACCOUNT_IS_LOCKED)
+
 }

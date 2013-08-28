@@ -20,8 +20,8 @@ class ApplicationSpec extends Specification {
       running(FakeApplication()) {
         appLogTrace("Start basic login test")
 
-        val data: Map[String, Seq[String]] = Map("lgn" -> Seq("lgnTest"),
-                                                 "pswd" -> Seq("pswdTest"))
+        val data: Map[String, Seq[String]] = Map("lgn" -> Seq("mvanin"),
+                                                 "pswd" -> Seq("oracle_1"))
 
         val request = FakeRequest(POST, routes.Login.basicLogin().url)
         val result = route(request.withHeaders(FORM_URLENCODED_CONTENT_TYPE), data).get
