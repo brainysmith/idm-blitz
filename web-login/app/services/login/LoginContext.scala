@@ -1,6 +1,6 @@
 package services.login
 
-import play.api.mvc.{AnyContent, Request}
+import play.api.mvc.{Call, AnyContent, Request}
 import scala.collection.mutable
 import java.security.Principal
 
@@ -8,12 +8,6 @@ import java.security.Principal
  * Interface of the authentication process.
   */
 trait LoginContext {
-
-  /**
-   * Return the current HTTP request.
-   * @return request.
-   */
-  def getRequest: Request[AnyContent]
 
   /**
    * Returns the current login method of the authentication process.
@@ -86,7 +80,7 @@ trait LoginContext {
    * Returns the obligation which must be executed before the authentication process will be completed.
    * @return string representing the obligation.
    */
-  def getObligation: Option[String]
+  def getObligation: Option[Call]
 
   /**
    * Array of the message's keys which will be sent to the client.
@@ -103,23 +97,16 @@ trait LoginContext {
 }
 
 object LoginContext {
-  //Login`s method constants
-  val BASIC_METHOD = 1
-  val SMART_CARD_METHOD = 2
-  val OTP_METHOD = 4
+  import Authenticator._
 
   //Login`s status constants
   val INIT_STATUS = -1
-  val SUCCESS_STATUS = 0
-  val FAIL_STATUS = 1
-  val ERROR_STATUS = 2
-  val PRE_AUTH_STATUS = 3
-  val DO_OBLIGATION_STATUS = 4
+  val AUTH_SUCCESS_STATUS = 0
+  val AUTH_FAIL_STATUS = 1
+  val DO_PRE_AUTH_STATUS = 2
+  val DO_OBLIGATION_STATUS = 3
 
-  //Obligation`s constants
-  val OTP_OBLIGATION = "otp_required"
-
-  def basic(lgnAndPwd: (String, String))(implicit request : Request[AnyContent]): LoginContext = {
+  def basic(lgnAndPwd: (String, String)): LoginContext = {
     new LoginContextImpl(BASIC_METHOD) + Credentials(lgnAndPwd)
   }
 
@@ -128,7 +115,7 @@ object LoginContext {
   }
 }
 
-private class LoginContextImpl(private val method: Int)(implicit val request: Request[AnyContent]) extends LoginContext {
+private[login] class LoginContextImpl(private val method: Int) extends LoginContext {
   import LoginContext._
 
   private val params = new mutable.HashMap[String, String]()
@@ -137,19 +124,30 @@ private class LoginContextImpl(private val method: Int)(implicit val request: Re
   private val prls = new mutable.ArrayBuffer[Principal]()
 
   private var status = INIT_STATUS
-  private var completedMethods: Option[Int] = None
   private var authenticator: Option[Authenticator] = None
-  private var obligation: Option[String] = None
 
-  def getRequest: Request[AnyContent] = request
+  //todo: thinking about it
+  private var completedMethods: Option[Int] = None
+  private var obligation: Option[Call] = None
 
   def getStatus: Int = status
+  def setStatus(iStatus: Int): LoginContextImpl = {
+    status = iStatus
+    this
+  }
 
   def getMethod: Int = method
-
   def getCompletedMethods: Option[Int] = completedMethods
 
   def getAuthenticator: Option[Authenticator] = authenticator
+  def setAuthenticator(iAuthenticator: Authenticator): LoginContextImpl = {
+    authenticator = Option(iAuthenticator)
+    this
+  }
+  def clearAuthenticator: LoginContextImpl = {
+    authenticator = None
+    this
+  }
 
   def getCredentials: Array[Credentials] = crls.toArray
 
@@ -165,7 +163,7 @@ private class LoginContextImpl(private val method: Int)(implicit val request: Re
     this
   }
 
-  def getObligation: Option[String] = obligation
+  def getObligation: Option[Call] = obligation
 
   def getMessages: Array[String] = msgs.toArray
 
@@ -179,5 +177,18 @@ private class LoginContextImpl(private val method: Int)(implicit val request: Re
   def +(principal: Principal): LoginContext = {
     prls += principal
     this
+  }
+
+  override def toString: String = {
+    val sb =new StringBuilder("LoginContextImpl(")
+    sb.append("method -> ").append(method)
+    sb.append(", ").append("status -> ").append(status)
+    sb.append(", ").append("authenticator -> ").append(authenticator)
+    sb.append(", ").append("credentials -> ").append(crls.toList)
+    sb.append(", ").append("parameters -> ").append(params.toMap)
+    sb.append(", ").append("obligation -> ").append(obligation)
+    sb.append(", ").append("messages -> ").append(msgs.toList)
+    sb.append(", ").append("principals -> ").append(prls.toList)
+    sb.append(")").toString()
   }
 }

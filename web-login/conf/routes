@@ -4,6 +4,7 @@
 
 # Login page
 GET     /login                             controllers.Login.getPage
+#GET     /login/basic                       controllers.Login.getPage
 POST    /login/basic                       controllers.Login.basicLogin
 
 # Map static resources from the /public folder to the /assets URL path

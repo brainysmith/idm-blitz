@@ -9,6 +9,7 @@ object ApplicationBuild extends Build {
   val appVersion      = "1.0-SNAPSHOT"
 
   val appDependencies = Seq(
+    "com.google.guava" % "guava" % "13.0.1" % "test"
 /*    jdbc,
     anorm*/
   )
@@ -22,7 +23,7 @@ object ApplicationBuild extends Build {
   )).settings(
       {
         requireJsFolder := "js"
-        requireJs ++= Seq("main.js", "login.js", "/utils/placeholder.js")
+        requireJs ++= Seq("conf.js", "ie.js", "main.js", "login.js", "/utils/placeholder.js")
         externalIvySettingsURL(url(System.getProperty("ivy.settings.path")))
       }
   )

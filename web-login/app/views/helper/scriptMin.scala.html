@@ -1,0 +1,2 @@
+@(module: String, jsFolder: String = "js", minPrefix: String = ".min")
+<script src='@{routes.Assets.at(jsFolder + "/" + (if(play.api.Mode.Prod == play.api.Play.maybeApplication.map(_.mode).getOrElse(play.api.Mode.Dev)) module.replace(module, module + minPrefix + ".js") else module + ".js"))}' type="text/javascript"></script>

@@ -34,7 +34,7 @@ object Logger {
       loggerCtx.putProperty("dir.logs", config.main.logger.dirOfLogs)
 
       try {
-        Option(cl.getResource("logger.xml")).fold[Unit]{
+        Option(cl.getResource("idm-logger.xml")).fold[Unit]{
           println("logger.xml not found")
           throw new IllegalStateException("logger.xml not found")
         }(configurator.doConfigure(_))

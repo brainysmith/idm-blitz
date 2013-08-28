@@ -4,10 +4,9 @@ import play.api.mvc._
 import play.api.data.Forms._
 import play.api.data.Form
 import services.login.LoginContext._
-import services.login.{loginManager, LoginContext}
+import services.login.loginManager
 import com.blitz.idm.app._
-import org.slf4j.LoggerFactory
-
+import play.api.i18n.Messages
 
 object Login extends Controller {
 
@@ -34,9 +33,11 @@ object Login extends Controller {
         form => {
           Option(basic(form))
             .fold[Result](BadRequest(""))(implicit lc => {
-                loginManager(request =>
+                loginManager(call => {
                   Ok("Good! Lgn: " + form._1 + ", pswd: " + form._2 + ".")
-                )(request => BadRequest(""))
+                })(errors => {
+                  BadRequest(views.html.login(errors.foldLeft(basicForm.fill((form._1, "")))((frm, msg) => frm.withGlobalError(Messages(msg)))))
+                })
               }
             )
         }

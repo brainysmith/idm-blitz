@@ -1,6 +1,6 @@
 console.log('start main.js');
 
-define(['jquery', 'kendo', 'domReady'],
+define(['jquery', 'conf', 'kendo', 'domReady'],
     function ($) {
         console.log('defining the app module');
 
@@ -28,12 +28,12 @@ define(['jquery', 'kendo', 'domReady'],
                 $('#errMsg').html(mainMsg("main.errPP.defaultError"));
             }
             errPP.open();
-        }
+        };
 
         //default ajax error handler
         var ajaxErrorHandler = function (event, jqxhr, settings, exception) {
             showError();
-        }
+        };
         $(document).ajaxError(ajaxErrorHandler);
 
         return {

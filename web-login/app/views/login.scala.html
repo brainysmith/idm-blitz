@@ -20,23 +20,21 @@
         <div class="">
 
             @inputText(loginForm("lgn"),
-                '_id -> "lgn",
                 '_label -> Messages("login.loginFm.lgn.label"),
                 '_showErrors -> true,
                 '_showConstraints -> false,
                 'placeholder -> Messages("login.loginFm.lgn.placeholder"))
 
             @inputPassword(loginForm("pswd"),
-                '_id -> "pswd",
                 '_label -> Messages("login.loginFm.pswd.label"),
                 '_showErrors -> true,
                 '_showConstraints -> false,
                 'placeholder -> Messages("login.loginFm.pswd.placeholder"))
 
-            @if(!loginForm.errors("").isEmpty) {
+            @if(loginForm.hasGlobalErrors) {
                 <dl class="line-msgs">
                     <dt></dt>
-                    @for(error <- loginForm.errors("")) {
+                    @for(error <- loginForm.globalErrors) {
                         <dd class="error">@error.message</dd>
                     }
                 </dl>

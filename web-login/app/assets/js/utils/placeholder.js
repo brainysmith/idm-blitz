@@ -1,30 +1,34 @@
-$(document).ready(function(){
-    $('input[placeholder]').each(function(){
+console.log('start placeholder.js');
 
-        // init
-        var placeholder = $(this).attr('placeholder');
-        if ($(this).attr('type') == 'password') {
-            $(this).addClass('password-placeholder').attr('type','text');
-        }
-        $(this).val(placeholder)
+define(['jquery', 'main', 'domReady'],
+    function ($) {
+        $('input[placeholder]').each(function(){
 
-        // focus
-        .focus(function(){
-            if ($(this).hasClass('password-placeholder')) {
-                $(this).attr('type','password');
+            // init
+            var placeholder = $(this).attr('placeholder');
+            if ($(this).attr('type') == 'password') {
+                $(this).addClass('password-placeholder').attr('type','text');
             }
-            if ($(this).val() == placeholder) {
-                $(this).val('');
-            }
-        })
+            $(this).val(placeholder)
 
-        // blur
-        .blur(function(){
-            if ($(this).val() == '') {
-                $(this).val(placeholder);
-                $(this).attr('type','text');
-            }
-        })
+                // focus
+                .focus(function(){
+                    if ($(this).hasClass('password-placeholder')) {
+                        $(this).attr('type','password');
+                    }
+                    if ($(this).val() == placeholder) {
+                        $(this).val('');
+                    }
+                })
+
+                // blur
+                .blur(function(){
+                    if ($(this).val() == '') {
+                        $(this).val(placeholder);
+                        $(this).attr('type','text');
+                    }
+                })
+        });
     });
-});
 
+console.log('end placeholder.js');

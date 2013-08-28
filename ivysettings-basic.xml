@@ -3,11 +3,16 @@
 	<settings defaultResolver="custom" />
 	<resolvers>
 		<filesystem name="playLocal" checkmodified="true">
-        	<ivy pattern="${play.home}/repository/local/[organisation]/[module]/(scala_[scalaVersion]/)(sbt_[sbtVersion]/)[revision]/[type]s/[artifact](-[classifier]).[ext]" />
-        	<artifact pattern="${play.home}/repository/local/[organisation]/[module]/(scala_[scalaVersion]/)(sbt_[sbtVersion]/)[revision]/[type]s/[artifact](-[classifier]).[ext]" />
-    	</filesystem>
+        		<ivy pattern="${play.home}/repository/local/[organisation]/[module]/(scala_[scalaVersion]/)(sbt_[sbtVersion]/)[revision]/[type]s/[artifact](-[classifier]).[ext]" />
+        		<artifact pattern="${play.home}/repository/local/[organisation]/[module]/(scala_[scalaVersion]/)(sbt_[sbtVersion]/)[revision]/[type]s/[artifact](-[classifier]).[ext]" />
+    	        </filesystem>
+		<filesystem name="repo" checkmodified="true">
+			<ivy pattern="${basedir}/repo/[organization]/[module]/[revision]/[type]/[artifact](-[classifier]).[ext]"/>
+			<artifact pattern="${basedir}/repo/[organization]/[module]/[revision]/[type]/[artifact](-[classifier]).[ext]"/>
+		</filesystem>
 		<ibiblio name="test" m2compatible="true" root="https://build.shibboleth.net/nexus/content/groups/public/"/>
 		<chain name="custom" returnFirst="true" checkmodified="true">
+			<resolver ref="repo"/>
 			<resolver ref="playLocal" />
 			<resolver ref="default" />
 			<resolver ref="test" />

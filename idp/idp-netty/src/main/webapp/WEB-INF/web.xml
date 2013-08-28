@@ -36,7 +36,7 @@
     <!-- Filter for supporting http-load balancing (nginx-server). (Comment it for disabling). -->
     <filter>
         <filter-name>LoadBalancingFilter</filter-name>
-        <filter-class>ru.atc.esia.idp.lb.LoadBalancingFilter</filter-class>
+        <filter-class>com.blitz.idm.idp.lb.LoadBalancingFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>LoadBalancingFilter</filter-name>
@@ -57,7 +57,7 @@
     <!-- Filter for caching session, login and logout context in external storage at the end of request . -->
     <filter>
         <filter-name>ContextCacheUpdater</filter-name>
-        <filter-class>ru.atc.esia.idp.storage.StorageServiceFilter</filter-class>
+        <filter-class>com.blitz.idm.idp.storage.StorageServiceFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>ContextCacheUpdater</filter-name>
@@ -67,7 +67,7 @@
     <!-- ESIA context initializer -->
     <filter>
         <filter-name>ContextInitializer</filter-name>
-        <filter-class>ru.atc.esia.core.api.context.ContextFilter</filter-class>
+        <filter-class>ContextFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>ContextInitializer</filter-name>
@@ -173,7 +173,7 @@
    <!-- Servlet for redirecting to external authentication server -->
     <servlet>
         <servlet-name>ExternalAuthnSystemLoginHandler</servlet-name>
-        <servlet-class>ru.atc.esia.rtk.idp.authn.provider.ExternalSystemAuthnServlet</servlet-class>
+        <servlet-class>com.blitz.idm.idp.netty.authn.provider.ExternalSystemAuthnServlet</servlet-class>
         <load-on-startup>3</load-on-startup>
     </servlet>
 
@@ -203,7 +203,7 @@
     <!-- Servlet for displaying cache usage. (Comment it for disabling). -->
     <servlet>
       <servlet-name>MemoryConsumingHandler</servlet-name>
-      <servlet-class>ru.atc.esia.idp.system.MemoryConsumingServlet</servlet-class>
+      <servlet-class>com.blitz.idm.idp.system.MemoryConsumingServlet</servlet-class>
     </servlet>
     <servlet-mapping>
       <servlet-name>MemoryConsumingHandler</servlet-name>

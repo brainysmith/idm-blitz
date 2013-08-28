@@ -1,9 +1,9 @@
 console.log('start login.js');
 
-requirejs(['jquery', 'kendo', 'main'],
-    function ($, kendo, main) {
+require(['ie', 'main', 'conf', 'jquery'],
+    function (ie, main, conf, $) {
         console.log('running the login module');
-        console.log(main);
+        console.log(ie);
     });
 
 console.log('end login.js');

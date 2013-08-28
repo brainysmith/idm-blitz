@@ -11,3 +11,5 @@ login.loginFm.lgn.placeholder=Login
 login.loginFm.pswd.label=Password
 login.loginFm.pswd.placeholder=Password
 login.loginFm.btn.submit=Login
+
+BasicAuthenticator.wrongUserNameOrPassword=The username or password you entered is incorrect.

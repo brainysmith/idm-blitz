@@ -9,5 +9,6 @@
         <dependency org="ch.qos.logback" name="logback-classic" rev="1.0.7"/>
         <dependency org="org.codehaus.jackson" name="jackson-core-asl" rev="1.9.10"/>
         <dependency org="org.codehaus.jackson" name="jackson-mapper-asl" rev="1.9.10"/>
+        <dependency org="berkeleydb" name="je" rev="5.0.84"/>
     </dependencies>
 </ivy-module>
