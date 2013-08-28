@@ -9,6 +9,7 @@ import org.codehaus.jackson.map.Module.SetupContext
 import java.io.StringWriter
 import org.codehaus.jackson.map.`type`.TypeFactory
 import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
 
 
 /**
@@ -43,6 +44,7 @@ object JBool {
 }
 
 case class JArr(v: Array[JVal]) extends JVal {
+  def this(b: mutable.Buffer[JVal]) = this(b.toArray)
   val value = v.clone()
   def apply[B <: JVal](idx: Int): B = value(idx).asInstanceOf[B]
 }
@@ -77,41 +79,29 @@ private[json] class JSerializer extends JsonSerializer[JVal]{
   }
 }
 
-class JObjStart
-object JObjStart extends JObjStart
-class JObjEnd
-object JObjEnd extends JObjEnd
-case class JObjField(name: String) //what about value
-
-class JArrStart
-object JArrStart
-class JArrEnd
-object JArrEnd
+object JElemType extends Enumeration {
+  type JElemType = Value
+  val SIMPLE, OBJECT, ARRAY, FIELD = Value
+}
+import JElemType._
 
 trait JVisitor {
-  def visit(e: JObjStart)
-  def visit(e: JObjEnd)
-  def visit(e: JObjField)
-
-  def visit(e: JArrStart)
-  def visit(e: JArrEnd)
-
-  def visit(e: JNum)
-  def visit(e: JStr)
-  def visit(e: JBool)
+  def visit(l: JElemType, s: AnyRef)
+  def visit(l: JElemType)(f: AnyRef=>JVal)
+  def visit(e: JVal)
 
   def produce: JVal
 }
 
 class JValVisitor extends JVisitor {
 
-  //0 - Undefined, 1 - object, 2 - array, 3 - field
-  var level = 0
-  val levels = mutable.Stack[(Int, AnyRef)]()
+  var level = SIMPLE
+  val levels = mutable.Stack[(JElemType, AnyRef)]()
   var cur: AnyRef = null
   var finalElem: JVal = _
 
-  private def popLevel() {
+  @inline
+  private def popLevel = {
     val old = cur
     levels.pop() match {
       case (l, c) => level = l; cur = c
@@ -119,67 +109,52 @@ class JValVisitor extends JVisitor {
     old
   }
 
-  def visit(e: JObjStart) {
-    if(level != 0) {
-      levels.push((level, cur))
-    }
-    cur = mutable.Seq[(String, JVal)]()
-    level = 1
+  @inline
+  private def fieldEnd(v: JVal) {
+    val fieldName = popLevel.asInstanceOf[String]
+    if(level != OBJECT)
+      throw new IllegalStateException("Mailformed JSON. After finishing a filed found level = " + level + " on the stack")
+    cur.asInstanceOf[mutable.ListBuffer[(String, JVal)]] += ((fieldName, v))
   }
 
-  def visit(e: JObjEnd) {
-    if(level != 1) {
-      throw new IllegalStateException("Malformed JSON. Called JObjEnd but current level is " + level)
+  def visit(l: JElemType, s: AnyRef) {
+    if(level != SIMPLE) {
+      levels.push((level, cur))
     }
-    val obj = JObj(cur.asInstanceOf[mutable.Seq[(String, JVal)]])
+    cur = s
+    level = l
+  }
+
+  def visit(l: JElemType)(f: AnyRef=>JVal) {
+    if(level != l) {
+      throw new IllegalStateException("Malformed JSON. Called for level '" + l + "' but current level is " + level)
+    }
+    val value = f(cur)
     if(levels.isEmpty) {
-      finalElem = obj
+      finalElem = value
     }
     else {
-      popLevel()
+      popLevel
       level match {
-        case 2 => cur.asInstanceOf[mutable.Seq[JVal]] :+ obj
-        case 3 =>
-        case (_ @ l, _) => throw new IllegalStateException("Malformed JSON. After JObjEnd on stack found level = " + l)
-      }
-    }
-
-  }
-
-  def visit(e: JObjField) {
-    if(level != 0) {
-      levels.push((level, cur))
-    }
-    cur = e.name
-    level = 3
-  }
-
-  def visit(e: JArrStart) {}
-
-  def visit(e: JArrEnd) {}
-
-  def visit(e: JNum) {
-    level match {
-      case 2 => cur.asInstanceOf[Seq[JVal]] :+ e
-      case 3 => {level = 1
-        cur = levels.pop() match {
-          case (1, s) => s.asInstanceOf[mutable.Seq[(String, JVal)]] :+ (cur, e)
-          case (_ @ l, _) => throw new IllegalStateException("Malformed JSON. After finishing filed on stack found level = " + l)
-        }
+        case ARRAY => cur.asInstanceOf[mutable.ListBuffer[JVal]] += value
+        case FIELD => fieldEnd(value)
+        case _ @ lvl => throw new IllegalStateException("Malformed JSON. After ending level '" + lvl + "' on stack found level = " + lvl)
       }
     }
   }
 
-  private def fieldEnd(v: JVal) {
-    val fieldName = popLevel()
-    if(level != 1)
-      throw new IllegalStateException("Mailformed JSON. After finishing a filed found level = " + level + " on the stack")
-    cur.asInstanceOf[mutable.Seq[(String, JVal)]] :+ (fieldName, v)
+  def visit(e: JVal) {
+    if(level == SIMPLE) {
+      finalElem = e
+    }
+    else {
+      level match {
+        case ARRAY => cur.asInstanceOf[mutable.ListBuffer[JVal]] += e
+        case FIELD => fieldEnd(e)
+        case _ @ lvl => throw new IllegalStateException("Malformed JSON. After JNum on stack found level = " + lvl)
+      }
+    }
   }
-
-  def visit(e: JStr) {}
-
-  def visit(e: JBool) {}
 
   def produce: JVal = finalElem
 }
@@ -210,12 +185,20 @@ private[json] class JDeserializer(factory: TypeFactory, klass: Class[_]) extends
     value
   }
 
+  @inline
   def accept(tkn: JsonToken, jp: JsonParser, visitor: JVisitor) {
     tkn match {
-      case JsonToken.START_OBJECT => visitor.visit(JObjStart)
-      case JsonToken.FIELD_NAME => visitor.visit(new JObjField(jp.getCurrentName))
-      case JsonToken.END_OBJECT => visitor.visit(JObjEnd)
-      case JsonToken.VALUE_NUMBER_INT => visitor.visit(JNum(jp.getIntValue))
+      case JsonToken.START_OBJECT => visitor.visit(OBJECT, new mutable.ListBuffer[(String, JVal)]())
+      case JsonToken.FIELD_NAME => visitor.visit(FIELD, jp.getCurrentName)
+      case JsonToken.END_OBJECT => visitor.visit(OBJECT)(s => new JObj(s.asInstanceOf[mutable.ListBuffer[(String, JVal)]]))
+      case JsonToken.START_ARRAY => visitor.visit(ARRAY, new mutable.ListBuffer[JVal]())
+      case JsonToken.END_ARRAY => visitor.visit(ARRAY)(s => new JArr(s.asInstanceOf[mutable.ListBuffer[JVal]]))
+      case JsonToken.VALUE_NUMBER_INT => visitor.visit(JNum(jp.getDecimalValue))
+      case JsonToken.VALUE_NUMBER_FLOAT => visitor.visit(JNum(jp.getDecimalValue))
+      case JsonToken.VALUE_NULL => visitor.visit(JNull)
+      case JsonToken.VALUE_FALSE => visitor.visit(JBool(jp.getBooleanValue))
+      case JsonToken.VALUE_TRUE => visitor.visit(JBool(jp.getBooleanValue))
+      case JsonToken.VALUE_STRING => visitor.visit(JStr(jp.getText))
       case _ => throw new IllegalStateException("Found unknown token " + tkn)
     }
   }
