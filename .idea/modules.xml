@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/db-adapter-api/db-adapter-api.iml" filepath="$PROJECT_DIR$/db-adapter-api/db-adapter-api.iml" />
       <module fileurl="file://$PROJECT_DIR$/idp/idp-config/idp-config.iml" filepath="$PROJECT_DIR$/idp/idp-config/idp-config.iml" />
       <module fileurl="file://$PROJECT_DIR$/idp/idp-netty/idp-netty.iml" filepath="$PROJECT_DIR$/idp/idp-netty/idp-netty.iml" />
       <module fileurl="file://$PROJECT_DIR$/idp/netty-servlet-bridge/netty-servlet-bridge.iml" filepath="$PROJECT_DIR$/idp/netty-servlet-bridge/netty-servlet-bridge.iml" />
