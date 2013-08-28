@@ -54,7 +54,6 @@ public class HttpSessionThreadLocal {
         if (HttpSessionThreadLocal.get() == null) {
             HttpSessionImpl newSession = sessionStore.createSession();
             newSession.setMaxInactiveInterval(ServletBridgeConfig.get()
-                    // TODO
                     .getWebapp(IdpApp.name()).getSessionTimeout());
             sessionThreadLocal.set(sessionStore.createSession());
         }

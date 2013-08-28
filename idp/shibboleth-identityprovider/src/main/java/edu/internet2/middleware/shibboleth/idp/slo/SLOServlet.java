@@ -81,24 +81,27 @@ public class SLOServlet extends HttpServlet {
             if (req.getParameter("status") != null) { //status query, response is JSON
                 log.debug("checkStatus...");
                 sloContext.checkTimeout();
-                PrintWriter writer = resp.getWriter();
-                writer.print("[");
+                StringBuilder html = new StringBuilder();
+                html.append("[");
                 Iterator<SingleLogoutContext.LogoutInformation> it =
                         sloContext.getServiceInformation().values().iterator();
                 log.debug("services found: " + sloContext.getServiceInformation().values().size());
                 while (it.hasNext()) {
                     LogoutInformation service = it.next();
-                    writer.print("{\"entityID\":\"");
-                    writer.print(service.getEntityID());
-                    writer.print("\",\"logoutStatus\":\"");
-                    writer.print(service.getLogoutStatus().toString());
-                    writer.print("\"}");
+                    html.append("{\"entityID\":\"");
+                    html.append(service.getEntityID());
+                    html.append("\",\"logoutStatus\":\"");
+                    html.append(service.getLogoutStatus().toString());
+                    html.append("\"}");
                     log.debug("entityID:" + service.getEntityID() + ", logoutStatus:" + service.getLogoutStatus().toString());
                     if (it.hasNext()) {
-                        writer.print(",");
+                        html.append(",");
                     }
                 }
-                writer.print("]");
+                html.append("]");
+                log.debug("Logout status json sending: " + html.toString());
+                PrintWriter out = resp.getWriter();
+                out.print(html.toString());
             } else if (req.getParameter("action") != null) { //forward to handler
                 req.getRequestDispatcher(sloContext.getProfileHandlerURL()).forward(req, resp);
             } else if (req.getParameter("finish") != null) { //forward to handler
@@ -119,7 +122,7 @@ public class SLOServlet extends HttpServlet {
                 return;
             }
         } catch (Throwable e) {
-            log.error("Eror while processing logout: " + e.getMessage());
+            log.error("Error while processing logout: " + e.getMessage());
             e.printStackTrace();
         }
     }

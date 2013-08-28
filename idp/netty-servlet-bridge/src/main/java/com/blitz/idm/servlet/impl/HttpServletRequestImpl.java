@@ -65,9 +65,9 @@ public class HttpServletRequestImpl implements HttpServletRequest {
             throw new NullPointerException("Servlet request filter chain mustn't be null.");
         }
         this.servletContext = chain.getServletContext();
-        String temp_uri = uri;
+        String uri_munus_cxt_path = uri;
         if (uri == null) {
-            temp_uri = originalRequest.getUri().substring(servletContext.getContextPath().length());
+            uri_munus_cxt_path = originalRequest.getUri().substring(servletContext.getContextPath().length());
         }
         if (inputStream == null){
             this.inputStream = new ServletInputStreamImpl(originalRequest);
@@ -80,9 +80,9 @@ public class HttpServletRequestImpl implements HttpServletRequest {
         } else {
             this.reader = reader;
         }
-        this.queryStringDecoder = new QueryStringDecoder(temp_uri);
+        this.queryStringDecoder = new QueryStringDecoder(uri_munus_cxt_path);
         this.uriParser = new URIParser(chain);
-        this.uriParser.parse(temp_uri);
+        this.uriParser.parse(uri_munus_cxt_path);
         if (attributes == null){
             this.attributes = new HashMap<String, Object>();
         } else {
@@ -102,8 +102,10 @@ public class HttpServletRequestImpl implements HttpServletRequest {
 
     }
 
+    //  first request constructor
     public HttpServletRequestImpl(HttpRequest request, FilterChainImpl chain) {
         this(request, null,  null, null, null,  null, null, chain);
+
         log.debug("Http servlet request created :");
         log.debug("contextPath = " + getContextPath());
         log.debug("queryString = " + getQueryString());
@@ -112,6 +114,7 @@ public class HttpServletRequestImpl implements HttpServletRequest {
         log.debug("requestURL = " + getRequestURL().toString());
     }
 
+    // forwarded request constructor
     public HttpServletRequestImpl(HttpServletRequestImpl servletRequest, String forwardUri, FilterChainImpl chain) {
         this(servletRequest.getOriginalRequest(), forwardUri, servletRequest.inputStream, servletRequest.reader,
                 servletRequest.attributes, servletRequest.cookieDecoder, servletRequest.characterEncoding, chain);
@@ -220,9 +223,6 @@ public class HttpServletRequestImpl implements HttpServletRequest {
         int port = this.getServerPort();
         String urlPath = this.getRequestURI();
 
-        // String servletPath = req.getServletPath ();
-        // String pathInfo = req.getPathInfo ();
-
         url.append(scheme); // http, https
         url.append("://");
         url.append(this.getServerName());
@@ -231,10 +231,6 @@ public class HttpServletRequestImpl implements HttpServletRequest {
             url.append(':');
             url.append(this.getServerPort());
         }
-        // if (servletPath != null)
-        // url.append (servletPath);
-        // if (pathInfo != null)
-        // url.append (pathInfo);
         url.append(urlPath);
         return url;
     }

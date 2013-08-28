@@ -43,7 +43,12 @@ public class RequestDispatcherImpl implements RequestDispatcher {
                 throw new ServletBridgeRuntimeException(
                         "Servlet handler for forward path " + path + " not found");
             }
-            ServletRequest frwRequest = new HttpServletRequestImpl((HttpServletRequestImpl)request, webapp.getRelativePath(path), chain );
+            HttpServletRequestImpl initialRequest = (HttpServletRequestImpl)request;
+            String forwardPath = webapp.getRelativePath(path);
+            if (initialRequest.getQueryString() != null) {
+                forwardPath += "?" + initialRequest.getQueryString();
+            }
+            ServletRequest frwRequest = new HttpServletRequestImpl(initialRequest, forwardPath, chain );
             chain.doFilter(frwRequest, response);
 
 		} catch (Exception e) {
