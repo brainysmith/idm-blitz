@@ -16,12 +16,42 @@ import scala.collection.mutable.ListBuffer
  *
  */
 trait JVal {
+
+  /**
+   * Extract a value corresponding to filed name passed, from this object. It works only in JSON objects.
+   * @param filed - field name
+   * @return - value - if found;
+   *           JUndef - if not found.
+   */
+  def \(filed: String): JVal = JUndef
+
+  /**
+   * Serializes this object to string
+   * @return a string in JSON format
+   */
   def toJson: String = JacksonBridge.jVal2JsonString(this)
+
+  /**
+   * Unmarshal a JVal object into an object of type T.
+   * @param reader - reader being used to unmarshal
+   * @tparam T - type to unmarshal in
+   * @return - an unmarshalled object
+   */
+  def as[T](implicit reader: JReader[T]) = reader.read(this).fold[T](e => throw new IllegalStateException(e.toString()))(v => v)
+
 }
 
 object JVal {
+
+  /**
+   * Parses input string containing a JSON object.
+   * @param str - string containing a JSON object.
+   * @return - a JSON object
+   */
   def parseStr(str: String): JVal = JacksonBridge.jsonString2JVal(str)
 }
+
+case object JUndef extends JVal
 
 case object JNull extends JVal
 
@@ -44,14 +74,25 @@ object JBool {
 }
 
 case class JArr(v: Array[JVal]) extends JVal {
+
   def this(b: mutable.Buffer[JVal]) = this(b.toArray)
+
   val value = v.clone()
+
   def apply[B <: JVal](idx: Int): B = value(idx).asInstanceOf[B]
+
+  override def toString = v.mkString("JArr(", ", ", ")")
+
 }
 
 case class JObj(v: Seq[(String, JVal)]) extends JVal{
+
   val value = v.toMap
+
   def apply[B <: JVal](name: String): B = value(name).asInstanceOf[B]
+
+  override def \(field: String) = value.get(field).getOrElse(JUndef)
+
 }
 
 @JsonCachable
@@ -89,7 +130,6 @@ trait JVisitor {
   def visit(l: JElemType, s: AnyRef)
   def visit(l: JElemType)(f: AnyRef=>JVal)
   def visit(e: JVal)
-
   def produce: JVal
 }
 

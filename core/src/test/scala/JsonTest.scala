@@ -58,8 +58,60 @@ class JsonTest extends Specification {
         JVal.parseStr("[12, \"text\"]").toJson must be equalTo("[12,\"text\"]")
       }
 
-      "deserialization of an really complex object ({\"key1\":12,\"key2\":\"value2\",\"key3\":true,\"key4\":[10,\"value2\"],\"key5\":{\"key6\":17,\"key7\":37},\"key8\":null}) " in {
-        JVal.parseStr("{\"key1\":12,\"key2\":\"value2\",\"key3\":true,\"key4\":[10,\"value2\"],\"key5\":{\"key6\":17,\"key7\":37},\"key8\":null}").toJson must be equalTo("{\"key1\":12,\"key2\":\"value2\",\"key3\":true,\"key4\":[10,\"value2\"],\"key5\":{\"key6\":17,\"key7\":37},\"key8\":null}")
+      "deserialization of an really complex object ({\"key1\":12,\"key2\":\"value2\",\"key3\":true,\"key4\":[10,\"value2\",{\"key\":7}],\"key5\":{\"key6\":17,\"key7\":37},\"key8\":null}) " in {
+        JVal.parseStr("{\"key1\":12,\"key2\":\"value2\",\"key3\":true,\"key4\":[10,\"value2\", {\"key\":7}],\"key5\":{\"key6\":17,\"key7\":37},\"key8\":null}").toJson must be equalTo("{\"key1\":12,\"key2\":\"value2\",\"key3\":true,\"key4\":[10,\"value2\",{\"key\":7}],\"key5\":{\"key6\":17,\"key7\":37},\"key8\":null}")
+      }
+
+      val obj = JObj(Seq(
+        "name" -> JStr("John"),
+        "lastname" -> JStr("Smith"),
+        "address" -> JObj(Seq(
+          "city" -> JStr("Moscow")
+        ))
+      ))
+
+      "extracting 'firstname' from " + obj.toJson + " " in {
+        obj \ "firstname" must be equalTo JUndef
+      }
+
+      "extracting 'lastname' from " + obj.toJson + " " in {
+        obj \ "lastname" must be equalTo JStr("Smith")
+      }
+
+      "extracting 'city' from " + obj.toJson + " " in {
+        obj \ "address" \ "city" must be equalTo JStr("Moscow")
+      }
+
+      "marshalling Int " in {
+        Json.toJson(7) must be equalTo JNum(7)
+      }
+
+      "marshalling String " in {
+        Json.toJson("text") must be equalTo JStr("text")
+      }
+
+      "marshalling true " in {
+        Json.toJson(true) must be equalTo JBool(true)
+      }
+
+      "marshalling " + JArr(Array(JNum(1), JNum(2), JNum(3))) + " " in {
+        Json.toJson(Array(1,2,3)).toString must be equalTo JArr(Array(JNum(1), JNum(2), JNum(3))).toString
+      }
+
+      "unmarshalling Int " in {
+        JNum(7).as[Int] must be equalTo 7
+      }
+
+      "unmarshalling String " in {
+        JStr("text").as[String] must be equalTo "text"
+      }
+
+      "unmarshalling Boolean " in {
+        JBool(true).as[Boolean] must be equalTo true
+      }
+
+      "unmarshalling " + JArr(Array(JNum(1), JNum(2), JNum(3))) + " " in {
+        JArr(Array(JNum(1), JNum(2), JNum(3))).as[Array[Int]].toSeq.toString must be equalTo Array(1, 2, 3).toSeq.toString
       }
 
     }
