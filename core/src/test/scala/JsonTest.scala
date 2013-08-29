@@ -139,8 +139,13 @@ class JsonTest extends Specification {
         (objToTestAdding +! ("login", JStr("jsmith"))).toJson must be equalTo "{\"name\":\"John\",\"lastname\":\"Smith\",\"login\":\"jsmith\"}"
       }
 
+      val objToAdd = JObj(Seq(
+        "name" -> JStr("Mike"),
+        "login" -> JStr("msmith")
+      ))
+
       "adding or replace an existing filed to JObj " in {
-        (objToTestAdding +! ("name", JStr("Mike"))).toJson must be equalTo "{\"name\":\"Mike\",\"lastname\":\"Smith\"}"
+        (objToTestAdding ++! objToAdd).toJson must be equalTo "{\"name\":\"Mike\",\"lastname\":\"Smith\",\"login\":\"msmith\"}"
       }
 
     }
