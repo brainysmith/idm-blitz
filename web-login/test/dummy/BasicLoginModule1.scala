@@ -2,15 +2,15 @@ package dummy
 
 import play.api.mvc.{AnyContent, Request}
 import com.blitz.idm.app._
-import services.login.{BasicCredentials, LoginContext, Authenticator}
-import services.login.Authenticator._
+import services.login.{BasicCredentials, LoginContext, LoginModule}
+import LoginModule._
 
 /**
    */
-class BasicAuthenticator3 extends Authenticator {
+class BasicLoginModule1 extends LoginModule {
 
-   def init(options: Map[String, String]): Authenticator = {
-     appLogTrace("initializing the basic authenticator 3 [options={}]", options)
+   def init(options: Map[String, String]): LoginModule = {
+     appLogTrace("initializing the basic authenticator 1 [options={}]", options)
      this
    }
 

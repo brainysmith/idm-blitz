@@ -11,7 +11,7 @@ String requesterSP = sloContext.getServiceInformation().
 %>
 <html>
     <head>
-        <link title="style" href="<%= contextPath %>/webstatic/css/main.css" type="text/css" rel="stylesheet" />
+        <link title="style" href="<%= contextPath %>/css/main.css" type="text/css" rel="stylesheet" />
         <title>Shibboleth IdP Logout</title>
     </head>
     <body>

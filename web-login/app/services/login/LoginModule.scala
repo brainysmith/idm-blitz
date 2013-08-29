@@ -4,7 +4,7 @@ import play.api.mvc.{AnyContent, Request}
 
 /**
  */
-trait Authenticator {
+trait LoginModule {
   /**
    * The method is called by the application to indicate to a authenticator that it is being place into service.
    * The application calls this method exactly once after instantiating the authenticator.
@@ -12,7 +12,7 @@ trait Authenticator {
    * @param options - map of the options which was specified into the configuration.
    * @return - current instance of the authenticator
    */
-  def init(options: Map[String, String]): Authenticator
+  def init(options: Map[String, String]): LoginModule
 
 
   /**
@@ -44,7 +44,7 @@ trait Authenticator {
   def `do`(implicit lc: LoginContext, request: Request[AnyContent]): Int
 }
 
-object Authenticator {
+object LoginModule {
 
   //Login`s method constants
   val BASIC_METHOD = 1
@@ -56,7 +56,7 @@ object Authenticator {
   val FAIL = 1
   val PRE_AUTH_IS_REQUIRE = 2
 
-  def apply(className: String, params: Map[String, String]): Authenticator = {
+  def apply(className: String, params: Map[String, String]): LoginModule = {
     new AuthenticatorMeta(className, params).newInstance
   }
 }
@@ -73,8 +73,8 @@ private[login] class AuthenticatorMeta(private val className: String,
 
   private val order = options.get(ORDER_PARAM_NAME).fold(Int.MaxValue)(augmentString(_).toInt)
 
-  def newInstance: Authenticator = {
-    val instance: Authenticator = clsConstructor().asInstanceOf[Authenticator]
+  def newInstance: LoginModule = {
+    val instance: LoginModule = clsConstructor().asInstanceOf[LoginModule]
     instance.init(options)
     instance
   }

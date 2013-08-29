@@ -2,7 +2,7 @@ package services.login
 
 import play.api.mvc.{AnyContent, Request}
 import com.blitz.idm.app._
-import Authenticator._
+import LoginModule._
 
 import com.unboundid.util.ssl.{TrustAllTrustManager, SSLUtil}
 import com.unboundid.ldap.sdk._
@@ -13,8 +13,8 @@ import com.unboundid.ldap.sdk.controls.{PasswordExpiredControl, PasswordExpiring
 
 /**
   */
-class LdapBasicAuthenticator extends Authenticator {
-  import LdapBasicAuthenticator._
+class LdapBasicLoginModule extends LoginModule {
+  import LdapBasicLoginModule._
 
   private var options: Map[String, String] = _
   private var pool: LDAPConnectionPool = _
@@ -32,7 +32,7 @@ class LdapBasicAuthenticator extends Authenticator {
 
   //todo: change implementation
   @Override
-  def init(options: Map[String, String]): Authenticator = {
+  def init(options: Map[String, String]): LoginModule = {
     appLogTrace("initializing the ldap authenticator [options={}]", options)
 
 
@@ -180,7 +180,7 @@ class LdapBasicAuthenticator extends Authenticator {
   }
 }
 
-private object LdapBasicAuthenticator {
+private object LdapBasicLoginModule {
   val UNMAPPED_ERROR_MSG_PREFIX = "LdapBasicAuthenticator.error."
 
   //todo: add mapper for password expired

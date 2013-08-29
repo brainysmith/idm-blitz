@@ -2,17 +2,17 @@ package services.login
 
 import play.api.mvc.{AnyContent, Request}
 import com.blitz.idm.app._
-import Authenticator._
+import LoginModule._
 
 /**
   */
-class BasicAuthenticator extends Authenticator {
+class BasicLoginModule extends LoginModule {
 
   private val ERROR_WRONG_CREDENTIALS = "BasicAuthenticator.wrongUserNameOrPassword"
 
   private var options: Map[String, String] = _
 
-  def init(options: Map[String, String]): Authenticator = {
+  def init(options: Map[String, String]): LoginModule = {
     appLogTrace("initializing the basic authenticator [options={}]", options)
     this.options = options
     this

@@ -22,16 +22,28 @@
     <!--=================================
 		Building of database adapter
 		=================================-->
-    <target name="db-adapter.build" description="builds db-adapter">
-        <echo>Started building of db-adapter</echo>
+
+    <target name="db-adapter-api.init" description="initializes needed variables for build">
+        <property name="db-adapter-api.dir" value="${basedir}${fs}db-adapter-api"/>
+        <property name="db-adapter-api.src.dir" value="${db-adapter-api.dir}${fs}src${fs}main${fs}java"/>
+        <property name="db-adapter-api.target.dir" value="${db-adapter-api.dir}${fs}target"/>
+        <property name="db-adapter-api.target.classes" value="${db-adapter-api.target.dir}${fs}classes"/>
     </target>
 
-    <target name="db-adapter.test" description="test db-adapter" depends="db-adapter.build">
-        <echo>Started testing of db-adapter</echo>
+    <target name="db-adapter-api.build" description="builds db-adapter-api" depends="db-adapter-api.init">
+        <echo>Started building of db-adapter-api</echo>
+        <echo>Clean and then build will be executed</echo>
+        <antcall target="db-adapter-api.clean"/>
+        <echo>Clean finished and building started</echo>
+        <mkdir dir="${db-adapter-api.target.dir}"/>
+        <mkdir dir="${db-adapter-api.target.classes}"/>
+        <javac srcdir="${db-adapter-api.src.dir}" destdir="${db-adapter-api.target.classes}"/>
+        <jar destfile="${db-adapter-api.target.dir}${fs}db-adapter-api.jar" basedir="${db-adapter-api.target.classes}"/>
     </target>
 
-    <target name="db-adapter" description="build and test db-adapter" depends="db-adapter.test">
-        <echo>Started building and testing of db-adapter</echo>
+    <target name="db-adapter-api.clean" description="cleans db-adapter-api" depends="db-adapter-api.init">
+        <echo>Starting cleaning of db-adapter-api</echo>
+        <delete dir="${db-adapter-api.target.dir}"/>
     </target>
 
     <!--=================================

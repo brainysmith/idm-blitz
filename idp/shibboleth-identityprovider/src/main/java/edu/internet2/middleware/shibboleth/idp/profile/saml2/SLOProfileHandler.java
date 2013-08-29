@@ -341,6 +341,7 @@ public class SLOProfileHandler extends AbstractSAML2ProfileHandler {
             throw new ProfileException(msg);
         }
 
+        // gam TODO support partial logout (not delete all session but delete sp info from session)
         SingleLogoutContext sloContext =
                 buildSingleLogoutContext(initialRequest, idpSession);
         destroySession(sloContext);
@@ -352,9 +353,10 @@ public class SLOProfileHandler extends AbstractSAML2ProfileHandler {
             respondToInitialRequest(sloContext, initialRequest);
         } else {
             //skip logout question if the requesting sp is the only session participant
-            if (!idpInitiatedLogout && sloContext.getServiceInformation().size() == 1) {
+            //if (!idpInitiatedLogout && sloContext.getServiceInformation().size() == 1) {
+                // TODO (gam) support partial logout (with answering question)
                 servletRequest.setAttribute(SKIP_LOGOUT_QUESTION_ATTR, true);
-            }
+            //}
             HttpServletResponse servletResponse =
                     ((HttpServletResponseAdapter) outTransport).getWrappedResponse();
             SingleLogoutContextStorageHelper.bindSingleLogoutContext(sloContext, servletRequest);

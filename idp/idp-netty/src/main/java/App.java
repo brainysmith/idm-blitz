@@ -127,8 +127,11 @@ public class App {
         /* Send request to the EntityID to the SAML metadata handler. */
         servlets.add(new WebAppServlet(ShibbolethJspServlet.class, "/shibboleth"));
 
-        /* Error handler. */
+        /* SloController handler. */
         servlets.add(new WebAppServlet(SloControllerJspServlet.class, "/sloController.jsp"));
+
+        /* SloQuestion handler. */
+        servlets.add(new WebAppServlet(SloQuestionJspServlet.class, "/sloQuestion.jsp"));
 
         /* Error handler. */
         servlets.add(new WebAppServlet(ErrorJspServlet.class, "/error.jsp"));

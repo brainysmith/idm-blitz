@@ -63,8 +63,6 @@ public class HttpSessionImpl implements HttpSession {
 
     @Override
     public ServletContext getServletContext() {
-
-      // TODO
         WebApp webApp = ServletBridgeConfig.get().getWebapp(IdpApp.name());
         return ServletContextImpl.getInstance(webApp);
     }

@@ -25,19 +25,17 @@ public class ErrorJspServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        PrintWriter out = response.getWriter();
 
-        out.println("<html>");
-        out.println("<body>");
-        out.println("<img src=\"images/logo.jpg\"/>");
-        out.println("<h3>ERROR</h3>");
+        StringBuilder html = new StringBuilder();
+        html.append("<html>").append("<body>").append("<img src=\"images/logo.jpg\"/>").append("<h3>ERROR</h3>");
         Throwable error = (Throwable) request.getAttribute(AbstractErrorHandler.ERROR_KEY);
         if (error != null) {
             org.owasp.esapi.Encoder esapiEncoder = org.owasp.esapi.ESAPI.encoder();
-            out.println("Error Message: " + esapiEncoder.encodeForHTML(error.getMessage()));
+            html.append("Error Message: " + esapiEncoder.encodeForHTML(error.getMessage()));
         }
-        out.println("</body>");
-        out.println("</html>");
+        html.append("</body>").append("</html>");
+        PrintWriter out = response.getWriter();
+        out.print(html.toString());
     }
 
 }
