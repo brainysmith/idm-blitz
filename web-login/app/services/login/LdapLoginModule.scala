@@ -13,8 +13,8 @@ import com.unboundid.ldap.sdk.controls.{PasswordExpiredControl, PasswordExpiring
 
 /**
   */
-class LdapBasicLoginModule extends LoginModule {
-  import LdapBasicLoginModule._
+class LdapLoginModule extends LoginModule {
+  import LdapLoginModule._
 
   private var options: Map[String, String] = _
   private var pool: LDAPConnectionPool = _
@@ -33,7 +33,7 @@ class LdapBasicLoginModule extends LoginModule {
   //todo: change implementation
   @Override
   def init(options: Map[String, String]): LoginModule = {
-    appLogTrace("initializing the ldap authenticator [options={}]", options)
+    appLogTrace("initializing the ldap login module [options={}]", options)
 
 
     host = options.getOrElse("host", null)
@@ -174,14 +174,14 @@ class LdapBasicLoginModule extends LoginModule {
     (text /: vars) { (t, kv) => t.replace("${"+kv._1+"}", kv._2)  }
 
   override def toString: String = {
-    val sb =new StringBuilder("LdapAuthenticator(")
+    val sb =new StringBuilder("LdapLoginModule(")
     sb.append("options -> ").append(options)
     sb.append(")").toString()
   }
 }
 
-private object LdapBasicLoginModule {
-  val UNMAPPED_ERROR_MSG_PREFIX = "LdapBasicAuthenticator.error."
+private object LdapLoginModule {
+  val UNMAPPED_ERROR_MSG_PREFIX = "LdapLoginModule.error."
 
   //todo: add mapper for password expired
   val errorMapper = Map(ResultCode.NO_SUCH_OBJECT -> LoginErrors.NO_USER_FOUND,

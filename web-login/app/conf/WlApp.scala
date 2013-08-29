@@ -5,15 +5,15 @@ import com.blitz.idm.app.{MainConfiguration, App}
 /**
  * Example:
  * wl-conf {
- *    authenticators {
- *      com.blitz.idm.login.BasicAuthenticator = {
+ *    loginModules {
+ *      com.blitz.idm.login.LdapLoginModule = {
  *        order = 1
  *        param1 = value 1
  *        param2 = value 2
  *        ...
  *      }
  *
- *      com.blitz.idm.login.SmartCardAuthenticator = {
+ *      com.blitz.idm.login.SmartCardLoginModule = {
  *        ...
  *      }
  *
@@ -24,7 +24,7 @@ import com.blitz.idm.app.{MainConfiguration, App}
 class WlConfiguration extends MainConfiguration("wl-conf") {
   implicit val self = this
 
-  val authenticators = getDeepMapString("authenticators")
+  val loginModules = getDeepMapString("loginModules")
 }
 
 object WlApp extends App {

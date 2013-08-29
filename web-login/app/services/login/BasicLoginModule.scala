@@ -6,14 +6,15 @@ import LoginModule._
 
 /**
   */
+//todo: remove it
 class BasicLoginModule extends LoginModule {
 
-  private val ERROR_WRONG_CREDENTIALS = "BasicAuthenticator.wrongUserNameOrPassword"
+  private val ERROR_WRONG_CREDENTIALS = "LoginErrors.INVALID_CREDENTIALS"
 
   private var options: Map[String, String] = _
 
   def init(options: Map[String, String]): LoginModule = {
-    appLogTrace("initializing the basic authenticator [options={}]", options)
+    appLogTrace("initializing the basic login module [options={}]", options)
     this.options = options
     this
   }
@@ -44,7 +45,7 @@ class BasicLoginModule extends LoginModule {
   }
 
   override def toString: String = {
-    val sb =new StringBuilder("BasicAuthenticator(")
+    val sb =new StringBuilder("BasicLoginModule(")
     sb.append("options -> ").append(options)
     sb.append(")").toString()
   }

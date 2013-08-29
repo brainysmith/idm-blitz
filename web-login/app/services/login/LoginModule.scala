@@ -6,21 +6,21 @@ import play.api.mvc.{AnyContent, Request}
  */
 trait LoginModule {
   /**
-   * The method is called by the application to indicate to a authenticator that it is being place into service.
-   * The application calls this method exactly once after instantiating the authenticator.
-   * The method must be completed successfully before the authenticator is asked to do any work.
+   * The method is called by the application to indicate to a login module that it is being place into service.
+   * The application calls this method exactly once after instantiating the login module.
+   * The method must be completed successfully before the login module is asked to do any work.
    * @param options - map of the options which was specified into the configuration.
-   * @return - current instance of the authenticator
+   * @return - current instance of the login module.
    */
   def init(options: Map[String, String]): LoginModule
 
 
   /**
-   * The method is called each time a login request has been gotten to defines if the authenticator is acceptable
+   * The method is called each time a login request has been gotten to defines if the login module is acceptable
    * to authenticate against the input login context.
    * @param lc - the context of the current authentication process.
    * @param request - the login HTTP request.
-   * @return true if the authenticator is acceptable and false otherwise.
+   * @return true if the login module is acceptable and false otherwise.
    */
   def isYours(implicit lc: LoginContext, request: Request[AnyContent]): Boolean
 
@@ -57,17 +57,17 @@ object LoginModule {
   val PRE_AUTH_IS_REQUIRE = 2
 
   def apply(className: String, params: Map[String, String]): LoginModule = {
-    new AuthenticatorMeta(className, params).newInstance
+    new LoginModuleMeta(className, params).newInstance
   }
 }
 
-private[login] class AuthenticatorMeta(private val className: String,
-                                       private val options: Map[String, String]) extends Ordered[AuthenticatorMeta]{
-  import AuthenticatorMeta._
+private[login] class LoginModuleMeta(private val className: String,
+                                       private val options: Map[String, String]) extends Ordered[LoginModuleMeta]{
+  import LoginModuleMeta._
   import scala.reflect.runtime.{universe => ru}
 
   private val mirror = ru.runtimeMirror(getClass.getClassLoader)
-  private val clsSymbol = mirror.classSymbol(Class.forName(className.replace('>', '.').replaceAll("\"", ""))) //todo: temporary + if authenticators params not set then it will be ignored
+  private val clsSymbol = mirror.classSymbol(Class.forName(className.replace('>', '.').replaceAll("\"", ""))) //todo: temporary + if login modules params not set then it will be ignored
   private val clsMirror = mirror.reflectClass(clsSymbol)
   private val clsConstructor = clsMirror.reflectConstructor(clsSymbol.toType.declaration(ru.nme.CONSTRUCTOR).asMethod)
 
@@ -83,10 +83,10 @@ private[login] class AuthenticatorMeta(private val className: String,
   def getOptions = options
   def getOrder = order
 
-  def compare(that: AuthenticatorMeta): Int = this.getOrder - that.getOrder
+  def compare(that: LoginModuleMeta): Int = this.getOrder - that.getOrder
 
   override def toString: String = {
-    val sb =new StringBuilder("AuthenticatorMeta(")
+    val sb =new StringBuilder("LoginModuleMeta(")
     sb.append("class -> ").append(getClassName)
     sb.append(", ").append("order -> ").append(getOrder)
     sb.append(", ").append("options -> ").append(getOptions)
@@ -94,7 +94,7 @@ private[login] class AuthenticatorMeta(private val className: String,
   }
 }
 
-private[login] object AuthenticatorMeta {
+private[login] object LoginModuleMeta {
   val ORDER_PARAM_NAME = "order"
 }
 

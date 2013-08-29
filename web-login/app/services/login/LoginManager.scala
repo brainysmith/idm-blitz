@@ -2,7 +2,7 @@ package services.login
 
 import play.api.mvc._
 import services.login.LoginContext._
-import Authenticator._
+import LoginModule._
 import com.blitz.idm.app._
 import scala.util.Try
 import controllers.routes
@@ -19,41 +19,41 @@ object loginManager {
   //todo: change it
   private val tmpCompleteRedirectCall = routes.Login.getPage()
 
-  private val authenticatorsMeta =
-    (for ((clazz, params) <- conf.authenticators) yield new AuthenticatorMeta(clazz, params)).toArray.sorted
+  private val loginModulesMeta =
+    (for ((clazz, params) <- conf.loginModules) yield new LoginModuleMeta(clazz, params)).toArray.sorted
 
-  if (authenticatorsMeta.isEmpty) {
-    appLogWarn("authentication may not work: there aren't authenticators found in the configuration\n")
+  if (loginModulesMeta.isEmpty) {
+    appLogWarn("authentication may not work: there aren't login modules found in the configuration")
   } else {
-    appLogTrace("read authenticators from the configuration: {}\n", authenticatorsMeta)
+    appLogTrace("read login modules from the configuration: {}", loginModulesMeta)
   }
 
-  private val authenticators = authenticatorsMeta.map(_.newInstance)
+  private val loginModules = loginModulesMeta.map(_.newInstance)
 
-  def apply(redirect: Call => Result)(loginFail: Array[String] => Result)
+  def apply(redirect: Call => Result)(loginFail: Seq[(String, Seq[Any])] => Result)
            (implicit lc: LoginContext, request: Request[AnyContent]) : Result = {
-    appLogTrace("got login request [login context = {}, request = {}]\n", lc, request)
+    appLogTrace("got login request [login context = {}, request = {}]", lc, request)
 
     lc match {
       case lcImpl: LoginContextImpl => {
         chain(lcImpl) match {
           case Success(PRE_AUTH_IS_REQUIRE) => {
-            appLogDebug("pre-authentication is required\n")
+            appLogDebug("pre-authentication is required")
             lcImpl.setStatus(DO_PRE_AUTH_STATUS)
-            loginFail(lc.getMessages)
+            loginFail(lc.getErrors)
           }
           case Success(SUCCESS) => {
-            appLogDebug("authentication is successful [login context = {}]\n", lc)
-            lcImpl.clearAuthenticator
+            appLogDebug("authentication is successful [login context = {}]", lc)
+            lcImpl.clearLoginModule
             lcImpl.getObligation match {
               case Some(obligation) => {
                 lcImpl.setStatus(DO_OBLIGATION_STATUS)
-                appLogDebug("get an obligation, sent obligation redirect [obligation={}]\n", obligation)
+                appLogDebug("get an obligation, sent obligation redirect [obligation={}]", obligation)
                 redirect(obligation)
               }
               case None => {
                 lcImpl.setStatus(AUTH_SUCCESS_STATUS)
-                appLogDebug("authentication process is complete successfully [login context = {}]\n", lc)
+                appLogDebug("authentication process is complete successfully [login context = {}]", lc)
 
                 //todo: thinking about why will be made the response to SP
                 redirect(tmpCompleteRedirectCall)
@@ -62,31 +62,40 @@ object loginManager {
           }
           case Success(FAIL) => {
             lcImpl.setStatus(AUTH_FAIL_STATUS)
-            lc.getAuthenticator.fold[Result]({
-              appLogError("the authentication process is stopped: there aren't authenticators to process the login " +
-                "request [login context = {}]\n", lcImpl)
-              throw new IllegalStateException("there aren't authenticators to process the login request")
+            lc.getLoginModule.fold[Result]({
+              appLogError("the authentication process is stopped: there aren't login modules to process the login " +
+                "request [login context = {}]", lcImpl)
+              throw new IllegalStateException("there aren't login modules to process the login request")
             }
             )(a => {
-              appLogDebug("the authentication process is stopped: authentication is fail [login context = {}]\n", lc)
-              loginFail(lc.getMessages)
+              appLogDebug("the authentication process is stopped: authentication is fail [login context = {}]", lc)
+              loginFail(lc.getErrors)
             })
           }
           case Failure(e) => {
-            appLogError("authentication can't be perform [runtime exception = {}]\n", e)
+            appLogError("authentication can't be perform [runtime exception = {}]", e)
             throw e
           }
           case Success(unknownRes) => {
-            appLogError("authentication can't be perform: unknown authentication result [result = {}], please, email to the technical support\n", unknownRes)
+            appLogError("authentication can't be perform: unknown authentication result [result = {}], please, email to the technical support", unknownRes)
             throw new RuntimeException("unknown authentication result")
           }
         }
       }
       case _ => {
-        appLogError("an unknown implementation of the login context: {}\n", lc)
+        appLogError("an unknown implementation of the login context: {}", lc)
         throw new RuntimeException("an unknown implementation of the login context, please, email to the technical support")
       }
     }
+  }
+
+  //todo: realized it
+  /**
+   * Retrieve the next point of the authentication process to redirect the current subject.
+   * @return if the current state is not a SUCCESS then returns None otherwise a next point.
+   */
+  def getNextPoint(implicit lc: LoginContext, request: Request[AnyContent]): Option[Call] = {
+    throw new UnsupportedOperationException("Hasn't realized yet.")
   }
 
   //chain to perform the main authentication process
@@ -95,25 +104,25 @@ object loginManager {
     for {
       dummy <- Try({
         if (lcImpl.getStatus == AUTH_SUCCESS_STATUS || lcImpl.getStatus == AUTH_FAIL_STATUS) {
-          appLogError("the authentication process is stopped: the login process has already completed [login context = {}]\n", lcImpl)
+          appLogError("the authentication process is stopped: the login process has already completed [login context = {}]", lcImpl)
           throw new IllegalStateException("the login process has already completed")
         }
       })
-      curAuthenticator <- Try({
-        lcImpl.getAuthenticator
+      curLoginModule <- Try({
+        lcImpl.getLoginModule
       })
       result <- Try[Int]({
-        curAuthenticator.fold(authenticators.filter(_.isYours).foldLeft[Int](FAIL)((prevRes, a) => {
+        curLoginModule.fold(loginModules.filter(_.isYours).foldLeft[Int](FAIL)((prevRes, a) => {
           prevRes match {
             case FAIL => {
-              appLogTrace("selected a new authenticator [authenticator = {}]\n", a)
-              lcImpl.setAuthenticator(a)
+              appLogTrace("selected a new login module [login module = {}]", a)
+              lcImpl.setLoginModule(a)
               a.`do`
             }
             case _ => prevRes
           }
         }))(implicit a => {
-          appLogTrace("got authenticator from the current login context [authenticator = {}]\n", a)
+          appLogTrace("got login module from the current login context [login module = {}]", a)
           a.`do`
         })
       })

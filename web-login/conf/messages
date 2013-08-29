@@ -12,4 +12,4 @@ login.loginFm.pswd.label=Password
 login.loginFm.pswd.placeholder=Password
 login.loginFm.btn.submit=Login
 
-BasicAuthenticator.wrongUserNameOrPassword=The username or password you entered is incorrect.
+LoginErrors.INVALID_CREDENTIALS=The username or password you entered is incorrect.

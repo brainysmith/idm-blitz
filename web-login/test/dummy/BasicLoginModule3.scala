@@ -10,7 +10,7 @@ import services.login.LoginModule._
 class BasicLoginModule3 extends LoginModule {
 
    def init(options: Map[String, String]): LoginModule = {
-     appLogTrace("initializing the basic authenticator 3 [options={}]", options)
+     appLogTrace("initializing the basic login module 3 [options={}]", options)
      this
    }
 
