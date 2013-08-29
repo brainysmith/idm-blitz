@@ -144,7 +144,7 @@ class JsonTest extends Specification {
         "login" -> JStr("msmith")
       ))
 
-      "adding or replace an existing filed to JObj " in {
+      "adding or replace one JObj to another JObj " in {
         (objToTestAdding ++! objToAdd).toJson must be equalTo "{\"name\":\"Mike\",\"lastname\":\"Smith\",\"login\":\"msmith\"}"
       }
 
