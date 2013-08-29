@@ -97,6 +97,8 @@ case class JObj(v: Seq[(String, JVal)]) extends JVal{
   def +!(v: (String, JVal)): JObj = JObj.addOrReplace(this, v)
   def +!(name: String, value: JVal): JObj = this +! ((name, value))
 
+  def ++!(that: JObj): JObj = JObj.addOrReplace(this, that)
+
   override def \(field: String) = value.get(field).getOrElse(JUndef)
 
 }
@@ -106,9 +108,14 @@ object JObj {
   def apply(name: String, value: JVal): JObj = new JObj(Seq((name, value)))
   def apply(v: (String, JVal)): JObj = new JObj(Seq(v))
 
+  @inline
   private def add(obj: JObj, field: (String, JVal)): JObj = if (obj.value.contains(field._1)) obj else JObj(obj.value.toSeq :+ field)
 
+  @inline
   private def addOrReplace(obj: JObj, field: (String, JVal)): JObj = JObj(obj.value.toSeq :+ field)
+
+  @inline
+  private def addOrReplace(obj: JObj, that: JObj): JObj = JObj(obj.value.toSeq ++ that.value.toSeq)
 
 }
 
