@@ -9,7 +9,6 @@ import org.codehaus.jackson.map.Module.SetupContext
 import java.io.StringWriter
 import org.codehaus.jackson.map.`type`.TypeFactory
 import scala.collection.mutable
-import scala.collection.mutable.ListBuffer
 
 
 /**
@@ -73,21 +72,32 @@ object JBool {
   implicit def booleanConverter(j: JBool): Boolean = j.value
 }
 
-case class JArr(v: Array[JVal]) extends JVal {
+case class JArr(private val v: Array[JVal]) extends JVal {
 
   def this(b: mutable.Buffer[JVal]) = this(b.toArray)
 
-  val value = v.clone()
+  private val value = v.clone()
 
   def apply[B <: JVal](idx: Int): B = value(idx).asInstanceOf[B]
+
+  def +:[T](element: T)(implicit writer: JWriter[T]) = JArr.prepend(this, element)
+  def :+[T](element: T)(implicit writer: JWriter[T]) = JArr.append(this, element)
 
   override def toString = v.mkString("JArr(", ", ", ")")
 
 }
 
-case class JObj(v: Seq[(String, JVal)]) extends JVal{
+object JArr {
 
-  val value = v.toMap
+  def prepend[T](arr: JArr, element: T)(implicit writer: JWriter[T]): JArr = JArr((writer.write(element) +: arr.value.toSeq).toArray)
+
+  def append[T](arr: JArr, element: T)(implicit writer: JWriter[T]): JArr = JArr((arr.value.toSeq :+ writer.write(element)).toArray)
+
+}
+
+case class JObj(private val v: Seq[(String, JVal)]) extends JVal {
+
+  private[json] val value = v.toMap
 
   def apply[B <: JVal](name: String): B = value(name).asInstanceOf[B]
 
