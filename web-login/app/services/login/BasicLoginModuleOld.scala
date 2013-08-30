@@ -7,7 +7,7 @@ import LoginModule._
 /**
   */
 //todo: remove it
-class BasicLoginModule extends LoginModule {
+class BasicLoginModuleOld extends LoginModule {
 
   private val ERROR_WRONG_CREDENTIALS = "LoginErrors.INVALID_CREDENTIALS"
 
