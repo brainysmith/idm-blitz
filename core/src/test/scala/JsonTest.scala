@@ -128,15 +128,15 @@ class JsonTest extends Specification {
       ))
 
       "adding an absent filed to JObj " in {
-        (objToTestAdding + ("login", JStr("jsmith"))).toJson must be equalTo "{\"name\":\"John\",\"lastname\":\"Smith\",\"login\":\"jsmith\"}"
+        (objToTestAdding + ("login", "jsmith")).toJson must be equalTo "{\"name\":\"John\",\"lastname\":\"Smith\",\"login\":\"jsmith\"}"
       }
 
       "adding an existing filed to JObj " in {
-        (objToTestAdding + ("name", JStr("Mike"))).toJson must be equalTo "{\"name\":\"John\",\"lastname\":\"Smith\"}"
+        (objToTestAdding + ("name", "Mike")).toJson must be equalTo "{\"name\":\"John\",\"lastname\":\"Smith\"}"
       }
 
       "adding or replace an absent filed to JObj " in {
-        (objToTestAdding +! ("login", JStr("jsmith"))).toJson must be equalTo "{\"name\":\"John\",\"lastname\":\"Smith\",\"login\":\"jsmith\"}"
+        (objToTestAdding +! ("login", "jsmith")).toJson must be equalTo "{\"name\":\"John\",\"lastname\":\"Smith\",\"login\":\"jsmith\"}"
       }
 
       val objToAdd = JObj(Seq(
@@ -144,7 +144,7 @@ class JsonTest extends Specification {
         "login" -> JStr("msmith")
       ))
 
-      "adding or replace an existing filed to JObj " in {
+      "adding or replace one JObj to another JObj " in {
         (objToTestAdding ++! objToAdd).toJson must be equalTo "{\"name\":\"Mike\",\"lastname\":\"Smith\",\"login\":\"msmith\"}"
       }
 

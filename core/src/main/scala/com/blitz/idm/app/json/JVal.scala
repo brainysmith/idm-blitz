@@ -91,11 +91,11 @@ case class JObj(v: Seq[(String, JVal)]) extends JVal{
 
   def apply[B <: JVal](name: String): B = value(name).asInstanceOf[B]
 
-  def +(v: (String, JVal)): JObj = JObj.add(this, v)
-  def +(name: String, value: JVal): JObj = this + ((name, value))
+  def +[T](name: String, value: T)(implicit writer: JWriter[T]): JObj = JObj.add(this, name, value)
+  def +[T](v: (String, T))(implicit writer: JWriter[T]): JObj = this + (v._1, v._2)
 
-  def +!(v: (String, JVal)): JObj = JObj.addOrReplace(this, v)
-  def +!(name: String, value: JVal): JObj = this +! ((name, value))
+  def +![T](name: String, value: T)(implicit writer: JWriter[T]): JObj = JObj.addOrReplace(this, name, value)
+  def +![T](v: (String, T))(implicit writer: JWriter[T]): JObj = this +! (v._1, v._2)
 
   def ++!(that: JObj): JObj = JObj.addOrReplace(this, that)
 
@@ -109,10 +109,10 @@ object JObj {
   def apply(v: (String, JVal)): JObj = new JObj(Seq(v))
 
   @inline
-  private def add(obj: JObj, field: (String, JVal)): JObj = if (obj.value.contains(field._1)) obj else JObj(obj.value.toSeq :+ field)
+  private def add[T](obj: JObj, fieldName: String, fieldValue: T)(implicit writer: JWriter[T]): JObj = if (obj.value.contains(fieldName)) obj else JObj(obj.value.toSeq :+ ((fieldName, Json.toJson(fieldValue))))
 
   @inline
-  private def addOrReplace(obj: JObj, field: (String, JVal)): JObj = JObj(obj.value.toSeq :+ field)
+  private def addOrReplace[T](obj: JObj, fieldName: String, fieldValue: T)(implicit writer: JWriter[T]): JObj = JObj(obj.value.toSeq :+ ((fieldName, Json.toJson(fieldValue))))
 
   @inline
   private def addOrReplace(obj: JObj, that: JObj): JObj = JObj(obj.value.toSeq ++ that.value.toSeq)
