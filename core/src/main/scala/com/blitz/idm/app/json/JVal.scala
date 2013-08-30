@@ -107,7 +107,7 @@ case class JObj(private val v: Seq[(String, JVal)]) extends JVal {
 
   private[json] val value = v.toMap
 
-  def apply[B <: JVal](name: String): B = value(name).asInstanceOf[B]
+  def apply(name: String):JVal = value.get(name).getOrElse(JUndef)
 
   def +[T](name: String, value: T)(implicit writer: JWriter[T]): JObj = JObj.add(this, name, value)
   def +[T](v: (String, T))(implicit writer: JWriter[T]): JObj = this + (v._1, v._2)
