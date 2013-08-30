@@ -12,14 +12,14 @@ class JsonTest extends Specification {
     "Checking of JSON serialization" should {
 
       "serialization result must be equal to '{\"key1\":12,\"key2\":\"value2\",\"key3\":true,\"key4\":[10,\"value2\"],\"key5\":{\"key6\":17,\"key7\":37},\"key8\":null}'" in {
-        JObj(Seq("key1" -> JNum(12),
-          "key2" -> JStr("value2"),
-          "key3" -> JBool(true),
-          "key4" -> JArr(Array(JNum(10), JStr("value2"))),
-          "key5" -> JObj(Seq("key6" -> JNum(17),
-            "key7" -> JNum(37))),
+        Json.obj("key1" -> 12,
+          "key2" -> "value2",
+          "key3" -> true,
+          "key4" -> Json.arr(10, "value2"),
+          "key5" -> Json.obj("key6" -> 17,
+            "key7" -> 37),
           "key8" -> JNull
-        )).toJson must be equalTo("{\"key4\":[10,\"value2\"],\"key5\":{\"key6\":17,\"key7\":37},\"key8\":null,\"key1\":12,\"key2\":\"value2\",\"key3\":true}")
+        ).toJson must be equalTo("{\"key4\":[10,\"value2\"],\"key5\":{\"key6\":17,\"key7\":37},\"key8\":null,\"key1\":12,\"key2\":\"value2\",\"key3\":true}")
       }
 
       "deserialization of nested objects ({\"key\":{\"key2\":7}}) " in {
@@ -62,13 +62,13 @@ class JsonTest extends Specification {
         JVal.parseStr("{\"key1\":12,\"key2\":\"value2\",\"key3\":true,\"key4\":[10,\"value2\", {\"key\":7}],\"key5\":{\"key6\":17,\"key7\":37},\"key8\":null}").toJson must be equalTo("{\"key4\":[10,\"value2\",{\"key\":7}],\"key5\":{\"key6\":17,\"key7\":37},\"key8\":null,\"key1\":12,\"key2\":\"value2\",\"key3\":true}")
       }
 
-      val obj = JObj(Seq(
-        "name" -> JStr("John"),
-        "lastname" -> JStr("Smith"),
-        "address" -> JObj(Seq(
-          "city" -> JStr("Moscow")
-        ))
-      ))
+      val obj = Json.obj(
+        "name" -> "John",
+        "lastname" -> "Smith",
+        "address" -> Json.obj(
+          "city" -> "Moscow"
+        )
+      )
 
       "extracting 'firstname' from " + obj.toJson + " " in {
         obj \ "firstname" must be equalTo JUndef
@@ -98,6 +98,10 @@ class JsonTest extends Specification {
         Json.toJson(Array(1,2,3)).toString must be equalTo JArr(Array(JNum(1), JNum(2), JNum(3))).toString
       }
 
+      "marshalling " + Json.obj("key1" -> JNum(1), "key2" -> JNum(2), "key3" -> JNum(3)) + " " in {
+        Json.toJson(Map("key1" -> 1, "key2" -> 2, "key3" -> 3)).toString must be equalTo Json.obj("key1" -> JNum(1), "key2" -> JNum(2), "key3" -> JNum(3)).toString
+      }
+
       "unmarshalling Int " in {
         JNum(7).as[Int] must be equalTo 7
       }
@@ -122,10 +126,10 @@ class JsonTest extends Specification {
         JObj(("key", JStr("value"))).toJson must be equalTo "{\"key\":\"value\"}"
       }
 
-      val objToTestAdding = JObj(Seq(
-        "name" -> JStr("John"),
-        "lastname" -> JStr("Smith")
-      ))
+      val objToTestAdding = Json.obj(
+        "name" -> "John",
+        "lastname" -> "Smith"
+      )
 
       "adding an absent filed to JObj " in {
         (objToTestAdding + ("login", "jsmith")).toJson must be equalTo "{\"name\":\"John\",\"lastname\":\"Smith\",\"login\":\"jsmith\"}"
@@ -139,13 +143,23 @@ class JsonTest extends Specification {
         (objToTestAdding +! ("login", "jsmith")).toJson must be equalTo "{\"name\":\"John\",\"lastname\":\"Smith\",\"login\":\"jsmith\"}"
       }
 
-      val objToAdd = JObj(Seq(
-        "name" -> JStr("Mike"),
-        "login" -> JStr("msmith")
-      ))
+      val objToAdd = Json.obj(
+        "name" -> "Mike",
+        "login" -> "msmith"
+      )
 
       "adding or replace one JObj to another JObj " in {
         (objToTestAdding ++! objToAdd).toJson must be equalTo "{\"name\":\"Mike\",\"lastname\":\"Smith\",\"login\":\"msmith\"}"
+      }
+
+      val arr = Json.arr(10, "test", true)
+
+      "prepend an element into an array " in {
+        (7 +: arr).toJson must be equalTo "[7,10,\"test\",true]"
+      }
+
+      "append an element into an array " in {
+        (arr :+ 7).toJson must be equalTo "[10,\"test\",true,7]"
       }
 
     }

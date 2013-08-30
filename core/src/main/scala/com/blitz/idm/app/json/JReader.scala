@@ -41,7 +41,7 @@ trait DefaultJReaders {
   implicit def arrayJReader[T : ClassTag](implicit reader: JReader[T]): JReader[Array[T]] = new JReader[Array[T]] {
     def read(v: JVal): JResult[Array[T]] = v match {
       case JArr(a) => JSuccess(a.map(e => e.as[T](reader)).toArray[T])
-      case _ => throw new IllegalStateException("Wrong JSON type passed. Required JArr")
+      case _ => JError("json.error.expected.array")
     }
   }
 
