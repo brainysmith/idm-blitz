@@ -33,4 +33,24 @@ trait DefaultJWriters {
     def write(o: Array[T]): JVal = JArr(o.map(t => Json.toJson(t)(writer)))
   }
 
+  implicit object JStrWriter extends JWriter[JStr] {
+    def write(o: JStr): JVal = o
+  }
+
+  implicit object JNUmWriter extends JWriter[JNum] {
+    def write(o: JNum): JVal = o
+  }
+
+  implicit object JBoolWriter extends JWriter[JBool] {
+    def write(o: JBool): JVal = o
+  }
+
+  implicit object JArrWriter extends JWriter[JArr] {
+    def write(o: JArr): JVal = o
+  }
+
+  implicit object JObjWriter extends JWriter[JObj] {
+    def write(o: JObj): JVal = o
+  }
+
 }
