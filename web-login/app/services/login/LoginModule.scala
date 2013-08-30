@@ -25,37 +25,25 @@ trait LoginModule {
   def isYours(implicit lc: LoginContext, request: Request[AnyContent]): Boolean
 
   /**
-   * The method is called each time need to perform the authentication. The result code controls subsequent
-   * authentication process (see the result's constants). The following represents a description their respective
-   * semantics:
-   *    - SUCCESS - if the subject successfully authenticated. If there isn't obligation then the authentication process
-   *    continues and all principals will be included in the assertions otherwise it will be performed the obligation
-   *    from the current login context. If obligation perform is successfully then the authentication process continues
-   *    and all principals will be included in the assertions.
-   *    - FAIL - if the subject's credentials are wrong. The authentication process is interrupted. A cause can be added
-   *    to the list of the messages.
-   *    - PRE_AUTH_REQUIRE - if it requires to do pre-authentication process (e.g: challenge/response protocol).
-   *    The client will receive pre_authentication response which contains parameters (e.g: challenge) from the login
-   *    context to create the required credentials ans to continue the authentication process.
+   * The method is called each time need to perform the authentication. The result controls subsequent
+   * authentication process. The following represents a description their respective semantics:
+   *    - TRUE - if the subject successfully authenticated. All claims will be included in the assertions.
+   *    If there is obligation in the login context the controller must performs successfully it before
+   *    continue the process. If there are warning in the login context the controller must shows it before
+   *    continue process.
+   *    - FALSE - if the subject's authentication is failed. The authentication process is interrupted.
+   *    A cause can be added to the list of the login context's errors. For example: if the pre-authentication
+   *    is required (e.g: challenge/response protocol) then the controller must be able to find the
+   *    pre_authentication_required error and needed parameters (e.g: challenge) from the login context to create
+   *    the required credentials and continue the authentication process.
    * @param lc - context of the current authentication process.
    * @param request - the login HTTP request.
    * @return result code {@see LoginContext}.
    */
-  def `do`(implicit lc: LoginContext, request: Request[AnyContent]): Int
+  def `do`(implicit lc: LoginContext, request: Request[AnyContent]): Boolean
 }
 
 object LoginModule {
-
-  //Login`s method constants
-  val BASIC_METHOD = 1
-  val SMART_CARD_METHOD = 2
-  val OTP_METHOD = 4
-
-  //Authentication result`s constants
-  val SUCCESS = 0
-  val FAIL = 1
-  val PRE_AUTH_IS_REQUIRE = 2
-
   def apply(className: String, params: Map[String, String]): LoginModule = {
     new LoginModuleMeta(className, params).newInstance
   }

@@ -1,10 +1,10 @@
 package services.login
 
 object AuthenticationMethods extends Enumeration {
-  type LoginStatuses = Value
+  type AuthenticationMethods = Value
 
-  val INITIAL = Value(-1)
-  val SUCCESS = Value(0)
-  val FAIL = Value(1)
-  val PROCESSING = Value(2)
+  //the identifier must be power of two
+  val BASIC = Value(1)
+  val OTP = Value(2)
+  val SMART_CARD = Value(4)
 }

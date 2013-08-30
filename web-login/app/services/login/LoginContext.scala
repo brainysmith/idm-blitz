@@ -1,7 +1,7 @@
 package services.login
 
-import com.blitz.idm.app.json.{JVal, JObj}
-import play.api.mvc.{AnyContent, Request, Call}
+import com.blitz.idm.app.json.{JStr, JObj}
+import play.api.mvc.{AnyContent, Request}
 import LoginErrors._
 import play.api.i18n.Messages
 
@@ -12,23 +12,23 @@ trait LoginContext {
   import scala.Predef._
 
   /**
-   * Retrieve the current login method of the authentication process.
-   * See the login's method constants of the current interface.
-   * @return code of the login method.
+   * Retrieve the current authentication method of the login process.
+   * See the authentication's methods enum.
+   * @return the identifier of the current authentication method.
    */
-  def getMethod: Int
+  def getCurrentMethod: Option[Int]
 
   /**
    * Retrieve login methods that have been successfully completed.
-   * See the login's method constants of the current interface.
+   * See the authentication's methods enum.
    * @return the bitmask of the login methods.
    */
   def getCompletedMethods: Option[Int]
 
   /**
    * Retrieve of the current status of the authentication process.
-   * See the login's status constants of the current interface.
-   * @return the current status of the login process.
+   * See the login's statuses enum.
+   * @return the identifier of the current status of the login process.
    */
   def getStatus: Int
 
@@ -38,13 +38,14 @@ trait LoginContext {
    * the next login request with this login context it wouldn't be able to get one.
    * @return array of the credentials associated with current http request.
    */
-  def getCredentials: Seq[Credentials]
+  def getCredentials: Seq[JObj]
 
   /**
    * Appends the specified credential to the credential's array.
+   * @param crls the credentials which must be added.
    * @return the current login context.
    */
-  def withCredentials(credentials: Credentials): LoginContext
+  def withCredentials(crls: JObj): LoginContext
 
   /**
    * Retrieve the login module which was selected in the current login context.
@@ -61,10 +62,10 @@ trait LoginContext {
   /**
    * Add a specified claim to the current set of the claims.
    * @param claim the tuple with the claim name and value.
-   * T type of the claim value, for example: Int, Boolean, String and others type of the JSON.
+   * @tparam T type of the claim value, for example: Int, Boolean, String and others type of the JSON.
    * @return the current login context.
    */
-  def withClaim(claim: (String, JVal)): LoginContext
+  def withClaim[T](claim: (String, T)): LoginContext
 
   /**
    * Add a specified claims to the current set of the claims.
@@ -84,10 +85,10 @@ trait LoginContext {
   /**
    * Adds a specified parameter to the current set of the parameters.
    * @param param the tuple with the parameter name and value.
-   * T type of the parameter value, for example: Int, Boolean, String and others type of the JSON.
+   * @tparam T type of the parameter value, for example: Int, Boolean, String and others type of the JSON.
    * @return the current login context.
    */
-  def withParam(param: (String, JVal)): LoginContext
+  def withParam[T](param: (String, T)): LoginContext
 
   /**
    * Add a specified parameters to the current set of the parameters (merge).
@@ -173,39 +174,33 @@ trait LoginContext {
 }
 
 object LoginContext {
-  import LoginModule._
   import play.api.mvc.{AnyContent, Request}
 
-  //Login`s status constants
-  val INIT_STATUS = -1
-  val AUTH_SUCCESS_STATUS = 0
-  val AUTH_FAIL_STATUS = 1
-  val DO_PRE_AUTH_STATUS = 2
-
-  def basic(lgnAndPwd: (String, String)): LoginContext = {
-    new LoginContextImpl(BASIC_METHOD) withCredentials Credentials(lgnAndPwd)
+  def basic(lgnAndPwd: (String, String))(implicit request : Request[AnyContent]): LoginContext = {
+    LoginContext(request) withCredentials JObj(Seq("lgn" -> JStr(lgnAndPwd._1), "pswd" -> JStr(lgnAndPwd._2)))
   }
 
-  def apply(method: Int)(implicit request : Request[AnyContent]): LoginContext = {
-    new LoginContextImpl(method)
+  def apply(implicit request : Request[AnyContent]): LoginContext = {
+    new LoginContextImpl()
   }
 }
 
-private[login] class LoginContextImpl(private val method: Int) extends LoginContext {
+private[login] class LoginContextImpl extends LoginContext {
   import scala.collection.mutable
-  import play.api.mvc.Call
-  import LoginContext._
   import LoginErrors._
+  import LoginStatuses._
 
+
+  private var currentMethod: Option[Int] = None
   private var completedMethods: Option[Int] = None
-  private var status = INIT_STATUS
-  private val crls = new mutable.ArrayBuffer[Credentials]()
+  private var status = LoginStatuses.INITIAL.id
   private var loginModule: Option[LoginModule] = None
 
   private var claims = JObj(Seq())
   private var params = JObj(Seq())
 
   //it isn't serialized
+  private val crlsArray = new mutable.ArrayBuffer[JObj]()
   private var obligation: Option[String] = None
   private val errors = new mutable.ArrayBuffer[(String, String)]()
   private val warns = new mutable.ArrayBuffer[(String, String)]()
@@ -213,22 +208,22 @@ private[login] class LoginContextImpl(private val method: Int) extends LoginCont
 
   override def getStatus: Int = status
 
-  override def getMethod: Int = method
+  override def getCurrentMethod: Option[Int] = currentMethod
 
   override def getCompletedMethods: Option[Int] = completedMethods
 
   override def getLoginModule: Option[LoginModule] = loginModule
 
-  override def getCredentials: Seq[Credentials] = crls.toArray
+  override def getCredentials: Seq[JObj] = crlsArray.toArray
 
-  override def withCredentials(credentials: Credentials): LoginContext = {
-    crls += credentials
+  override def withCredentials(crls: JObj): LoginContext = {
+    crlsArray += crls
     this
   }
 
   override def getClaims: JObj = claims
 
-  override def withClaim(claim: (String, JVal)): LoginContext = {
+  override def withClaim[T](claim: (String, T)): LoginContext = {
     claims = claims +! claim
     this
   }
@@ -240,7 +235,7 @@ private[login] class LoginContextImpl(private val method: Int) extends LoginCont
 
   override def getParams: JObj = params
 
-  override def withParam(param: (String, JVal)): LoginContext = {
+  override def withParam[T](param: (String, T)): LoginContext = {
     params = params +! param
     this
   }
@@ -257,7 +252,7 @@ private[login] class LoginContextImpl(private val method: Int) extends LoginCont
     this
   }
 
-  override def getErrors: Seq[(String, String)] = errors
+  override def getErrors: Seq[(String, String)] = errors.toSeq
 
   override def getError(key: String): Option[String] = errors.find(_._1 == key).map(error => error._2)
 
@@ -277,7 +272,7 @@ private[login] class LoginContextImpl(private val method: Int) extends LoginCont
     this
   }
 
-  override def getWarns: Seq[(String, String)] = warns
+  override def getWarns: Seq[(String, String)] = warns.toSeq
 
   override def withWarn(key: String, msg: String): LoginContext = {
     warns += ((key, msg))
@@ -286,29 +281,32 @@ private[login] class LoginContextImpl(private val method: Int) extends LoginCont
 
 
   //additional functions
-  def setStatus(iStatus: Int): LoginContextImpl = {
-    status = iStatus
+  def setCurrentMethod(method: Int): LoginContextImpl = {
+    this.currentMethod = Some(method)
+    this
+  }
+
+  def setStatus(eStatus: LoginStatuses): LoginContextImpl = {
+    status = eStatus.id
     this
   }
 
   def setLoginModule(loginModule: LoginModule): LoginContextImpl = {
-    this.loginModule = Option(loginModule)
+    this.loginModule = Some(loginModule)
     this
   }
 
-  //todo: check is it possible
   def clearLoginModule: LoginContextImpl = {
-    loginModule = None
+    this.loginModule = None
     this
   }
-
 
   override def toString: String = {
     val sb =new StringBuilder("LoginContextImpl(")
-    sb.append("method -> ").append(method)
-    sb.append("completedMethod -> ").append(completedMethods)
+    sb.append("currentMethod -> ").append(currentMethod)
+    sb.append(", ").append("completedMethod -> ").append(completedMethods)
     sb.append(", ").append("status -> ").append(status)
-    sb.append(", ").append("credentials -> ").append(crls.toList)
+    sb.append(", ").append("credentials -> ").append(crlsArray.toList)
     sb.append(", ").append("loginModule -> ").append(loginModule)
     sb.append(", ").append("claims -> ").append(claims.toJson)
     sb.append(", ").append("parameters -> ").append(params.toJson)

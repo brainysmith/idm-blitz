@@ -2,15 +2,14 @@ package dummy
 
 import play.api.mvc.{AnyContent, Request}
 import com.blitz.idm.app._
-import services.login.{AuthenticationMethods, BasicCredentials, LoginContext, LoginModule}
-import LoginModule._
+import services.login.{AuthenticationMethods, LoginContext, LoginModule}
 
 /**
    */
-class TestLoginModule1 extends LoginModule {
+class TestLoginModule2 extends LoginModule {
 
    def init(options: Map[String, String]): LoginModule = {
-     appLogTrace("initializing the test login module 1 [options={}]", options)
+     appLogTrace("initializing the test login module 2 [options={}]", options)
      this
    }
 
@@ -36,7 +35,7 @@ class TestLoginModule1 extends LoginModule {
              }
            }
            case _ => {
-             false
+             prevRes
            }
          }
        }

@@ -19,12 +19,14 @@ import com.blitz.idm.app.{MainConfiguration, App}
  *
  *      ...
  *    }
+ *    loginFlow = services.login.DefaultLoginFlow
  * }
  */
 class WlConfiguration extends MainConfiguration("wl-conf") {
   implicit val self = this
 
   val loginModules = getDeepMapString("loginModules")
+  val loginFlow = getOptString("loginFlow")
 }
 
 object WlApp extends App {

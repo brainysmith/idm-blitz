@@ -1,12 +1,16 @@
 package services.login
 
+import play.api.mvc.{Call, AnyContent, Request}
+
 /**
- * Created with IntelliJ IDEA.
- * User: szaytsev
- * Date: 8/30/13
- * Time: 5:35 PM
- * To change this template use File | Settings | File Templates.
+ * Defines a flow of the login process.
+ * {@note the implementation must be a singleton}
  */
 trait LoginFlow {
 
+  /**
+   * Retrieve the next point of the login process to redirect the current subject.
+   * @return if the current state is not a PROCESSING then returns None otherwise a next point.
+   */
+  def getNextPoint(implicit lc: LoginContext, request: Request[AnyContent]): Option[Call]
 }
