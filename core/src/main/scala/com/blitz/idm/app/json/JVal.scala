@@ -38,6 +38,14 @@ trait JVal {
    */
   def as[T](implicit reader: JReader[T]) = reader.read(this).fold[T](e => throw new IllegalStateException(e.toString()))(v => v)
 
+  /**
+   * Unmarshal a JVal object into an Option containing object of type T.
+   * @param reader - reader being used to unmarshal
+   * @tparam T - type to unmarshal in
+   * @return - an Option of unmarshalled object or None if any errors occurred
+   */
+  def asOpt[T](implicit reader: JReader[T]): Option[T] = reader.read(this).fold[Option[T]](_ => None)(v => Option(v))
+
 }
 
 object JVal {
