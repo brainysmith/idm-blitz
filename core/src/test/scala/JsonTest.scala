@@ -106,6 +106,10 @@ class JsonTest extends Specification {
         JNum(7).as[Int] must be equalTo 7
       }
 
+      "unmarshalling Int as Option" in {
+        JNum(7).asOpt[Int] must be equalTo Option(7)
+      }
+
       "unmarshalling String " in {
         JStr("text").as[String] must be equalTo "text"
       }
@@ -116,6 +120,14 @@ class JsonTest extends Specification {
 
       "unmarshalling " + JArr(Array(JNum(1), JNum(2), JNum(3))) + " " in {
         JArr(Array(JNum(1), JNum(2), JNum(3))).as[Array[Int]].toSeq.toString must be equalTo Array(1, 2, 3).toSeq.toString
+      }
+
+      val objToTestOption = Json.obj("key1" -> "value1",
+        "key2" -> "value2",
+        "key3" -> "value3")
+
+      "unmarshalling Boolean " in {
+        (objToTestOption \ "key4").asOpt[String] must be equalTo None
       }
 
       "constructing JObj from name and value " in {

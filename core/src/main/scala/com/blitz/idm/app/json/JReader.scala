@@ -45,4 +45,8 @@ trait DefaultJReaders {
     }
   }
 
+  implicit object JValReader extends JReader[JVal] {
+    def read(v: JVal): JResult[JVal] = JSuccess(v)
+  }
+
 }
