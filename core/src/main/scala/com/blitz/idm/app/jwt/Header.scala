@@ -6,7 +6,13 @@ package com.blitz.idm.app.jwt
  */
 trait Header {
 
+  /**
+   * Returns algorithm of signing or encryption of the token.
+   * @return - an algorithm of signing or encryption of the token.
+   */
   def alg: Algorithm
+
+  def iss: StringOrUri
 
   /**
    * Returns store of headers fields.
