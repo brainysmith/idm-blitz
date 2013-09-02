@@ -10,6 +10,7 @@ import scala.util.Failure
 import scala.util.Success
 import com.unboundid.ldap.sdk.controls.{PasswordExpiredControl, PasswordExpiringControl}
 import play.api.i18n.Messages
+import services.login.LoginModule.Result
 
 /**
   */
