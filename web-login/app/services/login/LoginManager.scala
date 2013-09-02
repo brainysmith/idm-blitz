@@ -63,8 +63,7 @@ object LoginManager {
 
         }) match {
           case Success(_) => {
-            //set the new login module
-            appLogDebug("a new authentication process for specified method has been started [method={}, login context = {}]",
+            appLogDebug("a new authentication process for the specified method has been started [method={}, login context = {}]",
               method, _)
           }
           case Failure(e) => {
