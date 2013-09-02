@@ -176,11 +176,11 @@ trait LoginContext {
 object LoginContext {
   import play.api.mvc.{AnyContent, Request}
 
-  def basic(lgnAndPwd: (String, String))(implicit request : Request[AnyContent]): LoginContext = {
-    LoginContext(request) withCredentials JObj(Seq("lgn" -> JStr(lgnAndPwd._1), "pswd" -> JStr(lgnAndPwd._2)))
+  def basic(lgnAndPwd: (String, String)): LoginContext = {
+    LoginContext() withCredentials JObj(Seq("lgn" -> JStr(lgnAndPwd._1), "pswd" -> JStr(lgnAndPwd._2)))
   }
 
-  def apply(implicit request : Request[AnyContent]): LoginContext = {
+  def apply(): LoginContext = {
     new LoginContextImpl()
   }
 }

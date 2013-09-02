@@ -62,11 +62,11 @@ class LdapLoginModule extends BasicLoginModule {
     this
   }
 
-  override def isYours(implicit lc: LoginContext, request: Request[AnyContent]): Boolean = {
+  override def start(implicit lc: LoginContext, request: Request[AnyContent]): Boolean = {
     lc.getCurrentMethod.fold(false)(_ == AuthenticationMethods.BASIC.id)
   }
 
-  override def `do`(implicit lc: LoginContext, request: Request[AnyContent]): Boolean = {
+  override def `do`(implicit lc: LoginContext, request: Request[AnyContent]): Int = {
     appLogTrace("attempting to authenticate subject by LDAP server [login context: {}]", lc)
 
     //perform login for all credentials
@@ -75,9 +75,9 @@ class LdapLoginModule extends BasicLoginModule {
       case Success(connection) => {
         appLogTrace("got a ldap connection from the pool")
 
-        val authRes = lc.getCredentials.foldLeft(false)((isAuth, crl) => {
-          if (isAuth) {
-            isAuth
+        val authRes = lc.getCredentials.foldLeft(Result.FAIL.id)((authRes, crl) => {
+          if (authRes != Result.FAIL.id) {
+            authRes
           } else {
             (crl("lgn").asOpt[String], crl("pswd").asOpt[String]) match {
               case (Some(lgn), Some(pswd)) => {
@@ -130,14 +130,14 @@ class LdapLoginModule extends BasicLoginModule {
                     appLogTrace("got the subject's entry [entry: {}]", resEntity)
 
                     //todo: stop here
-                    Option(resEntity).fold[Boolean]({
+                    Option(resEntity).fold[Int]({
                       appLogError("can't get the subject's entry: check the LDAP access rules. The subject must have " +
                         "an access to his entry.")
                       throw new IllegalAccessException("can't get the subject's entry: check the LDAP access rules. " +
                         "The subject must have an access to his entry.")
                     })(entry => {
                       //todo: add user's attributes to claims of the lc
-                      true
+                      Result.SUCCESS.id
                     })
                   }
                   case Failure(e) => {
@@ -149,7 +149,7 @@ class LdapLoginModule extends BasicLoginModule {
                           val errorKey = UNMAPPED_ERROR_MSG_PREFIX + le.getResultCode
                           lc.withError(errorKey, Messages(errorKey))
                         })(lc withError _)
-                        false
+                        Result.FAIL.id
                       }
                       case _ => {
                         appLogError("can't perform authentication be LDAP server. Unknown error has occurred: {}", e)
@@ -160,7 +160,8 @@ class LdapLoginModule extends BasicLoginModule {
                 }
               }
               case _ => {
-                false
+                //there aren't login and password in the credentials
+                Result.FAIL.id
               }
             }
 
