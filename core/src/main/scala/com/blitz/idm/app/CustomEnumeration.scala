@@ -3,7 +3,7 @@ package com.blitz.idm.app
 /**
  *
  */
-private[app] trait CustomEnumeration[A <: {def name: String}] {
+trait CustomEnumeration[A <: {def name: String}] {
 
   trait Val {
     self: A =>

@@ -10,7 +10,6 @@ import scala.util.Failure
 import scala.util.Success
 import com.unboundid.ldap.sdk.controls.{PasswordExpiredControl, PasswordExpiringControl}
 import play.api.i18n.Messages
-import services.login.LoginModule.Result
 
 /**
   */
@@ -18,7 +17,7 @@ class LdapLoginModule extends BasicLoginModule {
   import LdapLoginModule._
 
   private var options: Map[String, String] = _
-  private var pool: LDAPConnectionPool = _
+  private var pool: LDAPConnectionPool = null
 
   //configurable options //todo: thinking about it
   private var host: String = _
@@ -30,11 +29,9 @@ class LdapLoginModule extends BasicLoginModule {
   private var userDnPattern: String = _
 
 
-
   //todo: change implementation
   override def init(options: Map[String, String]): LoginModule = {
     appLogTrace("initializing the ldap login module [options={}]", options)
-
 
     host = options.getOrElse("host", null)
     port = 1636
@@ -64,20 +61,20 @@ class LdapLoginModule extends BasicLoginModule {
   }
 
   override def start(implicit lc: LoginContext, request: Request[AnyContent]): Boolean = {
-    lc.getCurrentMethod.fold(false)(_ == AuthenticationMethods.BASIC.id)
+    lc.getCurrentMethod.fold(false)(_ == BuildInMethods.BASIC.id)
   }
 
-  override def `do`(implicit lc: LoginContext, request: Request[AnyContent]): Int = {
+  override def `do`(implicit lc: LoginContext, request: Request[AnyContent]): Result = {
     appLogTrace("attempting to authenticate subject by LDAP server [login context: {}]", lc)
-
+    Result.FAIL
     //perform login for all credentials
 
     Try(pool.getConnection) match {
       case Success(connection) => {
         appLogTrace("got a ldap connection from the pool")
 
-        val authRes = lc.getCredentials.foldLeft(Result.FAIL.id)((authRes, crl) => {
-          if (authRes != Result.FAIL.id) {
+        val authRes = lc.getCredentials.foldLeft[Result](Result.FAIL)((authRes, crl) => {
+          if (authRes != Result.FAIL) {
             authRes
           } else {
             (crl("lgn").asOpt[String], crl("pswd").asOpt[String]) match {
@@ -131,14 +128,14 @@ class LdapLoginModule extends BasicLoginModule {
                     appLogTrace("got the subject's entry [entry: {}]", resEntity)
 
                     //todo: stop here
-                    Option(resEntity).fold[Int]({
+                    Option(resEntity).fold[Result]({
                       appLogError("can't get the subject's entry: check the LDAP access rules. The subject must have " +
                         "an access to his entry.")
                       throw new IllegalAccessException("can't get the subject's entry: check the LDAP access rules. " +
                         "The subject must have an access to his entry.")
                     })(entry => {
                       //todo: add user's attributes to claims of the lc
-                      Result.SUCCESS.id
+                      Result.SUCCESS
                     })
                   }
                   case Failure(e) => {
@@ -147,10 +144,10 @@ class LdapLoginModule extends BasicLoginModule {
                         appLogDebug("authentication by LDAP server is failed [userName: {}, error: {}]", lgn, le)
 
                         errorMapper.get(le.getResultCode).fold({
-                          val errorKey = UNMAPPED_ERROR_MSG_PREFIX + le.getResultCode
+                          val errorKey = UNMAPPED_ERROR_MSG_PREFIX + le.getResultCode.getName
                           lc.withError(errorKey, Messages(errorKey))
                         })(lc withError _)
-                        Result.FAIL.id
+                        Result.FAIL
                       }
                       case _ => {
                         appLogError("can't perform authentication be LDAP server. Unknown error has occurred: {}", e)
@@ -162,7 +159,7 @@ class LdapLoginModule extends BasicLoginModule {
               }
               case _ => {
                 //there aren't login and password in the credentials
-                Result.FAIL.id
+                Result.FAIL
               }
             }
 
@@ -198,6 +195,9 @@ class LdapLoginModule extends BasicLoginModule {
     sb.append(")").toString()
   }
 
+
+  val UNMAPPED_ERROR_MSG_PREFIX = "LdapLoginModule.error."
+  val NEAR_PSWD_EXPIRE_WARN_KEY = "LdapLoginModule.warn.nearPswdExpire"
 }
 
 private object LdapLoginModule {
@@ -205,8 +205,7 @@ private object LdapLoginModule {
   val NEAR_PSWD_EXPIRE_WARN_KEY = "LdapLoginModule.warn.nearPswdExpire"
 
   //todo: add mapper for password expired
-  val errorMapper = Map(ResultCode.NO_SUCH_OBJECT -> LoginErrors.NO_SUBJECT_FOUND,
-                        ResultCode.INVALID_CREDENTIALS -> LoginErrors.INVALID_CREDENTIALS,
-                        ResultCode.UNWILLING_TO_PERFORM -> LoginErrors.ACCOUNT_IS_LOCKED)
-
+  val errorMapper = Map(ResultCode.NO_SUCH_OBJECT -> BuildInError.NO_SUBJECT_FOUND,
+                        ResultCode.INVALID_CREDENTIALS -> BuildInError.INVALID_CREDENTIALS,
+                        ResultCode.UNWILLING_TO_PERFORM -> BuildInError.ACCOUNT_IS_LOCKED)
 }

@@ -2,7 +2,7 @@ package dummy
 
 import play.api.mvc.{AnyContent, Request}
 import com.blitz.idm.app._
-import services.login.{AuthenticationMethods, LoginContext, LoginModule}
+import services.login.{BuildInMethods, LoginContext, LoginModule}
 
 /**
    */
@@ -14,7 +14,7 @@ class TestLoginModule2 extends LoginModule {
    }
 
    def isYours(implicit lc: LoginContext, request: Request[AnyContent]): Boolean = {
-     lc.getCurrentMethod.fold(false)(_ == AuthenticationMethods.BASIC.id)
+     lc.getCurrentMethod.fold(false)(_ == BuildInMethods.BASIC.id)
    }
 
    def `do`(implicit lc: LoginContext, request: Request[AnyContent]): Boolean = {

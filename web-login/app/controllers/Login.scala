@@ -3,8 +3,7 @@ package controllers
 import play.api.mvc._
 import play.api.data.Forms._
 import play.api.data.Form
-import services.login.LoginContext._
-import services.login.{AuthenticationMethods, LoginManager}
+import services.login.{BuildInMethods, LoginManager}
 import com.blitz.idm.app._
 
 object Login extends Controller {
@@ -31,17 +30,12 @@ object Login extends Controller {
           BadRequest(views.html.login(errorForm))
         },
         form => {
-          Option(basic(form))
-            .fold[Result](BadRequest(""))(implicit lc => {
-                LoginManager(AuthenticationMethods.BASIC.id)(call => {
-                  //authentication is successful
-
-                  Ok("Good! Lgn: " + form._1 + ", pswd: " + form._2 + ".")
-                })(errors => {
-                  BadRequest(views.html.login(errors.foldLeft(basicForm.fill((form._1, "")))((frm, msg) => frm.withGlobalError(msg._2))))
-                })
-              }
-            )
+          LoginManager[Result](BuildInMethods.BASIC)(call => {
+            //authentication is successful
+            Ok("Good! Lgn: " + form._1 + ", pswd: " + form._2 + ".")
+          })(errors => {
+            BadRequest(views.html.login(errors.foldLeft(basicForm.fill((form._1, "")))((frm, msg) => frm.withGlobalError(msg._2))))
+          })
         }
       )
     }
