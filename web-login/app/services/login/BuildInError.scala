@@ -16,6 +16,7 @@ object BuildInError extends CustomEnumeration[BuildInError] {
   case object NO_SUBJECT_FOUND extends BuildInError("no_subject_found")
   case object INVALID_CREDENTIALS extends BuildInError("invalid_credentials")
   case object ACCOUNT_IS_LOCKED extends BuildInError("account_is_locked")
+  case object PASSWORD_EXPIRED extends BuildInError("password_expired")
   case object WRONG_OLD_PASSWORD extends BuildInError("wrong_old_password")
   case object INAPPROPRIATE_NEW_PASSWORD extends BuildInError("inappropriate_new_password")
 }

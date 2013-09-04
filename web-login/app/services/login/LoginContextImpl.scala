@@ -19,10 +19,10 @@ private[login] class LoginContextImpl extends LoginContext {
   private var params = JObj(Seq())
 
   private val lmsToProcess = new mutable.ArrayBuffer[LoginModule]()
+  private var loginModule: Option[LoginModule] = None
 
   //it isn't serialized
   private val crlsArray = new mutable.ArrayBuffer[JObj]()
-  private var loginModule: Option[LoginModule] = None
   private var obligation: Option[String] = None
   private val errors = new mutable.ArrayBuffer[(String, String)]()
   private val warns = new mutable.ArrayBuffer[(String, String)]()
@@ -133,7 +133,7 @@ private[login] class LoginContextImpl extends LoginContext {
     this
   }
 
-  def clearLoginModulesToProcess(): LoginContextImpl = {
+  def clearLoginModulesToProcess: LoginContextImpl = {
     lmsToProcess.clear()
     this
   }
@@ -144,7 +144,6 @@ private[login] class LoginContextImpl extends LoginContext {
     sb.append(", ").append("completedMethod -> ").append(completedMethods)
     sb.append(", ").append("status -> ").append(status)
     sb.append(", ").append("loginModulesToProcess -> ").append(lmsToProcess.toList)
-    sb.append(", ").append("credentials -> ").append(crlsArray.toList)
     sb.append(", ").append("claims -> ").append(claims.toJson)
     sb.append(", ").append("parameters -> ").append(params.toJson)
     sb.append(", ").append("loginModule -> ").append(loginModule)

@@ -7,6 +7,7 @@ import controllers.routes
 import conf.WlApp._
 import play.api.mvc.{AnyContent, Request, Call}
 import scala.annotation.implicitNotFound
+import scala.Option
 
 /**
  * The login manager which controls a login context.
@@ -22,6 +23,7 @@ object LoginManager {
 
   if (loginModulesMeta.isEmpty) {
     appLogWarn("authentication will not work: there aren't login modules found in the configuration")
+    throw new RuntimeException("authentication will not work: there aren't login modules found in the configuration")
   } else {
     appLogDebug("the following login modules has been read from the configuration: {}", loginModulesMeta)
   }
@@ -65,7 +67,8 @@ object LoginManager {
           }
 
           lcImpl.setCurrentMethod(method)
-          lcImpl.clearLoginModulesToProcess()
+          lcImpl.clearLoginModule
+          lcImpl.clearLoginModulesToProcess
           //find the login modules to process
           loginModules.filter(lm => lm.start).foreach(lm => {
             appLogTrace("a new login module has been added to process [method = {}, login module = {}]",
@@ -102,19 +105,21 @@ object LoginManager {
 
   /**
    * Perform the authentication again the login modules which was selected on start step with "FIRST SUCCESS" strategy.
-   * If the authentication is successful it is called a specified <b>success</b> function with <b>nextPoint</b> argument
-   * which describing a HTTP request that needs to be done. The obligation and the login module which has performed the
-   * authentication can be obtained from the login context. If the authentication fails it's called a specified
-   * <b>fail</b> function that retrieves a list of the errors occurred.
-   * @param success the function that will be called if the authentication is successful.
+   * If the authentication is complete successfully or partially completed it is called a specified <b>complete</b>
+   * function with <b>nextPoint</b> argument which describing a HTTP request that needs to be done. If the
+   * authentication is partially completed the nextPoint is None otherwise Some(nextPoint). The obligation and the login
+   * module which has performed the authentication can be obtained from the login context. If the authentication fails
+   * it's called a specified <b>fail</b> function that retrieves a list of the errors occurred.
+   * @param complete the function that will be called if the authentication is complete successfully or partially
+   *                 completed.
    * @param fail the function that will be called if the authentication fails.
    * @param lc the current login context.
    * @param request the current HTTP request.
    * @tparam A the result type.
    */
-  def `do`[A](success: Call => A)(fail: Seq[(String, String)] => A)
+  def `do`[A](complete: Option[Call] => A)(fail: Seq[(String, String)] => A)
           (implicit lc: LoginContext, request: Request[AnyContent]) = {
-    appLogTrace("perform the authentication [login context = {}]", lc)
+    appLogTrace("performing the authentication [login context = {}]", lc)
 
     lc match {
       case lcImpl: LoginContextImpl => {
@@ -128,20 +133,27 @@ object LoginManager {
 
         //perform the authentication with "FIRST SUCCESS" strategy
         Try({
-          lcImpl.getLoginModulesToProcess().foldLeft[Result](Result.FAIL)((prevRes, lm) => {
-            if (prevRes == Result.FAIL) {
-              appLogTrace("try to authenticate by a new login module [lm = {}]", lm)
-              val iRes = lm.`do`
-              if (lm.`do` == Result.SUCCESS) {
-                appLogTrace("authentication by login module is successfully [lm = {}]", lm)
-                lcImpl.setLoginModule(lm)
+          lcImpl.getLoginModule[LoginModule].fold({
+            appLogTrace("performing authentication by the defined login modules in the start stage [lms = {}]",
+              lcImpl.getLoginModulesToProcess())
+            lcImpl.getLoginModulesToProcess().foldLeft[Result](Result.FAIL)((prevRes, lm) => {
+              if (prevRes == Result.FAIL) {
+                appLogTrace("try to authenticate by a following login module: {}", lm)
+                val iRes = lm.`do`
+                if (iRes == Result.SUCCESS) {
+                  appLogTrace("authentication by login module is successfully [lm = {}]", lm)
+                  lcImpl.setLoginModule(lm)
+                } else {
+                  appLogTrace("fail authentication by login module [lm = {}]", lm)
+                }
+                iRes
               } else {
-                appLogTrace("fail authentication by login module [lm = {}]", lm)
+                prevRes
               }
-              iRes
-            } else {
-              prevRes
-            }
+            })
+          })(lm => {
+            appLogTrace("continue authentication by login module from the login context [lm = {}]", lm)
+            lm.`do`
           })
         }) match {
           case Success(result) => {
@@ -152,11 +164,15 @@ object LoginManager {
                 loginFlow.getNextPoint.fold[A]({
                   lcImpl.setStatus(LoginStatus.SUCCESS)
                   appLogDebug("the login process is completed successfully [lc = {}]", lcImpl)
-                  success(tmpCompleteRedirectCall)
+                  complete(Some(tmpCompleteRedirectCall))
                 })(nextPoint => {
                   appLogDebug("go to the next point [lc = {}]", lcImpl)
-                  success(nextPoint)
+                  complete(Some(nextPoint))
                 })
+              }
+              case Result.PARTIALLY_COMPLETED => {
+                appLogDebug("authentication is partially completed [lc = {}]", lcImpl)
+                complete(None)
               }
               case Result.FAIL => {
                 lcImpl.setStatus(LoginStatus.FAIL)
@@ -188,14 +204,15 @@ object LoginManager {
    * Prepares to the authentication with specified method (start) and subsequent authentication (do) in one call.
    *
    * @param method the method of the authentication.
-   * @param success the function that will be called if the authentication is successful.
+   * @param complete the function that will be called if the authentication is complete successfully or partially
+   *                 completed.
    * @param fail the function that will be called if the authentication fails.
    * @param lc the current login context.
    * @param request the current HTTP request.
    */
-  def apply[A](method: Int)(success: Call => A)(fail: Seq[(String, String)] => A)
+  def apply[A](method: Int)(complete: Option[Call] => A)(fail: Seq[(String, String)] => A)
            (implicit lc: LoginContext = LoginContext(), request: Request[AnyContent]) = {
     start(method)
-    `do`(success)(fail)
+    `do`(complete)(fail)
   }
 }

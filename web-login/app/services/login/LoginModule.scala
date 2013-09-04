@@ -34,6 +34,10 @@ trait LoginModule {
    *    assertions. If there is an obligation in the login context the controller must does it successfully before
    *    continue the process. If there are warning in the login context the controller must shows it before continue the
    *    process.
+   *    - [[services.login.Result.PARTIALLY_COMPLETED]] - if the authentication process is completed partially. In this
+   *    case the login process stays at the current step. The next request with the same authentication method will be
+   *    processed by the same login module. The login module can store the specific state of its authentication process
+   *    by the parameters of the current login context.
    *    - [[services.login.Result.FAIL]] if the subject's authentication is failed. The authentication process is
    *    interrupted. A cause can be added to the list of the login context's errors.
    * @param lc the context of the current authentication process.
@@ -52,6 +56,7 @@ sealed abstract class Result(private val _name: String) extends Result.Val {
  */
 object Result extends CustomEnumeration[Result] {
   case object SUCCESS extends Result("success")
+  case object PARTIALLY_COMPLETED extends Result("partially_completed")
   case object FAIL extends Result("fail")
 }
 
