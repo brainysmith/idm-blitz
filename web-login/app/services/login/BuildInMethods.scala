@@ -1,5 +1,9 @@
 package services.login
 
+
+/**
+ * Enumeration of the build in authentication methods.
+ */
 object BuildInMethods extends Enumeration {
   type BuildInMethods = Value
 

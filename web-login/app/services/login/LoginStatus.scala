@@ -6,6 +6,9 @@ sealed abstract class LoginStatus(private val _name: String) extends LoginStatus
   def name = _name
 }
 
+/**
+ * Enumeration of the login statuses.
+ */
 object LoginStatus extends CustomEnumeration[LoginStatus] {
   case object INITIAL extends LoginStatus("initial")
   case object SUCCESS extends LoginStatus("success")

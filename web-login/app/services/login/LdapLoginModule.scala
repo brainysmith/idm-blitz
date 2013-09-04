@@ -12,6 +12,7 @@ import com.unboundid.ldap.sdk.controls.{PasswordExpiredControl, PasswordExpiring
 import play.api.i18n.Messages
 
 /**
+ * Implementation of the basic login module by LDAP server.
   */
 class LdapLoginModule extends BasicLoginModule {
   import LdapLoginModule._

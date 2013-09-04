@@ -3,9 +3,14 @@ package services.login
 import play.api.mvc.{AnyContent, Request}
 
 /**
+ * Interface of the login module for the basic authentication. It extends the [[services.login.LoginModule]] interface
+ * to process the specific for this authentication method obligations.
  */
 trait BasicLoginModule extends LoginModule {
 
+  /**
+   * Enumeration of obligations for the basic authentication.
+   */
   object Obligations extends Enumeration {
     type Obligations = Value
 
@@ -23,8 +28,8 @@ trait BasicLoginModule extends LoginModule {
    * @param newPswd the new subject's password.
    * @param lc the current login context.
    * @param request the current HTTP request.
-   * @return the result of the operation. True if password has been changed successfully and false otherwise.
-   *         Errors can be obtained from the current login context.
+   * @return the result of the operation. True if password has been changed successfully and false otherwise. Errors can
+   *         be obtained from the current login context.
    */
   def changePassword(curPswd: String, newPswd: String)(implicit lc: LoginContext, request: Request[AnyContent]): Boolean
 }

@@ -9,7 +9,8 @@ import play.api.mvc.{AnyContent, Request, Call}
 import scala.annotation.implicitNotFound
 
 /**
-  */
+ * The login manager which controls a login context.
+ */
 @implicitNotFound("No implicit login context of request found.")
 object LoginManager {
 
@@ -20,18 +21,18 @@ object LoginManager {
     (for ((clazz, params) <- conf.loginModules) yield new LoginModuleMeta(clazz, params)).toArray.sorted
 
   if (loginModulesMeta.isEmpty) {
-    appLogWarn("authentication may not work: there aren't login modules found in the configuration")
+    appLogWarn("authentication will not work: there aren't login modules found in the configuration")
   } else {
-    appLogDebug("read login modules from the configuration: {}", loginModulesMeta)
+    appLogDebug("the following login modules has been read from the configuration: {}", loginModulesMeta)
   }
 
   private val loginModules = loginModulesMeta.map(_.newInstance)
 
   private val loginFlow = conf.loginFlow.fold[LoginFlow]({
-    appLogDebug("use the default login flow")
-    DefaultLoginFlow
+    appLogDebug("use the build in login flow")
+    BuildInLoginFlow
   })(className => {
-    appLogDebug("getting the custom login flow [class = {}]", className)
+    appLogDebug("getting a custom login flow [class = {}]", className)
     this.getClass.getClassLoader.loadClass(className + "$").asInstanceOf[LoginFlow]
   })
 
@@ -45,6 +46,10 @@ object LoginManager {
    * @param method the method of the authentication.
    * @param lc the login context. If it is absent then new will be created.
    * @param request the current request.
+   * @throws IllegalStateException if:
+   *                               - the current login context has already completed;
+   *                               - there aren't login modules which is able to perform the authentication with
+   *                                 specified method.
    */
   def start(method: Int)(implicit lc: LoginContext = LoginContext(), request: Request[AnyContent]) = {
     appLogTrace("start a new authentication process [method = {}, lc = {}]", method, lc)
@@ -71,7 +76,7 @@ object LoginManager {
           if (lcImpl.getLoginModulesToProcess().isEmpty) {
             appLogError("there isn't login module which is able to perform the authentication with specified method " +
               "[method = {}, lc = {}]", method, lc)
-            throw new IllegalStateException("there isn't login module which is able to perform the authentication " +
+            throw new IllegalStateException("there aren't login modules which is able to perform the authentication " +
               "with specified method")
           }
         }) match {
@@ -97,15 +102,17 @@ object LoginManager {
 
   /**
    * Perform the authentication again the login modules which was selected on start step with "FIRST SUCCESS" strategy.
-   * todo: add description
-   * @param success
-   * @param fail
-   * @param lc
-   * @param request
-   * @tparam A
-   * @return
+   * If the authentication is successful it is called a specified <b>success</b> function with <b>nextPoint</b> argument
+   * which describing a HTTP request that needs to be done. The obligation and the login module which has performed the
+   * authentication can be obtained from the login context. If the authentication fails it's called a specified
+   * <b>fail</b> function that retrieves a list of the errors occurred.
+   * @param success the function that will be called if the authentication is successful.
+   * @param fail the function that will be called if the authentication fails.
+   * @param lc the current login context.
+   * @param request the current HTTP request.
+   * @tparam A the result type.
    */
-  def `do`[A](success: Option[Call] => A)(fail: Seq[(String, String)] => A)
+  def `do`[A](success: Call => A)(fail: Seq[(String, String)] => A)
           (implicit lc: LoginContext, request: Request[AnyContent]) = {
     appLogTrace("perform the authentication [login context = {}]", lc)
 
@@ -145,10 +152,10 @@ object LoginManager {
                 loginFlow.getNextPoint.fold[A]({
                   lcImpl.setStatus(LoginStatus.SUCCESS)
                   appLogDebug("the login process is completed successfully [lc = {}]", lcImpl)
-                  success(Some(tmpCompleteRedirectCall))
+                  success(tmpCompleteRedirectCall)
                 })(nextPoint => {
                   appLogDebug("go to the next point [lc = {}]", lcImpl)
-                  success(Some(nextPoint))
+                  success(nextPoint)
                 })
               }
               case Result.FAIL => {
@@ -178,15 +185,15 @@ object LoginManager {
   }
 
   /**
-   * Prepares a preparing to authentication (start) and subsequent authentication (do) in one call.
+   * Prepares to the authentication with specified method (start) and subsequent authentication (do) in one call.
    *
-   * @param method the required method of the authentication.
-   * @param success the function which will be called in case the login is successful.
-   * @param fail the function which will be called in case the login is failed.
+   * @param method the method of the authentication.
+   * @param success the function that will be called if the authentication is successful.
+   * @param fail the function that will be called if the authentication fails.
    * @param lc the current login context.
-   * @param request the http request.
+   * @param request the current HTTP request.
    */
-  def apply[A](method: Int)(success: Option[Call] => A)(fail: Seq[(String, String)] => A)
+  def apply[A](method: Int)(success: Call => A)(fail: Seq[(String, String)] => A)
            (implicit lc: LoginContext = LoginContext(), request: Request[AnyContent]) = {
     start(method)
     `do`(success)(fail)

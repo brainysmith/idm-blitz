@@ -7,6 +7,9 @@ sealed abstract class BuildInError(private val _name: String) extends BuildInErr
   def getKey: String = "BuildInErrors." + name
 }
 
+/**
+ * Enumeration of build in errors of a login process.
+ */
 object BuildInError extends CustomEnumeration[BuildInError] {
   case object INTERNAL extends BuildInError("internal")
   case object NO_CREDENTIALS_FOUND extends BuildInError("no_credential_found")
