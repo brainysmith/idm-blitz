@@ -10,5 +10,7 @@
         <dependency org="org.codehaus.jackson" name="jackson-core-asl" rev="1.9.10"/>
         <dependency org="org.codehaus.jackson" name="jackson-mapper-asl" rev="1.9.10"/>
         <dependency org="berkeleydb" name="je" rev="5.0.84"/>
+        <dependency org="joda-time" name="joda-time" rev="2.3"/>
+        <dependency org="commons-codec" name="commons-codec" rev="1.4"/>
     </dependencies>
 </ivy-module>

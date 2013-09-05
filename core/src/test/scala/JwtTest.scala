@@ -1,5 +1,5 @@
 import com.blitz.idm.app.json.{JNull, Json}
-import com.blitz.idm.app.jwt.{StringOrUri, Algorithm}
+import com.blitz.idm.app.jwt.{ReservedClaims, IntDate, StringOrUri, Algorithm}
 import java.net.URISyntaxException
 import org.specs2.mutable.Specification
 
@@ -62,6 +62,21 @@ class JwtTest extends Specification {
       StringOrUri("ftp://ftp.is co.za/rfc/rfc1808.txt") must throwA[URISyntaxException]
     }
 
+    "creating IntDate by passing the number of seconds " in {
+      IntDate(7).value must be equalTo 7
+    }
+
+    "creating IntDate by passing the negative value as the number of seconds " in {
+      IntDate(-7).value must throwA[IllegalArgumentException]
+    }
+
+    "creating IntDate by passing string representation of date/time " in {
+      IntDate("2000-01-01T0:0:0Z").value must be equalTo 1791994880
+    }
+
+    "creating IntDate by passing wrong string representation of date/time " in {
+      IntDate("2000_01-01T0:0:0Z").value must throwA[IllegalArgumentException]
+    }
 
 
 
