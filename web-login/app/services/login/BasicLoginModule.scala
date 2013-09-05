@@ -9,20 +9,6 @@ import play.api.mvc.{AnyContent, Request}
 trait BasicLoginModule extends LoginModule {
 
   /**
-   * Enumeration of obligations for the basic authentication.
-   */
-  object Obligations extends Enumeration {
-    type Obligations = Value
-
-    val CHANGE_PASSWORD = Value("change_password")
-
-    class ObligationsVal(obligation: Value)  {
-    }
-
-    implicit def valueToObligations(obligation: Value) = new ObligationsVal(obligation)
-  }
-
-  /**
    * Changes a subject's password.
    * @param curPswd the current subject's password.
    * @param newPswd the new subject's password.
@@ -32,4 +18,21 @@ trait BasicLoginModule extends LoginModule {
    *         be obtained from the current login context.
    */
   def changePassword(curPswd: String, newPswd: String)(implicit lc: LoginContext, request: Request[AnyContent]): Boolean
+}
+
+/**
+ * Enumeration of obligations for the basic authentication.
+ */
+object BasicLoginModule extends Enumeration {
+
+  object Obligation extends Enumeration {
+    type Obligation = Value
+
+    val CHANGE_PASSWORD = Value("change_password")
+
+    class ObligationsVal(obligation: Value)  {
+    }
+
+    implicit def valueToObligations(obligation: Value) = new ObligationsVal(obligation)
+  }
 }

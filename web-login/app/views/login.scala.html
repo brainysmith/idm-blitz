@@ -5,6 +5,10 @@
 }
 @scripts = {
     @utils.js.require("login")
+    @helper.javascriptRouter("router")(
+        routes.javascript.Login.basicLogin,
+        routes.javascript.Login.changePswd
+    )
 }
 
 @import helper._
@@ -19,17 +23,35 @@
 
         <div class="">
 
-            @inputText(loginForm("lgn"),
+            <dl class="lgn">
+                <dt>@Messages("login.loginFm.lgn.label")</dt>
+                <dd>
+                    <input id="lgn" type="text"
+                           placeholder='@Messages("login.loginFm.lgn.placeholder")'
+                           data-value-update="keyup" data-bind="value: lgn"/>
+                </dd>
+            </dl>
+
+            <dl class="pswd">
+                <dt>@Messages("login.loginFm.pswd.label")</dt>
+                <dd>
+                    <input id="pswd" type="password"
+                           placeholder='@Messages("login.loginFm.pswd.placeholder")'
+                           data-value-update="keyup" data-bind="value: pswd"/>
+                </dd>
+            </dl>
+
+@*            @inputText(loginForm("lgn"),
                 '_label -> Messages("login.loginFm.lgn.label"),
                 '_showErrors -> true,
                 '_showConstraints -> false,
-                'placeholder -> Messages("login.loginFm.lgn.placeholder"))
+                'placeholder -> Messages("login.loginFm.lgn.placeholder"))*@
 
-            @inputPassword(loginForm("pswd"),
+@*            @inputPassword(loginForm("pswd"),
                 '_label -> Messages("login.loginFm.pswd.label"),
                 '_showErrors -> true,
                 '_showConstraints -> false,
-                'placeholder -> Messages("login.loginFm.pswd.placeholder"))
+                'placeholder -> Messages("login.loginFm.pswd.placeholder"))*@
 
             @if(loginForm.hasGlobalErrors) {
                 <dl class="line-msgs">
@@ -43,7 +65,11 @@
             <dl class="line-btns">
                 <dt></dt>
                 <dd>
-                    <button type="submit" class="button-base">@Messages("login.loginFm.btn.submit")</button>
+                    <button data-bind="click: login">
+                        @Messages("login.loginFm.btn.submit")
+                    </button>
+
+                    @*<button type="submit" class="button-base">@Messages("login.loginFm.btn.submit")</button>*@
                 </dd>
             </dl>
         </div>

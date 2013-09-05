@@ -3,9 +3,11 @@
 # ~~~~
 
 # Login page
-GET     /login                             controllers.Login.getPage
-#GET     /login/basic                       controllers.Login.getPage
-POST    /login/basic                       controllers.Login.basicLogin
+GET         /login/basic                   controllers.Login.getPage
+GET         /login                         controllers.Login.getPage
+POST        /login/basic                   controllers.Login.basicLogin
+POST        /login/basic/changePswd        controllers.Login.changePswd
+
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET         /assets/*file                  controllers.Assets.at(path="/public", file)

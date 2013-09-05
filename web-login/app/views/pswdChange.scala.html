@@ -1,0 +1,53 @@
+@(pswdChangeFm : Form[(String, String)])(implicit request: Request[AnyContent])
+
+@stylesheets = {
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/login.min.css")">
+}
+@scripts = {
+    @utils.js.require("login")
+}
+
+@import helper._
+
+@tmpl.main(
+    Messages("login.head.title"),
+    stylesheets = stylesheets,
+    scripts = scripts
+) {
+
+    <form id="pswdChangeFm" action="@routes.Login.basicLogin()" method="post">
+
+        <div class="">
+
+            @inputPassword(pswdChangeFm("pswdCur"),
+                '_label -> Messages("login.pswdChangeFm.pswdCur.label"),
+                '_showErrors -> true,
+                '_showConstraints -> false,
+                'placeholder -> Messages("login.pswdChangeFm.pswdCur.placeholder"))
+
+            @inputPassword(pswdChangeFm("pswdNew"),
+                '_label -> Messages("login.pswdChangeFm.pswdNew.label"),
+                '_showErrors -> true,
+                '_showConstraints -> false,
+                'placeholder -> Messages("login.pswdChangeFm.pswdNew.placeholder"))
+
+            @if(pswdChangeFm.hasGlobalErrors) {
+                <dl class="line-msgs">
+                    <dt></dt>
+                    @for(error <- pswdChangeFm.globalErrors) {
+                        <dd class="error">@error.message</dd>
+                    }
+                </dl>
+            }
+
+            <dl class="line-btns">
+                <dt></dt>
+                <dd>
+                    <button type="submit" class="button-base">@Messages("login.pswdChangeFm.btn.submit")</button>
+                </dd>
+            </dl>
+        </div>
+
+    </form>
+
+}
