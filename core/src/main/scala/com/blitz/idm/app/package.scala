@@ -11,6 +11,8 @@ package object app {
 
   def appConfiguration = AppProvider.current.configuration
 
+  def keystoreManager = AppProvider.current.keystoreManager
+
   //Logger utils
   def coreLogError(msg: String) {
     AppProvider.current.coreLogger.error(msg)

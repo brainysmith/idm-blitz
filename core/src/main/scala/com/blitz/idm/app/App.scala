@@ -3,6 +3,7 @@ package com.blitz.idm.app
 import scala.io.Source
 import scala.annotation.implicitNotFound
 import org.slf4j.LoggerFactory
+import com.blitz.idm.app.security.KeyStoreManager
 
 /**
  *
@@ -23,6 +24,8 @@ trait App {
   def reloadLoggerConfig{
     Logger.doConfigure(AppProvider.classLoader, name, configuration)
   }
+
+  def keystoreManager = KeyStoreManager
 
 }
 
