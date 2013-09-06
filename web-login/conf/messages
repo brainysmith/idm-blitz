@@ -6,10 +6,15 @@ main.errPP.defaultError=Unknown error.
 
 #Login page
 login.head.title=Login
-login.loginFm.lgn.label=Login
-login.loginFm.lgn.placeholder=Login
+login.loginFm.login.label=Login
+login.loginFm.login.placeholder=Login
 login.loginFm.pswd.label=Password
 login.loginFm.pswd.placeholder=Password
-login.loginFm.btn.submit=Login
+login.loginFm.btn.login=Login
+login.altPswdFm.curPswd.label=current password
+login.altPswdFm.curPswd.placeholder=current password
+login.altPswdFm.newPswd.label=new password
+login.altPswdFm.newPswd.placeholder=new password
+login.altPswdFm.btn.altPswd=change password
 
-LoginErrors.INVALID_CREDENTIALS=The username or password you entered is incorrect.
+BuildInErrors.INVALID_CREDENTIALS=The username or password you entered is incorrect.

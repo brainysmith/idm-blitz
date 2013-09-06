@@ -3,22 +3,24 @@ package controllers
 import play.api.mvc._
 import play.api.data.Forms._
 import play.api.data.Form
-import services.login.{BasicLoginModule, LoginContext, BuildInMethods, LoginManager}
-import com.blitz.idm.app._
+import services.login.{LoginContext, BuildInMethods, LoginManager}
+import play.api.libs.json.Json
+import utils.security.LoginAction
+import com.blitz.idm.app.json.{JStr, JObj}
 
 object Login extends Controller {
 
   val basicForm = Form(
     tuple(
-      "lgn" -> nonEmptyText,
+      "login" -> nonEmptyText,
       "pswd"  -> nonEmptyText
     )
   )
 
   val pswdChangeForm = Form(
     tuple(
-      "pswdCur" -> nonEmptyText,
-      "pswdNew"  -> nonEmptyText
+      "curPswd" -> nonEmptyText,
+      "newPswd"  -> nonEmptyText
     )
   )
 
@@ -29,14 +31,18 @@ object Login extends Controller {
 
 
   /*todo: change implementation (move to ajax)*/
-  def basicLogin = Action {
-    implicit request => {
+  def basicLogin = LoginAction {
+    implicit loginRequest => {
       basicForm.bindFromRequest.fold(
         errorForm => {
-          BadRequest(views.html.login(errorForm))
+          session.get("test").map(time => System.out.printf("time: %s\n", time)).getOrElse(System.out.println("empty"))
+          BadRequest(Json.obj("errors" -> errorForm.errorsAsJson)).withSession("test" -> System.currentTimeMillis().toString)
         },
         form => {
-          implicit val lc = LoginContext.basic(form)
+          //implicit val lc = LoginContext.basic(form)
+          implicit val lc = loginRequest.getLoginContext withCredentials JObj(Seq("lgn" -> JStr(form._1), "pswd" -> JStr(form._2)))
+
+
           LoginManager[Result](BuildInMethods.BASIC)(callOpt => {
             callOpt.fold[Result]({
               //partial success
@@ -46,7 +52,8 @@ object Login extends Controller {
               })(obligation => {
                 obligation match {
                   case "change_password" => {
-                    Ok(views.html.pswdChange(pswdChangeForm))
+                    //todo: add login context
+                    Ok(Json.obj("result" -> Json.obj("obligation" -> "change_password")))
                   }
                   case _ => {
                     //todo: change it
@@ -55,11 +62,11 @@ object Login extends Controller {
                 }
               })
             })(call => {
-              //success
-              Ok("Good! Lgn: " + form._1 + ", pswd: " + form._2 + ".")
+              //todo: add login context
+              Ok(Json.obj("result" -> Json.obj("toUrl" -> call.absoluteURL())))
             })
           })(errors => {
-            BadRequest(views.html.login(errors.foldLeft(basicForm.fill((form._1, "")))((frm, msg) => frm.withGlobalError(msg._2))))
+            BadRequest(Json.obj("errors" -> errors.foldLeft(basicForm)((frm, msg) => frm.withGlobalError(msg._2)).errorsAsJson))
           })
         }
       )
@@ -72,22 +79,21 @@ object Login extends Controller {
   }  */
 
   /*todo: change implementation (move to ajax)*/
-  def changePswd = Action {
-    implicit request => NotImplemented
-  }
 /*  def changePswd = Action {
+    implicit request => NotImplemented
+  }*/
+  def altPswd = Action {
     implicit request => {
       pswdChangeForm.bindFromRequest.fold(
         errorForm => {
-          BadRequest(views.html.pswdChange(errorForm))
+          BadRequest(Json.obj("errors" -> errorForm.errorsAsJson))
         },
         form => {
-          implicit val lc = LoginContext.basic(form)
-
+          throw new UnsupportedOperationException("Hasn't realized yet.")
         }
       )
     }
-  }*/
+  }
 
   def smartCardLogin = Action {
     implicit request => NotImplemented

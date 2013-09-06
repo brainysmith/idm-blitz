@@ -4,76 +4,91 @@
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/login.min.css")">
 }
 @scripts = {
-    @utils.js.require("login")
     @helper.javascriptRouter("router")(
         routes.javascript.Login.basicLogin,
-        routes.javascript.Login.changePswd
+        routes.javascript.Login.altPswd
     )
+    @utils.js.require("login")
 }
-
-@import helper._
 
 @tmpl.main(
     Messages("login.head.title"),
     stylesheets = stylesheets,
     scripts = scripts
 ) {
-
-    <form id="loginFm" action="@routes.Login.basicLogin()" method="post">
-
+    <form id="loginFm" onkeydown="if (event.keyCode == 13) {$('#loginBtn').click();}">
         <div class="">
 
-            <dl class="lgn">
-                <dt>@Messages("login.loginFm.lgn.label")</dt>
+            <dl class="login">
+                <dt>@Messages("login.loginFm.login.label")</dt>
                 <dd>
-                    <input id="lgn" type="text"
-                           placeholder='@Messages("login.loginFm.lgn.placeholder")'
-                           data-value-update="keyup" data-bind="value: lgn"/>
+                    <input id="login" name ="login" type="text"
+                           placeholder='@Messages("login.loginFm.login.placeholder")'
+                           data-value-update="keyup" data-bind="value: login"/>
                 </dd>
             </dl>
 
             <dl class="pswd">
                 <dt>@Messages("login.loginFm.pswd.label")</dt>
                 <dd>
-                    <input id="pswd" type="password"
+                    <input id="pswd" name="pswd" type="password"
                            placeholder='@Messages("login.loginFm.pswd.placeholder")'
                            data-value-update="keyup" data-bind="value: pswd"/>
                 </dd>
             </dl>
 
-@*            @inputText(loginForm("lgn"),
-                '_label -> Messages("login.loginFm.lgn.label"),
-                '_showErrors -> true,
-                '_showConstraints -> false,
-                'placeholder -> Messages("login.loginFm.lgn.placeholder"))*@
-
-@*            @inputPassword(loginForm("pswd"),
-                '_label -> Messages("login.loginFm.pswd.label"),
-                '_showErrors -> true,
-                '_showConstraints -> false,
-                'placeholder -> Messages("login.loginFm.pswd.placeholder"))*@
-
-            @if(loginForm.hasGlobalErrors) {
-                <dl class="line-msgs">
-                    <dt></dt>
-                    @for(error <- loginForm.globalErrors) {
-                        <dd class="error">@error.message</dd>
-                    }
-                </dl>
-            }
+            <dl id="loginFm_lineError" class="line-msgs">
+                <dt></dt>
+            </dl>
 
             <dl class="line-btns">
                 <dt></dt>
                 <dd>
-                    <button data-bind="click: login">
-                        @Messages("login.loginFm.btn.submit")
+                    <button id="loginBtn" type="button"
+                            data-bind="click: do">
+                        @Messages("login.loginFm.btn.login")
                     </button>
-
-                    @*<button type="submit" class="button-base">@Messages("login.loginFm.btn.submit")</button>*@
                 </dd>
             </dl>
         </div>
-
     </form>
 
+    <div id="altPswdPP" style="display: none">
+        <form id="altPswdFm" onkeydown="if (event.keyCode == 13) {$('#altPswdBtn').click();}">
+            <div class="">
+
+                <dl class="curPswd">
+                    <dt>@Messages("login.altPswdFm.curPswd.label")</dt>
+                    <dd>
+                        <input id="curPswd" name="curPswd" type="password"
+                               placeholder='@Messages("login.altPswdFm.curPswd.placeholder")'
+                               data-value-update="keyup" data-bind="value: curPswd"/>
+                    </dd>
+                </dl>
+
+                <dl class="newPswd">
+                    <dt>@Messages("login.altPswdFm.newPswd.label")</dt>
+                    <dd>
+                        <input id="newPswd" name="newPswd" type="password"
+                               placeholder='@Messages("login.altPswdFm.newPswd.placeholder")'
+                               data-value-update="keyup" data-bind="value: newPswd"/>
+                    </dd>
+                </dl>
+
+                <dl id="altPswdFm_lineError" class="line-msgs">
+                    <dt></dt>
+                </dl>
+
+                <dl class="line-btns">
+                    <dt></dt>
+                    <dd>
+                        <button id="altPswdBtn" type="button"
+                                data-bind="click: do">
+                            @Messages("login.altPswdFm.btn.altPswd")
+                        </button>
+                    </dd>
+                </dl>
+            </div>
+        </form>
+    </div>
 }

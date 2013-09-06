@@ -28,7 +28,7 @@ object LoginManager {
     appLogDebug("the following login modules has been read from the configuration: {}", loginModulesMeta)
   }
 
-  private val loginModules = loginModulesMeta.map(_.newInstance)
+  private[login] val loginModules = loginModulesMeta.map(_.newInstance)
 
   private val loginFlow = conf.loginFlow.fold[LoginFlow]({
     appLogDebug("use the build in login flow")
@@ -140,7 +140,7 @@ object LoginManager {
               if (prevRes == Result.FAIL) {
                 appLogTrace("try to authenticate by a following login module: {}", lm)
                 val iRes = lm.`do`
-                if (iRes == Result.SUCCESS) {
+                if (iRes != Result.FAIL) {
                   appLogTrace("authentication by login module is successfully [lm = {}]", lm)
                   lcImpl.setLoginModule(lm)
                 } else {

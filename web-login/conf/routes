@@ -6,7 +6,7 @@
 GET         /login/basic                   controllers.Login.getPage
 GET         /login                         controllers.Login.getPage
 POST        /login/basic                   controllers.Login.basicLogin
-POST        /login/basic/changePswd        controllers.Login.changePswd
+POST        /login/basic/altPswd        controllers.Login.altPswd
 
 
 # Map static resources from the /public folder to the /assets URL path
