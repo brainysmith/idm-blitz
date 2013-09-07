@@ -117,6 +117,8 @@ case class JObj(private val v: Seq[(String, JVal)]) extends JVal {
 
   def ++!(that: JObj): JObj = JObj.addOrReplace(this, that)
 
+  def fields: Set[String] = value.keySet
+
   override def \(field: String) = value.get(field).getOrElse(JUndef)
 
 }

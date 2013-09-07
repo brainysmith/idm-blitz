@@ -15,7 +15,7 @@ sealed abstract class Algorithm(private val _name: String,
                                 val algType: AlgorithmType,
                                 val required: Boolean,
                                 val description: String,
-                                val isSupported: Boolean = false) extends Algorithm.Val {
+                                val supported: Boolean = false) extends Algorithm.Val {
   def name = _name
 }
 

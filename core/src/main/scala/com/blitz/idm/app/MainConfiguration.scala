@@ -65,6 +65,15 @@ class MainConfiguration(private val appConf: String, private val root: Config = 
 
     }
 
+    val truststore = new NestedConfiguration("truststore")(this) {
+
+      val path = getString("path")
+
+      val password = getString("password")
+
+
+    }
+
     val tests = new NestedConfiguration("tests")(this) {
       val dirOfTests = getOptString("dir-of-tests").getOrElse(dataDirPath)
     }
