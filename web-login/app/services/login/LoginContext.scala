@@ -2,6 +2,7 @@ package services.login
 
 import com.blitz.idm.app.json.{JWriter, JStr, JObj}
 import play.api.mvc.{AnyContent, Request}
+import java.util
 
 /**
  * Context's interface of the login process.
@@ -102,14 +103,14 @@ trait LoginContext {
    * login context it wouldn't be able to get one.
    * @return None if there isn't obligation ans some string representing the obligation otherwise.
    */
-  def getObligation: Option[String]
+  def getObligation: Option[Any]
 
   /**
    * Sets an obligation which must be executed before the login process will be continued.
-   * @param obligation the name of the obligation.
+   * @param obligation the obligation.
    * @return the current login context.
    */
-  def withObligation(obligation: String): LoginContext
+  def withObligation(obligation: Any): LoginContext
 
   /**
    * Retrieve all errors associated with the current login context and request. After the request has been processed the

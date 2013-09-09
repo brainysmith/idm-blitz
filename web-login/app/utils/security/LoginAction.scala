@@ -2,7 +2,7 @@ package utils.security
 
 import com.blitz.idm.app._
 import play.api.mvc._
-import services.login.{LoginContextImpl, LoginContext}
+import services.login.LoginContextImpl
 
 /**
  */

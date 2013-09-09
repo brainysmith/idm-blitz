@@ -66,163 +66,152 @@ class LdapLoginModule extends BasicLoginModule {
   }
 
   override def `do`(implicit lc: LoginContext, request: Request[AnyContent]): Result = {
-    appLogTrace("attempting to authenticate subject by LDAP server [login context: {}]", lc)
+    appLogTrace("attempting to authenticate subject by LDAP server [lc: {}]", lc)
 
-    Try(pool.getConnection) match {
-      case Success(connection) => {
-        appLogTrace("LDAP has been got from the pool")
-        val authRes = lc.getCredentials.foldLeft[Option[Result]](None)((authRes, crl) => {
-          if (authRes.getOrElse(Result.FAIL) == Result.FAIL) {
-            (crl("lgn").asOpt[String], crl("pswd").asOpt[String]) match {
-              case (Some(lgn), Some(pswd)) => {
-                val userDn = interpolate(userDnPattern, Map("USERNAME" -> lgn))
-                Try({
-                  appLogTrace("try to bind to LDAP server with following userDn: {}", userDn)
-                  val bindReq = new SimpleBindRequest(userDn, pswd)
-                  //if bind failed it rise LdapException
-                  val bind = connection.bind(bindReq)
-                  if (!bind.getResultCode.isConnectionUsable) {
-                    appLogError("cannot bind to LDAP server: the connection isn't usable [resultCode: {}]",
-                      bind.getResultCode)
-                    throw new RuntimeException("cannot bind to LDAP server: the connection isn't usable")
+    val userDnOpt: Option[String] = lc.getClaims.apply(USER_DN_CLAIM_NAME).asOpt[String].fold({
+      appLogTrace("getting login from the login context [lc: {}]", lc)
+      lc.getCredentials.find(_("login").asOpt[String].isDefined).fold[Option[String]]({
+        appLogError("cannot find the login within login context's credentials.")
+        None
+      })(crl => {
+        Some(interpolate(userDnPattern, Map("USERNAME" -> crl("login").as[String])))
+      })
+    })(userDn => Some(userDn))
+
+    val pswdOpt: Option[String] =  lc.getCredentials.find(_("pswd").asOpt[String].isDefined).fold[Option[String]]({
+      appLogError("cannot find the password into login context's credentials.")
+      None
+    })(crl => Some(crl("pswd").as[String]))
+
+    (userDnOpt, pswdOpt) match {
+      case (Some(userDn), Some(pswd)) => {
+        Try(pool.getConnection) match {
+          case Success(connection) => {
+            appLogTrace("LDAP has been got from the pool")
+            val authRes = Try({
+              appLogTrace("try to bind to LDAP server with following userDn: {}", userDn)
+              val bindReq = new SimpleBindRequest(userDn, pswd)
+              //if bind failed it rise LdapException
+              val bind = connection.bind(bindReq)
+              if (!bind.getResultCode.isConnectionUsable) {
+                appLogError("cannot bind to LDAP server: the connection isn't usable [resultCode: {}]",
+                  bind.getResultCode)
+                throw new RuntimeException("cannot bind to LDAP server: the connection isn't usable")
+              }
+              appLogDebug("bind to LDAP server is successful [userDn: {}]", userDn)
+              //put the matched user dn into the login context for the future use
+              lc withClaim (USER_DN_CLAIM_NAME -> bindReq.getBindDN)
+
+              appLogTrace("analyzing LDAP server's response controls [controls: {}]", bind.getResponseControls)
+              var isPswdExpired = false
+              bind.getResponseControls.foreach(control => {
+                appLogTrace("got a control [name={}, oid={}]", control.getControlName, control.getOID)
+                control match {
+                  case expiringControl: PasswordExpiringControl => {
+                    appLogTrace("the subject's password will expire in the near future [after {} sec]",
+                      expiringControl.getSecondsUntilExpiration)
+                    lc.withWarn(NEAR_PSWD_EXPIRE_WARN_KEY, Messages(NEAR_PSWD_EXPIRE_WARN_KEY,
+                      expiringControl.getSecondsUntilExpiration/60/60/24))
                   }
-                  appLogDebug("bind to LDAP server is successful [userDn: {}]", userDn)
-
-                  appLogTrace("analyzing bind LDAP server's response controls [controls: {}]", bind.getResponseControls)
-                  var isPswdExpired = false
-                  bind.getResponseControls.foreach(control => {
-                    appLogTrace("got a control [name={}, oid={}]", control.getControlName, control.getOID)
-                    control match {
-                      case expiringControl: PasswordExpiringControl => {
-                        appLogTrace("the subject's password will expire in the near future [after {} sec]",
-                          expiringControl.getSecondsUntilExpiration)
-                        lc.withWarn(NEAR_PSWD_EXPIRE_WARN_KEY, Messages(NEAR_PSWD_EXPIRE_WARN_KEY,
-                          expiringControl.getSecondsUntilExpiration/60/60/24))
-                      }
-                      case expiredControl: PasswordExpiredControl => {
-                        //todo: stop here
-                        appLogTrace("bind is successful, but the subject's password has expired: to continue the " +
-                          "authentication the subject must change its password. Adding the {} obligation to the login " +
-                          "context.",
-                          Obligation.CHANGE_PASSWORD.toString)
-                        lc.withObligation(Obligation.CHANGE_PASSWORD.toString)
-                        isPswdExpired = true
-                      }
-                      case _ => {
-                        appLogDebug("unknown control, do nothing [name={}, oid={}]", control.getControlName,
-                          control.getOID)
-                      }
-                    }
-                  })
-
-                  //put the matched user dn into the login context for the future use
-                  lc withParam(USER_DN_LC_PARAM_NAME -> bind.getMatchedDN)
-
-                  if (!isPswdExpired) {
-                    appLogTrace("getting the subject's entry [userDn: {}]", userDn)
-                    //todo: add requested attributes from the configuration
-                    Option(connection.getEntry(userDn)).fold[Result]({
-                      appLogError("can't get the subject's entry: check the LDAP access rules. The subject must have " +
-                        "an access to his entry.")
-                      throw new IllegalAccessException("can't get the subject's entry: check the LDAP access rules. " +
-                        "The subject must have an access to his entry.")
-                    })(entry => {
-                      //todo: add user's attributes to claims of the lc
-                      Result.SUCCESS
-                    })
-                  } else {
-                    Result.PARTIALLY_COMPLETED
+                  case expiredControl: PasswordExpiredControl => {
+                    //todo: analise what is it isCritical
+                    appLogTrace("bind is successful, but the subject's password has expired: to continue the " +
+                      "authentication the subject must change its password. Adding the {} obligation to the login " +
+                      "context.", Obligation.CHANGE_PASSWORD)
+                    lc.withObligation(Obligation.CHANGE_PASSWORD)
+                    isPswdExpired = true
                   }
-                }) match {
-                  case Success(res) => {
-                    appLogTrace("authentication by LDAP is completed successfully [userDn: {}, res={}]", userDn, res)
-                    Some(res)
-                  }
-                  case Failure(e) => {
-                    appLogDebug("authentication by LDAP is failed [userName: {}, error: {}]", lgn, e)
-                    e match {
-                      case le: LDAPException => {
-                        var isErrorResolvedByControl = false
-                        le.getResponseControls.foreach(control => {
-                          appLogTrace("got a control [name={}, oid={}]", control.getControlName, control.getOID)
-                          control match {
-                            case expiredControl: PasswordExpiredControl => {
-                              //todo: check is it possible to change password in this case
-                              appLogTrace("the subject's password has expired, adding the appropriate error")
-                              lc withError PASSWORD_EXPIRED
-                              isErrorResolvedByControl = true
-                            }
-                            case _ => {
-                              appLogDebug("unknown control, do nothing [name={}, oid={}]", control.getControlName,
-                                control.getOID)
-                            }
-                          }
-                        })
-
-                        if (!isErrorResolvedByControl) {
-                          appLogTrace("map result code to error [result code ={}]", le.getResultCode)
-                          errorMapper.get(le.getResultCode).fold({
-                            val errorKey = UNMAPPED_ERROR_MSG_PREFIX + le.getResultCode.getName
-                            lc.withError(errorKey, Messages(errorKey))
-                          })(lc withError _)
-                        }
-                      }
-                      case _ => {
-                        appLogError("can't perform authentication by LDAP server. Internal error has occurred: {}", e)
-                        lc withError BuildInError.INTERNAL
-                      }
-                    }
-                    Some(Result.FAIL)
+                  case _ => {
+                    appLogDebug("unknown control, do nothing [name={}, oid={}]", control.getControlName,
+                      control.getOID)
                   }
                 }
+              })
+
+              if (!isPswdExpired) {
+                appLogTrace("getting the subject's entry [userDn: {}]", userDn)
+                //todo: add requested attributes from the configuration
+                Option(connection.getEntry(userDn)).fold[Result]({
+                  appLogError("can't get the subject's entry: check the LDAP access rules. The subject must have " +
+                    "an access to his entry.")
+                  throw new IllegalAccessException("can't get the subject's entry: check the LDAP access rules. " +
+                    "The subject must have an access to his entry.")
+                })(entry => {
+                  //todo: add user's attributes to claims of the lc
+                  Result.SUCCESS
+                })
+              } else {
+                Result.PARTIALLY_COMPLETED
               }
-              case _ => {
-                //there aren't login and password in the credentials
-                appLogWarn("can't perform authentication by LDAP: the basic credentials not found [lc: {}]", lc)
-                lc withError NO_CREDENTIALS_FOUND
-                Some(Result.FAIL)
+            })
+
+            //release the connection
+            pool.releaseConnection(connection)
+            appLogTrace("LDAP connection has been released")
+
+            authRes match {
+              case Success(res) => {
+                appLogTrace("authentication by LDAP is completed successfully [userDn: {}, res={}]", userDn, res)
+                res
+              }
+              case Failure(e) => {
+                appLogDebug("authentication by LDAP is failed [userName: {}, error: {}]", userDn, e)
+                e match {
+                  case le: LDAPException => {
+                    var isErrorResolvedByControl = false
+                    le.getResponseControls.foreach(control => {
+                      appLogTrace("got a control [name={}, oid={}]", control.getControlName, control.getOID)
+                      control match {
+                        case expiredControl: PasswordExpiredControl => {
+                          //todo: check is it possible to change password in this case
+                          appLogTrace("the subject's password has expired, adding the appropriate error")
+                          lc withError PASSWORD_EXPIRED
+                          isErrorResolvedByControl = true
+                        }
+                        case _ => {
+                          appLogDebug("unknown control, do nothing [name={}, oid={}]", control.getControlName,
+                            control.getOID)
+                        }
+                      }
+                    })
+
+                    if (!isErrorResolvedByControl) {
+                      appLogTrace("map result code to error [result code ={}]", le.getResultCode)
+                      handleLdapError(le.getResultCode)
+                    }
+                  }
+                  case _ => {
+                    appLogError("can't perform authentication by LDAP server. Internal error has occurred: {}", e)
+                    lc withError BuildInError.INTERNAL
+                  }
+                }
+                Result.FAIL
               }
             }
-          } else {
-            //if authentication is successful
-            authRes
           }
-        })
-
-        //release the connection
-        pool.releaseConnection(connection)
-        appLogTrace("LDAP connection has been released")
-
-        //check the result
-        authRes match {
-          case Some(res) => {
-            appLogTrace("summary result of the authentication by ldap login module: [res: {}]", authRes)
-            res
-          }
-          case None => {
-            appLogWarn("can't perform authentication by LDAP: credentials not found [lc: {}]", lc)
-            lc withError NO_CREDENTIALS_FOUND
-            Result.FAIL
+          case Failure(e) => {
+            appLogError("can't perform authentication by LDAP: can't get a LDAP connection from the pool")
+            throw e
           }
         }
       }
-      case Failure(e) => {
-        appLogError("can't get a ldap connection from the pool")
-        throw e
+      case _ => {
+        appLogWarn("can't perform authentication by LDAP: required credentials not found [lc: {}]", lc)
+        lc withError NO_CREDENTIALS_FOUND
+        Result.FAIL
       }
     }
-
   }
 
   override def changePassword(curPswd: String, newPswd: String)
                              (implicit lc: LoginContext, request: Request[AnyContent]): Boolean = {
     appLogTrace("changing the subject's password [login context: {}]", lc)
 
-    lc.getParams(USER_DN_LC_PARAM_NAME).asOpt[String].fold[Boolean]({
+    lc.getParams(USER_DN_CLAIM_NAME).asOpt[String].fold[Boolean]({
       //in empty
       appLogError("change password is failed: couldn't find the {} param in the login context. Ensure that you have " +
-        "performed the authentication before.", USER_DN_LC_PARAM_NAME)
-      throw new IllegalStateException("change password is failed: couldn't find the " + USER_DN_LC_PARAM_NAME +
+        "performed the authentication before.", USER_DN_CLAIM_NAME)
+      throw new IllegalStateException("change password is failed: couldn't find the " + USER_DN_CLAIM_NAME +
         " param in the login context. Ensure that you have performed the authentication before.")
     })(userDn => {
       Try(pool.getConnection) match {
@@ -243,7 +232,7 @@ class LdapLoginModule extends BasicLoginModule {
               } else {
                 //todo: stop here
                 appLogDebug("the password change failed [userDn: {}, resultCode={}]", userDn, res.getResultCode.getName)
-                handleError(res.getResultCode)
+                handleLdapError(res.getResultCode)
                 false
               }
             }
@@ -261,10 +250,12 @@ class LdapLoginModule extends BasicLoginModule {
     })
   }
 
-  private def handleError(code: ResultCode)(implicit lc: LoginContext, request: Request[AnyContent]) = errorMapper.get(code).fold({
-    val errorKey = UNMAPPED_ERROR_MSG_PREFIX + code.getName
-    lc.withError(errorKey, Messages(errorKey))
-  })(lc withError _)
+  private def handleLdapError(code: ResultCode)(implicit lc: LoginContext, request: Request[AnyContent]) = {
+    errorMapper.get(code).fold({
+      val errorKey = UNMAPPED_ERROR_MSG_PREFIX + code.getName
+      lc.withError(errorKey, Messages(errorKey))
+    })(lc withError _)
+  }
 
   private def interpolate(text: String, vars: Map[String, String]) =
     (text /: vars) { (t, kv) => t.replace("${"+kv._1+"}", kv._2)  }
@@ -277,7 +268,7 @@ class LdapLoginModule extends BasicLoginModule {
 }
 
 object LdapLoginModule {
-  val USER_DN_LC_PARAM_NAME = "USER_DN"
+  val USER_DN_CLAIM_NAME = "USER_DN"
 
   val UNMAPPED_ERROR_MSG_PREFIX = "LdapLoginModule.error."
   val NEAR_PSWD_EXPIRE_WARN_KEY = "LdapLoginModule.warn.nearPswdExpire"

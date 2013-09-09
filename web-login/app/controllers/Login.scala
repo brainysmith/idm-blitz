@@ -2,11 +2,13 @@ package controllers
 
 import play.api.mvc._
 import play.api.data.Forms._
-import play.api.data.Form
-import services.login.{LoginContext, BuildInMethods, LoginManager}
-import play.api.libs.json.Json
+import play.api.data.{FormError, Form}
+import services.login.{BasicLoginModule, LoginContext, BuildInMethods, LoginManager}
+import play.api.libs.json.{JsObject, Json}
 import utils.security.LoginAction
 import com.blitz.idm.app.json.{JStr, JObj}
+import com.blitz.idm.app._
+import utils.js.{LoginFailure, LoginSuccess}
 
 object Login extends Controller {
 
@@ -35,13 +37,11 @@ object Login extends Controller {
     implicit loginRequest => {
       basicForm.bindFromRequest.fold(
         errorForm => {
-          session.get("test").map(time => System.out.printf("time: %s\n", time)).getOrElse(System.out.println("empty"))
-          BadRequest(Json.obj("errors" -> errorForm.errorsAsJson)).withSession("test" -> System.currentTimeMillis().toString)
+          BadRequest(LoginFailure(errorForm))
         },
         form => {
           //implicit val lc = LoginContext.basic(form)
-          implicit val lc = loginRequest.getLoginContext withCredentials JObj(Seq("lgn" -> JStr(form._1), "pswd" -> JStr(form._2)))
-
+          implicit val lc: LoginContext = loginRequest.getLoginContext withCredentials JObj(Seq("login" -> JStr(form._1), "pswd" -> JStr(form._2)))
 
           LoginManager[Result](BuildInMethods.BASIC)(callOpt => {
             callOpt.fold[Result]({
@@ -51,9 +51,8 @@ object Login extends Controller {
                 throw new RuntimeException("it's impossible")
               })(obligation => {
                 obligation match {
-                  case "change_password" => {
-                    //todo: add login context
-                    Ok(Json.obj("result" -> Json.obj("obligation" -> "change_password")))
+                  case BasicLoginModule.Obligation.CHANGE_PASSWORD => {
+                    Ok(LoginSuccess(obligation))
                   }
                   case _ => {
                     //todo: change it
@@ -62,33 +61,49 @@ object Login extends Controller {
                 }
               })
             })(call => {
-              //todo: add login context
-              Ok(Json.obj("result" -> Json.obj("toUrl" -> call.absoluteURL())))
+              Ok(LoginSuccess(call))
             })
           })(errors => {
-            BadRequest(Json.obj("errors" -> errors.foldLeft(basicForm)((frm, msg) => frm.withGlobalError(msg._2)).errorsAsJson))
+            BadRequest(LoginFailure(errors))
           })
         }
       )
     }
   }
 
-/*  def getChangePswdPage = Action { implicit request => {
-      Ok(views.html.pswdChange(pswdChangeForm))
-    }
-  }  */
-
-  /*todo: change implementation (move to ajax)*/
-/*  def changePswd = Action {
-    implicit request => NotImplemented
-  }*/
-  def altPswd = Action {
-    implicit request => {
+  /*todo: change implementation*/
+  def altPswd = LoginAction {
+    implicit loginRequest => {
       pswdChangeForm.bindFromRequest.fold(
         errorForm => {
           BadRequest(Json.obj("errors" -> errorForm.errorsAsJson))
         },
         form => {
+          implicit val lc: LoginContext = loginRequest.getLoginContext
+
+          val basicLm = lc.getLoginModule[BasicLoginModule].getOrElse({
+            appLogError("can't perform the operation: a login module not found")
+            throw new RuntimeException("can't perform the operation: a login module not found")
+          })
+
+          basicLm.changePassword(form._1, form._2)
+          FormError
+
+
+
+
+
+          //implicit val lc: LoginContext = loginRequest.getLoginContext withCredentials JObj(Seq("lgn" -> JStr(form._1), "pswd" -> JStr(form._2)))
+          LoginManager.`do`(callOpt => {
+            callOpt.fold[Result]({
+              appLogError("stop the authentication process: unexpected behavior, a next point not found.")
+              throw new RuntimeException("stop the authentication process: unexpected behavior, a next point not found.")
+            })(call => {
+              Ok(Json.obj("result" -> Json.obj("toUrl" -> call.absoluteURL())))
+            })
+          })(errors => {
+            BadRequest(Json.obj("errors" -> errors.foldLeft(pswdChangeForm)((frm, msg) => frm.withGlobalError(msg._2)).errorsAsJson))
+          })
           throw new UnsupportedOperationException("Hasn't realized yet.")
         }
       )

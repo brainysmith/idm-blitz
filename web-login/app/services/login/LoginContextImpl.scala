@@ -24,7 +24,7 @@ class LoginContextImpl extends LoginContext {
 
   //it isn't serialized
   private val crlsArray = new mutable.ArrayBuffer[JObj]()
-  private var obligation: Option[String] = None
+  private var obligation: Option[Any] = None
   private val errors = new mutable.ArrayBuffer[(String, String)]()
   private val warns = new mutable.ArrayBuffer[(String, String)]()
 
@@ -70,9 +70,9 @@ class LoginContextImpl extends LoginContext {
     this
   }
 
-  override def getObligation: Option[String] = obligation
+  def getObligation: Option[Any] = obligation
 
-  override def withObligation(obligation: String): LoginContext = {
+  def withObligation(obligation: Any): LoginContext = {
     this.obligation = Option(obligation)
     this
   }
@@ -139,6 +139,7 @@ class LoginContextImpl extends LoginContext {
     this
   }
 
+  /*todo: change it*/
   def toJson: String = {
     val jObj: JObj = Json.obj("status" -> getStatus.name,
              //"lmsToProcess" -> Json.arr(getLoginModulesToProcess().map(_.getClass.getSimpleName)),
@@ -191,6 +192,7 @@ object LoginContextImpl {
     })
 
     //todo: lmsToProcess
+    //jObj("loginModulesToProcess").as
     lc
   }
 }
