@@ -3,7 +3,7 @@ package utils.security
 import com.blitz.idm.app._
 import play.api.mvc._
 import services.login.LoginContextImpl
-import com.blitz.idm.app.json.Json
+import com.blitz.idm.app.json.{JVal, Json}
 
 /**
  */
@@ -17,9 +17,10 @@ trait LoginActionBuilder extends Results {
     Action(bodyParser) { implicit request =>
       implicit val lc: LoginContextImpl = request.session.get(LC_KEY_NAME).map(lcStr => {
         appLogTrace("got the following login context from the current HTTP session: {}", lcStr)
-        LoginContextImpl.fromJson(lcStr)
+        Json.fromJson[LoginContextImpl](JVal.parseStr(lcStr))
+        /*LoginContextImpl.fromJson(lcStr)*/
       }).getOrElse({
-        appLogTrace("can't find the login context in the current HTTP session: make a new")
+        appLogTrace("can't find the login context in the current HTTP session: make a new one")
         new LoginContextImpl()
       })
 

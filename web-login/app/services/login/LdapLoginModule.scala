@@ -87,7 +87,7 @@ class LdapLoginModule extends BasicLoginModule {
       case (Some(userDn), Some(pswd)) => {
         Try(pool.getConnection) match {
           case Success(connection) => {
-            appLogTrace("LDAP has been got from the pool")
+            appLogTrace("LDAP connection has been got from the pool")
             val authRes = Try({
               appLogTrace("try to bind to LDAP server with following userDn: {}", userDn)
               val bindReq = new SimpleBindRequest(userDn, pswd)
@@ -207,18 +207,20 @@ class LdapLoginModule extends BasicLoginModule {
                              (implicit lc: LoginContext, request: Request[AnyContent]): Boolean = {
     appLogTrace("changing the subject's password [login context: {}]", lc)
 
-    lc.getParams(USER_DN_CLAIM_NAME).asOpt[String].fold[Boolean]({
+    lc.getClaims(USER_DN_CLAIM_NAME).asOpt[String].fold[Boolean]({
       //in empty
-      appLogError("change password is failed: couldn't find the {} param in the login context. Ensure that you have " +
+      appLogError("change password is failed: couldn't find the {} claim in the login context. Ensure that you have " +
         "performed the authentication before.", USER_DN_CLAIM_NAME)
       throw new IllegalStateException("change password is failed: couldn't find the " + USER_DN_CLAIM_NAME +
-        " param in the login context. Ensure that you have performed the authentication before.")
+        " claim in the login context. Ensure that you have performed the authentication before.")
     })(userDn => {
+      val userIdentity = "dn:" + userDn
       Try(pool.getConnection) match {
         case Success(connection) => {
-          appLogTrace("LDAP has been got from the pool")
+          appLogTrace("LDAP connection has been got from the pool")
           val pswdMdfRes = Try({
-            val pswdMdfReq = new PasswordModifyExtendedRequest(userDn, curPswd, newPswd)
+            appLogTrace("try to change password in LDAP Server [userIdentity: {}]", userIdentity)
+            val pswdMdfReq = new PasswordModifyExtendedRequest(userIdentity, curPswd, newPswd)
             connection.processExtendedOperation(pswdMdfReq).asInstanceOf[PasswordModifyExtendedResult]
           })
           pool.releaseConnection(connection)
@@ -227,11 +229,11 @@ class LdapLoginModule extends BasicLoginModule {
           pswdMdfRes match {
             case Success(res) => {
               if (res.getResultCode == ResultCode.SUCCESS) {
-                appLogDebug("the password change was successful [userDn: {}]", userDn)
+                appLogDebug("the password change was successful [userIdentity: {}]", userIdentity)
                 true
               } else {
                 //todo: stop here
-                appLogDebug("the password change failed [userDn: {}, resultCode={}]", userDn, res.getResultCode.getName)
+                appLogDebug("the password change failed [userIdentity: {}, resultCode={}]", userIdentity, res.getResultCode.getName)
                 handleLdapError(res.getResultCode)
                 false
               }

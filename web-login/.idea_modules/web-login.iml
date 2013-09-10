@@ -141,6 +141,7 @@
     <orderEntry type="library" name="Scala 2.10.0" level="project" />
     <orderEntry type="module" module-name="core" />
     <orderEntry type="library" name="unboundid-ldapsdk-2.3.4" level="project" />
+    <orderEntry type="module" module-name="build-tools" />
   </component>
 </module>
 

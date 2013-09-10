@@ -8,7 +8,6 @@ import play.api.i18n.Messages
 /**
  * Implementation of the login context.
  */
-/*todo: make serialization*/
 class LoginContextImpl extends LoginContext {
   import scala.collection.mutable
 
@@ -163,7 +162,7 @@ object LoginContextImpl {
       "status" -> o.getStatus.name,
       "curMethod" -> o.getCurrentMethod.fold[JVal](JUndef)(method => JNum(method)),
       "completedMethods" -> o.getCompletedMethods.fold[JVal](JUndef)(methods => JNum(methods)),
-      "lm" -> o.getCompletedMethods.fold[JVal](JUndef)(lm => JStr(lm.getClass.getSimpleName)),
+      "lm" -> o.getLoginModule[LoginModule].fold[JVal](JUndef)(lm => JStr(lm.getClass.getSimpleName)),
       //"lmsToProcess" -> Json.arr(getLoginModulesToProcess().map(_.getClass.getSimpleName)),
       "params" -> o.getParams,
       "claims" -> o.getClaims
@@ -216,12 +215,12 @@ object LoginContextImpl {
           })
         })
       }).joinRight.right.map(lc => {
-        (v \ "params").asOpt[JVal].fold(Right(lc))(jp => {
+        (v \ "params").asOpt[JVal].fold[Either[String, LoginContextImpl]](Right(lc))(jp => {
           lc.params = jp.asInstanceOf[JObj]
           Right(lc)
         })
       }).joinRight.right.map(lc => {
-        (v \ "claims").asOpt[JVal].fold(Right(lc))(jc => {
+        (v \ "claims").asOpt[JVal].fold[Either[String, LoginContextImpl]](Right(lc))(jc => {
           lc.claims = jc.asInstanceOf[JObj]
           Right(lc)
         })
@@ -236,29 +235,5 @@ object LoginContextImpl {
         }
       }
     }
-  }
-
-  def fromJson(json: String): LoginContextImpl = {
-    val jObj: JObj = JVal.parseStr(json).asInstanceOf[JObj]
-    val lc = new LoginContextImpl()
-
-    lc.status = LoginStatus.valueOf(jObj("status").as[String])
-    lc.params = jObj("params").asInstanceOf[JObj]
-    lc.claims = jObj("claims").asInstanceOf[JObj]
-
-    lc.currentMethod = jObj("curMethod").asOpt[Int]
-    lc.completedMethods = jObj("completedMethod").asOpt[Int]
-
-    jObj("lm").asOpt[String].fold(lc.loginModule = None)(lmName => {
-      LoginManager.loginModules.find(_.getClass.getSimpleName == lmName).fold[Unit]({
-        //todo: throw exception
-        appLogError("the deserialization fail: can't find specified login module [name = {}]", lmName)
-        throw new IllegalArgumentException("the deserialization fail: can't find specified login module")
-      })(lm => {lc.loginModule = Some(lm)})
-    })
-
-    //todo: lmsToProcess
-    //jObj("loginModulesToProcess").as
-    lc
   }
 }

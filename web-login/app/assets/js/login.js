@@ -41,7 +41,7 @@ require(['ie', 'main', 'conf', 'jquery', 'kendo'],
                             },
                             success: function(request, textStatus, jqXHR) {
                                 main.clearFormErrors(formId);
-                                var res = $.parseJSON(jqXHR.responseText).result;
+                                var res = $.parseJSON(jqXHR.responseText);
                                 if (res.obligation) {
                                     doObligation(res.obligation)
                                 } else if (res.toUrl) {

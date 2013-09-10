@@ -4,11 +4,10 @@ import play.api.mvc._
 import play.api.data.Forms._
 import play.api.data.{FormError, Form}
 import services.login.{BasicLoginModule, LoginContext, BuildInMethods, LoginManager}
-import play.api.libs.json.{JsObject, Json}
-import utils.security.LoginAction
-import com.blitz.idm.app.json.{JStr, JObj}
+import utils.security.{LoginRequest, LoginAction}
+import com.blitz.idm.app.json.Json
 import com.blitz.idm.app._
-import utils.js.{LoginFailure, LoginSuccess}
+import utils.js.{LoginResult, LoginFailure, LoginSuccess}
 
 object Login extends Controller {
 
@@ -40,32 +39,7 @@ object Login extends Controller {
           BadRequest(LoginFailure(errorForm))
         },
         form => {
-          //implicit val lc = LoginContext.basic(form)
-          implicit val lc: LoginContext = loginRequest.getLoginContext withCredentials JObj(Seq("login" -> JStr(form._1), "pswd" -> JStr(form._2)))
-
-          LoginManager[Result](BuildInMethods.BASIC)(callOpt => {
-            callOpt.fold[Result]({
-              //partial success
-              lc.getObligation.fold[Result]({
-                //todo: change it
-                throw new RuntimeException("it's impossible")
-              })(obligation => {
-                obligation match {
-                  case BasicLoginModule.Obligation.CHANGE_PASSWORD => {
-                    Ok(LoginSuccess(obligation))
-                  }
-                  case _ => {
-                    //todo: change it
-                    throw new RuntimeException("unknown obligation")
-                  }
-                }
-              })
-            })(call => {
-              Ok(LoginSuccess(call))
-            })
-          })(errors => {
-            BadRequest(LoginFailure(errors))
-          })
+          _basicLogin(form._2, Some(form._1))
         }
       )
     }
@@ -76,38 +50,57 @@ object Login extends Controller {
     implicit loginRequest => {
       pswdChangeForm.bindFromRequest.fold(
         errorForm => {
-          BadRequest(Json.obj("errors" -> errorForm.errorsAsJson))
+          BadRequest(LoginFailure(errorForm))
         },
         form => {
           implicit val lc: LoginContext = loginRequest.getLoginContext
-
           val basicLm = lc.getLoginModule[BasicLoginModule].getOrElse({
             appLogError("can't perform the operation: a login module not found")
             throw new RuntimeException("can't perform the operation: a login module not found")
           })
 
-          basicLm.changePassword(form._1, form._2)
-          FormError
-
-
-
-
-
-          //implicit val lc: LoginContext = loginRequest.getLoginContext withCredentials JObj(Seq("lgn" -> JStr(form._1), "pswd" -> JStr(form._2)))
-          LoginManager.`do`(callOpt => {
-            callOpt.fold[Result]({
-              appLogError("stop the authentication process: unexpected behavior, a next point not found.")
-              throw new RuntimeException("stop the authentication process: unexpected behavior, a next point not found.")
-            })(call => {
-              Ok(Json.obj("result" -> Json.obj("toUrl" -> call.absoluteURL())))
-            })
-          })(errors => {
-            BadRequest(Json.obj("errors" -> errors.foldLeft(pswdChangeForm)((frm, msg) => frm.withGlobalError(msg._2)).errorsAsJson))
-          })
-          throw new UnsupportedOperationException("Hasn't realized yet.")
+          if (basicLm.changePassword(form._1, form._2)) {
+            appLogTrace("password has been changed successfully")
+            _basicLogin(form._2)
+          } else {
+            appLogTrace("password changing has failed [errors={}]", lc.getErrors)
+            BadRequest(LoginFailure(lc.getErrors))
+          }
         }
       )
     }
+  }
+
+  private def _basicLogin(pswd: String, loginOpt: Option[String] = None)(implicit lr: LoginRequest[AnyContent]): Result = {
+    implicit val lc: LoginContext = loginOpt.fold({
+      lr.getLoginContext withCredentials Json.obj("pswd" -> pswd)
+    })(login => {
+      lr.getLoginContext withCredentials Json.obj("login" -> login, "pswd" -> pswd)
+    })
+
+    LoginManager[Result](BuildInMethods.BASIC)(callOpt => {
+      callOpt.fold[Result]({
+        //partial success
+        lc.getObligation.fold[Result]({
+          //todo: change it
+          throw new RuntimeException("it's impossible")
+        })(obligation => {
+          obligation match {
+            case BasicLoginModule.Obligation.CHANGE_PASSWORD => {
+              Ok(LoginSuccess(obligation))
+            }
+            case _ => {
+              //todo: change it
+              throw new RuntimeException("unknown obligation")
+            }
+          }
+        })
+      })(call => {
+        Ok(LoginSuccess(call))
+      })
+    })(errors => {
+      BadRequest(LoginFailure(errors))
+    })
   }
 
   def smartCardLogin = Action {
