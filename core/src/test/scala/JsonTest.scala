@@ -102,6 +102,18 @@ class JsonTest extends Specification {
         Json.toJson(Map("key1" -> 1, "key2" -> 2, "key3" -> 3)).toString must be equalTo Json.obj("key1" -> JNum(1), "key2" -> JNum(2), "key3" -> JNum(3)).toString
       }
 
+      "marshalling " + Seq(3, 5, 7) + " " in {
+        Json.toJson(Seq(3, 5, 7)).toString must be equalTo "JArr(JNum(3), JNum(5), JNum(7))"
+      }
+
+      "marshalling " + Option(7) + " " in {
+        Json.toJson(Option(7)).toString must be equalTo "JNum(7)"
+      }
+
+      "marshalling " + Option[String](null) + " " in {
+        Json.toJson(Option[String](null)).toString must be equalTo "JUndef"
+      }
+
       "unmarshalling Int " in {
         JNum(7).as[Int] must be equalTo 7
       }
@@ -128,6 +140,18 @@ class JsonTest extends Specification {
 
       "unmarshalling Boolean " in {
         (objToTestOption \ "key4").asOpt[String] must be equalTo None
+      }
+
+      "unmarshalling " + JArr(Array(JNum(3), JNum(5), JNum(7))) + " " in {
+        JArr(Array(JNum(3), JNum(5), JNum(7))).as[Seq[Int]].toString must be equalTo List(3,5,7).toString()
+      }
+
+      "unmarshalling " + JUndef + " to Option[Int] " in {
+        JUndef.as[Option[Int]].toString must be equalTo "None"
+      }
+
+      "unmarshalling " + JNum(7) + " to Option[Int] " in {
+        JNum(7).as[Option[Int]].toString must be equalTo "Some(7)"
       }
 
       "constructing JObj from name and value " in {
@@ -173,6 +197,8 @@ class JsonTest extends Specification {
       "append an element into an array " in {
         (arr :+ 7).toJson must be equalTo "[10,\"test\",true,7]"
       }
+
+
 
     }
 
