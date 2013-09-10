@@ -4,6 +4,7 @@ import com.blitz.idm.app._
 import com.blitz.idm.app.json._
 import play.api.mvc.{AnyContent, Request}
 import play.api.i18n.Messages
+import play.api.libs.json.{JsValue, Writes}
 
 /**
  * Implementation of the login context.
@@ -140,18 +141,15 @@ class LoginContextImpl extends LoginContext {
   }
 
   /*todo: change it*/
-  def toJson: String = {
-    val jObj: JObj = Json.obj("status" -> getStatus.name,
-             //"lmsToProcess" -> Json.arr(getLoginModulesToProcess().map(_.getClass.getSimpleName)),
-             "params" -> getParams,
-             "claims" -> getClaims)
-
-    getCurrentMethod.map(method => jObj + ("curMethod" -> method))
-    getCompletedMethods.map(methods => jObj + ("completedMethod" -> methods))
-    getLoginModule[LoginModule].map(lm => jObj + ("lm" -> lm.getClass.getSimpleName))
-
-    jObj.toJson
-  }
+  def json: JObj = Json.obj(
+    "status" -> getStatus.name,
+    "curMethod" -> getCurrentMethod.fold[JVal](JUndef)(method => JNum(method)),
+    "completedMethod" -> getCompletedMethods.fold[JVal](JUndef)(methods => JNum(methods)),
+    "lm" -> getCompletedMethods.fold[JVal](JUndef)(lm => JStr(lm.getClass.getSimpleName)),
+    //"lmsToProcess" -> Json.arr(getLoginModulesToProcess().map(_.getClass.getSimpleName)),
+    "params" -> getParams,
+    "claims" -> getClaims
+  )
 
   override def toString: String = {
     val sb =new StringBuilder("LoginContextImpl(")
@@ -171,6 +169,18 @@ class LoginContextImpl extends LoginContext {
 
 /*todo: add private*/
 object LoginContextImpl {
+
+/*  implicit val writes: Writes[LoginContextImpl] = new Writes[LoginContextImpl] {
+    def writes(o: LoginContextImpl): JsValue = {
+      play.api.libs.json.Json.obj(
+        "status" -> o.getStatus.name,
+        "params" -> o.getParams,
+        "claims" -> o.getClaims,
+        "curMethod" -> o.getCurrentMethod,
+        "completedMethods" -> o.getCompletedMethods
+      )
+    }
+  }*/
 
   def fromJson(json: String): LoginContextImpl = {
     val jObj: JObj = JVal.parseStr(json).asInstanceOf[JObj]

@@ -22,7 +22,7 @@ trait LoginActionBuilder extends Results {
         new LoginContextImpl()
       })
 
-      a(LoginRequest(request, lc)).withSession(LC_KEY_NAME -> lc.toJson)
+      a(LoginRequest(request, lc)).withSession(LC_KEY_NAME -> lc.json.toJson)
     }
   }
 
