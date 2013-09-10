@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/build-tools/build-tools.iml" filepath="$PROJECT_DIR$/build-tools/build-tools.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" />
       <module fileurl="file://$PROJECT_DIR$/db-adapter-api/db-adapter-api.iml" filepath="$PROJECT_DIR$/db-adapter-api/db-adapter-api.iml" />
       <module fileurl="file://$PROJECT_DIR$/idp/idp-config/idp-config.iml" filepath="$PROJECT_DIR$/idp/idp-config/idp-config.iml" />

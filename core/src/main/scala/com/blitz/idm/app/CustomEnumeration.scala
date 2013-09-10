@@ -1,5 +1,7 @@
 package com.blitz.idm.app
 
+import com.blitz.idm.EnumerationMacros._
+
 /**
  *
  */
@@ -7,7 +9,10 @@ private[app] trait CustomEnumeration[A <: {def name: String}] {
 
   trait Val {
     self: A =>
-    _values += ((this.name, this))
+
+    def apply() {
+      _values += ((this.name, this))
+    }
   }
 
   private var _values = Map.empty[String, A]
@@ -23,13 +28,13 @@ private[app] trait CustomEnumeration[A <: {def name: String}] {
    * @param name - a name to search by.
    * @return - if there is an element with such a name then the method returns that element, otherwise throws NoSuchElementException.
    */
-  def valueOf(name: String) = _values(name)
+  def valueOf(name: String): A = _values(name)
 
   /**
    * Returns an Option of element that has a name given.
    * @param name - a name to search by.
    * @return - if there is an element with such a name then the method returns Some(that element), otherwise None.
    */
-  def optValueOf(name: String) = _values.get(name)
+  def optValueOf(name: String): Option[A] = _values.get(name)
 
 }
