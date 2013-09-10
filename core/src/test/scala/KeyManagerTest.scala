@@ -119,7 +119,7 @@ class KeyManagerTest extends Specification {
       keystoreManager.verifyCertificate(certChain, Set(secondCert)) must be equalTo Left("No issuer certificate for certificate in certification path found.")
     }
 
-    "validating of a wrong certificate chain" in {
+    "validating of a valid certificate chain" in {
       keystoreManager.verifyCertificate(certChain, Set(firstCert, secondCert)) must be equalTo Right(certChain)
     }
 

@@ -157,9 +157,9 @@ private[json] class JSerializer extends JsonSerializer[JVal]{
         o.value.foreach(e => {
           e._2 match {
             case JUndef =>
-            case _ => {
+            case v => {
               generator.writeFieldName(e._1)
-              serialize(e._2, generator, provider)
+              serialize(v, generator, provider)
             }
           }
         })

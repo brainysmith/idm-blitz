@@ -4,7 +4,6 @@ import com.blitz.idm.app._
 import com.blitz.idm.app.json._
 import play.api.mvc.{AnyContent, Request}
 import play.api.i18n.Messages
-import play.api.libs.json.{JsValue, Writes}
 
 /**
  * Implementation of the login context.
@@ -140,17 +139,6 @@ class LoginContextImpl extends LoginContext {
     this
   }
 
-  /*todo: change it*/
-  def json: JObj = Json.obj(
-    "status" -> getStatus.name,
-    "curMethod" -> getCurrentMethod.fold[JVal](JUndef)(method => JNum(method)),
-    "completedMethod" -> getCompletedMethods.fold[JVal](JUndef)(methods => JNum(methods)),
-    "lm" -> getCompletedMethods.fold[JVal](JUndef)(lm => JStr(lm.getClass.getSimpleName)),
-    //"lmsToProcess" -> Json.arr(getLoginModulesToProcess().map(_.getClass.getSimpleName)),
-    "params" -> getParams,
-    "claims" -> getClaims
-  )
-
   override def toString: String = {
     val sb =new StringBuilder("LoginContextImpl(")
     sb.append("currentMethod -> ").append(currentMethod)
@@ -167,20 +155,88 @@ class LoginContextImpl extends LoginContext {
   }
 }
 
-/*todo: add private*/
+
 object LoginContextImpl {
 
-/*  implicit val writes: Writes[LoginContextImpl] = new Writes[LoginContextImpl] {
-    def writes(o: LoginContextImpl): JsValue = {
-      play.api.libs.json.Json.obj(
-        "status" -> o.getStatus.name,
-        "params" -> o.getParams,
-        "claims" -> o.getClaims,
-        "curMethod" -> o.getCurrentMethod,
-        "completedMethods" -> o.getCompletedMethods
-      )
+  implicit def jwriter: JWriter[LoginContextImpl] = new JWriter[LoginContextImpl] {
+    def write(o: LoginContextImpl): JVal = Json.obj(
+      "status" -> o.getStatus.name,
+      "curMethod" -> o.getCurrentMethod.fold[JVal](JUndef)(method => JNum(method)),
+      "completedMethods" -> o.getCompletedMethods.fold[JVal](JUndef)(methods => JNum(methods)),
+      "lm" -> o.getCompletedMethods.fold[JVal](JUndef)(lm => JStr(lm.getClass.getSimpleName)),
+      //"lmsToProcess" -> Json.arr(getLoginModulesToProcess().map(_.getClass.getSimpleName)),
+      "params" -> o.getParams,
+      "claims" -> o.getClaims
+    )
+  }
+
+  implicit def jreader: JReader[LoginContextImpl] = new JReader[LoginContextImpl] {
+    def read(v: JVal): JResult[LoginContextImpl] = {
+      Right[String, LoginContextImpl](new LoginContextImpl()).right.map(lc => {
+        (v \ "status").asOpt[String].fold[Either[String, LoginContextImpl]](Left("status.notFound"))(s => {
+          LoginStatus.optValueOf(s).fold[Either[String, LoginContextImpl]](Left("status.unknown"))(ls => {
+            lc.status = ls
+            Right(lc)
+          })})
+      }).joinRight.right.map(lc => {
+        (v \ "curMethod").asOpt[Int].fold({
+          if (lc.getStatus == LoginStatus.PROCESSING) {
+            Left("curMethod.undefinedInProgress")
+          } else {
+            Right(lc)
+          }
+        })(m => {
+          lc.currentMethod = Some(m)
+          Right(lc)
+        })
+      }).joinRight.right.map(lc => {
+        (v \ "completedMethods").asOpt[Int].fold({
+          if (lc.getStatus == LoginStatus.SUCCESS) {
+            Left("completedMethods.undefinedInSuccess")
+          } else {
+            Right(lc)
+          }
+        })(m => {
+          lc.completedMethods = Some(m)
+          Right(lc)
+        })
+      }).joinRight.right.map(lc => {
+        (v \ "lm").asOpt[String].fold[Either[String, LoginContextImpl]]({
+          if (lc.getStatus == LoginStatus.PROCESSING) {
+            Left("lm.undefinedInProgress")
+          } else {
+            Right(lc)
+          }
+        })(lmName => {
+          LoginManager.loginModules.find(_.getClass.getSimpleName == lmName).fold[Either[String, LoginContextImpl]]({
+            Left("lm.unknown")
+          })(lm => {
+            lc.loginModule = Some(lm)
+            Right(lc)
+          })
+        })
+      }).joinRight.right.map(lc => {
+        (v \ "params").asOpt[JVal].fold(Right(lc))(jp => {
+          lc.params = jp.asInstanceOf[JObj]
+          Right(lc)
+        })
+      }).joinRight.right.map(lc => {
+        (v \ "claims").asOpt[JVal].fold(Right(lc))(jc => {
+          lc.claims = jc.asInstanceOf[JObj]
+          Right(lc)
+        })
+      }).joinRight match {
+        case Left(err) => {
+          appLogError("can't read login context from json [error = {}, json = {}]", err, v.toJson)
+          JError(err)
+        }
+        case Right(lc) => {
+          appLogTrace("the login context has been read from json successfully [lc = {}]", lc)
+          JSuccess(lc)
+        }
+      }
     }
-  }*/
+  }
 
   def fromJson(json: String): LoginContextImpl = {
     val jObj: JObj = JVal.parseStr(json).asInstanceOf[JObj]

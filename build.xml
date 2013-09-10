@@ -19,6 +19,53 @@
         <echo>Started cleaning of the whole project</echo>
     </target>
 
+    <target name="global.init">
+        <!-- init global libraries -->
+        <property name="global.dir.lib" value="${basedir}${fs}lib"/>
+        <mkdir dir="${global.dir.lib}"/>
+        <ivy:resolve file="${basedir}${fs}ivy.xml"/>
+        <ivy:retrieve pattern="${global.dir.lib}/[artifact]-[type]-[revision].[ext]"/>
+        <path id="global-libs.id">
+            <fileset dir="${global.dir.lib}"/>
+        </path>
+        <!-- init scala tasks -->
+        <taskdef resource="scala/tools/ant/antlib.xml">
+            <classpath>
+                <pathelement location="${global.dir.lib}/scala-compiler-jar-2.10.0.jar"/>
+                <pathelement location="${global.dir.lib}/scala-library-jar-2.10.0.jar"/>
+                <pathelement location="${global.dir.lib}/scala-reflect-jar-2.10.0.jar"/>
+            </classpath>
+        </taskdef>
+    </target>
+
+    <!--=================================
+			Init of build-tools
+		=================================-->
+    <target name="build-tools.init" depends="global.init">
+        <property name="build-tools.dir" value="${basedir}${fs}build-tools"/>
+        <property name="build-tools.dir.src" value="${build-tools.dir}${fs}src${fs}main${fs}scala"/>
+        <property name="build-tools.dir.dest" value="${build-tools.dir}${fs}target"/>
+        <property name="build-tools.dir.dest.classes" value="${build-tools.dir.dest}${fs}classes"/>
+        <mkdir dir="${build-tools.dir.dest}"/>
+        <mkdir dir="${build-tools.dir.dest.classes}"/>
+    </target>
+
+    <!--=================================
+			Building of core-lib
+		=================================-->
+    <target name="build-tools.build" depends="build-tools.init">
+        <scalac srcdir="${build-tools.dir.src}" destdir="${build-tools.dir.dest.classes}" classpathref="global-libs.id"/>
+        <jar destfile="${build-tools.dir.dest}${fs}build-tools.jar" basedir="${build-tools.dir.dest.classes}"/>
+    </target>
+
+    <target name="build-tools.clean" depends="build-tools.init">
+        <delete dir="${build-tools.dir.dest}"/>
+    </target>
+
+    <target name="build-tools" depends="build-tools.build">
+        <property name="build-tools.jar.path" value="${build-tools.dir.dest}${fs}build-tools.jar"/>
+    </target>
+
     <!--=================================
 		Building of database adapter
 		=================================-->
@@ -49,35 +96,21 @@
     <!--=================================
 			Init of Core library
 		=================================-->
-    <target name="core-lib.init">
+    <target name="core-lib.init" depends="global.init">
         <property name="core-lib.dir" value="${basedir}${fs}core"/>
-        <property name="core-lib.dir.lib" value="${basedir}${fs}lib"/>
         <property name="core-lib.dir.src" value="${core-lib.dir}${fs}src${fs}main${fs}scala"/>
         <property name="core-lib.dir.resources" value="${core-lib.dir}${fs}src${fs}main${fs}resources"/>
         <property name="core-lib.dir.dest" value="${core-lib.dir}${fs}target"/>
         <property name="core-lib.dir.dest.classes" value="${core-lib.dir.dest}${fs}classes"/>
-        <mkdir dir="${core-lib.dir.lib}"/>
         <mkdir dir="${core-lib.dir.dest}"/>
         <mkdir dir="${core-lib.dir.dest.classes}"/>
-        <ivy:resolve file="${basedir}${fs}ivy.xml"/>
-        <ivy:retrieve pattern="${core-lib.dir.lib}/[artifact]-[type]-[revision].[ext]"/>
-        <path id="core-lib.id.int">
-            <fileset dir="${core-lib.dir.lib}"/>
-        </path>
-        <taskdef resource="scala/tools/ant/antlib.xml">
-            <classpath>
-                <pathelement location="${core-lib.dir.lib}/scala-compiler-jar-2.10.0.jar"/>
-                <pathelement location="${core-lib.dir.lib}/scala-library-jar-2.10.0.jar"/>
-                <pathelement location="${core-lib.dir.lib}/scala-reflect-jar-2.10.0.jar"/>
-            </classpath>
-        </taskdef>
     </target>
 
     <!--=================================
 			Building of core-lib
 		=================================-->
-    <target name="core-lib.build" depends="core-lib.init">
-        <scalac srcdir="${core-lib.dir.src}" destdir="${core-lib.dir.dest.classes}" classpathref="core-lib.id.int"/>
+    <target name="core-lib.build" depends="core-lib.init, build-tools">
+        <scalac srcdir="${core-lib.dir.src}" destdir="${core-lib.dir.dest.classes}" classpathref="global-libs.id" classpath="${build-tools.jar.path}"/>
         <copy todir="${core-lib.dir.dest.classes}">
             <fileset dir="${core-lib.dir.resources}"/>
         </copy>
@@ -90,8 +123,9 @@
 
     <target name="core-lib" depends="core-lib.build">
         <path id="core-lib.id">
-            <fileset dir="${core-lib.dir.lib}"/>
+            <fileset dir="${global.dir.lib}"/>
             <file file="${core-lib.dir.dest}${fs}core-lib.jar"/>
+            <file file="${build-tools.jar.path}"/>
         </path>
     </target>
 

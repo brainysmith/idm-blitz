@@ -3,6 +3,7 @@ package utils.security
 import com.blitz.idm.app._
 import play.api.mvc._
 import services.login.LoginContextImpl
+import com.blitz.idm.app.json.Json
 
 /**
  */
@@ -22,7 +23,7 @@ trait LoginActionBuilder extends Results {
         new LoginContextImpl()
       })
 
-      a(LoginRequest(request, lc)).withSession(LC_KEY_NAME -> lc.json.toJson)
+      a(LoginRequest(request, lc)).withSession(LC_KEY_NAME -> Json.toJson(lc).toJson)
     }
   }
 

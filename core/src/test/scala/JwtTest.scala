@@ -14,6 +14,14 @@ class JwtTest extends Specification {
       Algorithm.valueOf("HS256") must be equalTo Algorithm.HS256
     }
 
+    "checking of existence of none algorithm " in {
+      Algorithm.valueOf("none") must be equalTo Algorithm.NONE
+    }
+
+    "checking of existence of HS384 algorithm " in {
+      Algorithm.valueOf("HS384") must be equalTo Algorithm.HS384
+    }
+
     "creating StringOrUri with plain string 'test string' " in {
       StringOrUri("test string").isUri must be equalTo false
     }
