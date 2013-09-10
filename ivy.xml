@@ -14,6 +14,5 @@
         <dependency org="commons-codec" name="commons-codec" rev="1.4"/>
         <dependency org="org.bouncycastle" name="bcprov-jdk16" rev="1.46"/>
         <dependency org="com.unboundid" name="unboundid-ldapsdk" rev="2.3.4"/>
-        <!--test-->
     </dependencies>
 </ivy-module>
