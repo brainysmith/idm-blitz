@@ -5,7 +5,7 @@ import com.blitz.idm.EnumerationMacros._
 /**
  *
  */
-private trait CustomEnumeration[A <: {def name: String}] {
+trait CustomEnumeration[A <: {def name: String}] {
 
   trait Val {
     self: A =>
