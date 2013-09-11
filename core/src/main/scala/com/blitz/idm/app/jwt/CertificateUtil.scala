@@ -12,6 +12,14 @@ import com.blitz.idm.app.security.{KeyStoreManager, TrustedCertsFactory}
 trait CertificateUtil {
   self: TrustedCertsFactory =>
 
+  /**
+   * Verifies the a certificate or certificate chain represented by array containing
+   * base64 encoded DER PKIX certificate values. The first is considered as the leaf of chain
+   * and other - as intermediate certificates.
+   * @param chain - an array of base64 encoded DER certificate values.
+   * @return if validation succeeded the method returns Right(leaf certificate as X509Certificate object),
+   *         otherwise - Left("error message")
+   */
   def verifyCertificateChain(chain: Array[String]): Either[String, X509Certificate] = decodeBase64(chain).right.map(s => KeyStoreManager.verifyCertificate(s(0), s.drop(1).toSet)).joinRight
 
   private def decodeBase64(arr: Array[String]): Either[String, Seq[X509Certificate]] = Try {
@@ -37,3 +45,4 @@ trait CertificateUtil {
   }
 
 }
+

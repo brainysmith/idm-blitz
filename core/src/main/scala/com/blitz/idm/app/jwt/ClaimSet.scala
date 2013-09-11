@@ -1,6 +1,6 @@
 package com.blitz.idm.app.jwt
 
-import com.blitz.idm.app.jwt.ReservedClaims._
+import com.blitz.idm.app.jwt.ReservedClaim._
 
 /**
  * This trait represents a claim set of JWT.
