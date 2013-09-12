@@ -91,10 +91,11 @@ class LdapLoginModule extends BasicLoginModule {
             appLogTrace("LDAP connection has been got from the pool")
             val authRes = Try({
               val bindRes = bind(userDn, pswd)
-              //put the matched user dn into the login context for the future use
+              //put the matched user dn into the login context for future using
               lc withClaim (USER_DN_CLAIM_NAME -> userDn)
 
-              appLogTrace("analyzing LDAP server's response controls [controls: {}]", bindRes.getResponseControls)
+              appLogTrace("analyzing LDAP server's response controls [controls: {}, messageId: {}]",
+                bindRes.getResponseControls, bindRes.getMessageID)
               var isPswdExpired = false
               bindRes.getResponseControls.foreach(control => {
                 appLogTrace("got a control [name={}, oid={}]", control.getControlName, control.getOID)
@@ -106,7 +107,7 @@ class LdapLoginModule extends BasicLoginModule {
                       expiringControl.getSecondsUntilExpiration/60/60/24))
                   }
                   case expiredControl: PasswordExpiredControl => {
-                    //todo: analise what is it isCritical
+                    //todo: analise what is it "isCritical"
                     appLogTrace("bind is successful, but the subject's password has expired: to continue the " +
                       "authentication the subject must change its password. Adding the {} obligation to the login " +
                       "context.", Obligation.CHANGE_PASSWORD)
@@ -130,6 +131,9 @@ class LdapLoginModule extends BasicLoginModule {
                     "The subject must have an access to his entry.")
                 })(entry => {
                   //todo: add user's attributes to claims of the lc
+/*                  for (attr: Attribute <- entry.getAttributes) {
+                    attr.get
+                  }*/
                   Result.SUCCESS
                 })
               } else {
@@ -202,17 +206,18 @@ class LdapLoginModule extends BasicLoginModule {
           pswdMdfRes match {
             case Success(res) => {
               if (res.getResultCode == ResultCode.SUCCESS) {
-                appLogDebug("the password change was successful [userIdentity: {}]", userDn)
+                appLogDebug("the password change was successful [userDn: {}, messageId: {}]",
+                  userDn, res.getMessageID)
                 true
               } else {
-                //todo: stop here
-                appLogDebug("the password change failed [userIdentity: {}, resultCode={}]", userDn, res.getResultCode.getName)
+                appLogDebug("the password change failed [userDn: {}, resultCode: {}, messageId: {}, " +
+                  "diagnosticMessage: {}]", userDn, res.getResultCode.getName, res.getMessageID, res.getDiagnosticMessage)
                 handleLdapError(res)
                 false
               }
             }
             case Failure(e) => {
-              appLogDebug("An error occurred while attempting to process the password modify extended request: {}", e)
+              appLogTrace("An error occurred while attempting to process the password modify extended request: {}", e)
               e match {
                 case le: LDAPException => {
                   handleLdapError(le.toLDAPResult)
@@ -239,21 +244,23 @@ class LdapLoginModule extends BasicLoginModule {
     appLogTrace("try to bind to LDAP server with following userDn: {}", userDn)
     val bindReq = new SimpleBindRequest(userDn, pswd)
     //if bind failed it rise LdapException
-    val bind = connection.bind(bindReq)
-    if (!bind.getResultCode.isConnectionUsable) {
-      appLogError("cannot bind to LDAP server: the connection isn't usable [resultCode: {}]",
-        bind.getResultCode)
+    val bindRes = connection.bind(bindReq)
+    if (!bindRes.getResultCode.isConnectionUsable) {
+      appLogError("cannot bind to LDAP server: the connection isn't usable [resultCode: {}, messageId: {}, " +
+        "diagnosticMessage: {}]", bindRes.getResultCode, bindRes.getMessageID, bindRes.getDiagnosticMessage)
       throw new RuntimeException("cannot bind to LDAP server: the connection isn't usable")
     }
 
-    appLogDebug("bind to LDAP server is successful [userDn: {}]", userDn)
-    bind
+    appLogDebug("bind to LDAP server is successful [userDn: {}, messageId: {}]", userDn, bindRes.getMessageID)
+    bindRes
   }
 
   private def handleLdapError(err: LDAPResult)(implicit lc: LoginContext, request: Request[AnyContent]) = {
+    appLogDebug("handling ldap error: [{resultCode: {}, messageId: {}, diagnosticMessage: {}}]",
+      err.getResultCode.getName, err.getMessageID, err.getDiagnosticMessage)
     var isErrorResolvedByControl = false
     err.getResponseControls.foreach(control => {
-      appLogTrace("got a control [name={}, oid={}]", control.getControlName, control.getOID)
+      appLogTrace("got a control [name: {}, oid: {}]", control.getControlName, control.getOID)
       control match {
         case expiredControl: PasswordExpiredControl => {
           //todo: check is it possible to change password in this case

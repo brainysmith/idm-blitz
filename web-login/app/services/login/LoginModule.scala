@@ -8,6 +8,8 @@ import com.blitz.idm.app.CustomEnumeration
  */
 trait LoginModule {
 
+  var attrMeta: Option[Seq[AttrMeta]] = None
+
   /**
    * The application calls this method exactly once after instantiating the login module.The method must be completed
    * successfully before the login module is asked to do any work.

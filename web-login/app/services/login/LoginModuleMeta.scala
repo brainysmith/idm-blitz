@@ -14,6 +14,7 @@ private[login] class LoginModuleMeta(private val className: String,
 
   def newInstance: LoginModule = {
     val instance: LoginModule = clsConstructor().asInstanceOf[LoginModule]
+    options.find(t => t._1 == "attrs").map(t => instance.attrMeta = Some(AttrMeta.parseArray(t._2)))
     instance.init(options)
     instance
   }

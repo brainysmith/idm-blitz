@@ -9,6 +9,7 @@ import org.codehaus.jackson.map.Module.SetupContext
 import java.io.StringWriter
 import org.codehaus.jackson.map.`type`.TypeFactory
 import scala.collection.mutable
+import scala.collection.generic.CanBuildFrom
 
 
 /**
@@ -84,12 +85,18 @@ case class JArr(private val v: Array[JVal]) extends JVal {
 
   def this(b: mutable.Buffer[JVal]) = this(b.toArray)
 
-  private val value = v.clone()
+  private val value: Array[JVal] = v.clone()
 
   def apply[B <: JVal](idx: Int): B = value(idx).asInstanceOf[B]
 
   def +:[T](element: T)(implicit writer: JWriter[T]) = JArr.prepend(this, element)
   def :+[T](element: T)(implicit writer: JWriter[T]) = JArr.append(this, element)
+
+  def foreach(f: (JVal) => Unit): Unit = value.foreach(f)
+
+  def map[B](f: (JVal) => B)(implicit bf: CanBuildFrom[Array[JVal], B, Array[B]]): Array[B] = value.map(f)(bf)
+
+  def forall(f: (JVal) => Boolean): Boolean = value.forall(f)
 
   override def toString = v.mkString("JArr(", ", ", ")")
 
@@ -118,6 +125,14 @@ case class JObj(private val v: Seq[(String, JVal)]) extends JVal {
   def ++!(that: JObj): JObj = JObj.addOrReplace(this, that)
 
   def fields: Set[String] = value.keySet
+
+  def isEmpty: Boolean = value.isEmpty
+
+  def foreach(f: ((String, JVal)) => Unit): Unit = value.foreach(f)
+
+  def map[B, That](f: ((String, JVal)) => B)(implicit bf: CanBuildFrom[Map[String, JVal], B, That]): That = value.map(f)(bf)
+
+  def forall(f: ((String, JVal)) => Boolean): Boolean = value.forall(f)
 
   override def \(field: String) = value.get(field).getOrElse(JUndef)
 
