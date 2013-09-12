@@ -12,12 +12,12 @@ import java.security.cert.X509Certificate
 trait Header {
   self: HeaderStore =>
 
-  private val mandatoryParams = values.filter(_.asInstanceOf[ReservedHeaderParameter[Nothing, Nothing]].headerType == HeaderType.PLAIN).filter(_.mandatory)
+  private val mandatoryParams = values.filter(_.mandatory).filter(_.asInstanceOf[ReservedHeaderParameter[Nothing, Nothing]].headerType == HeaderType.PLAIN)
 
   /**
    * validating of mandatory params
    */
-  values.filter(_.asInstanceOf[ReservedHeaderParameter[Nothing, Nothing]].headerType == HeaderType.PLAIN).foreach(p => getAsAny(p.name) match {
+  mandatoryParams.filter(_.asInstanceOf[ReservedHeaderParameter[Nothing, Nothing]].headerType == HeaderType.PLAIN).foreach(p => getAsAny(p.name) match {
     case None => throw new IllegalStateException("Header parameter '" + p.name + "' must be defined.")
     case _ =>
   })
@@ -29,6 +29,7 @@ trait Header {
     case Some(ALG) => getAsString(ALG.name).map(v => ALG.validate(v))
     case Some(TYP) => getAsString(TYP.name).map(v => TYP.validate(v))
     case Some(CTY) => getAsString(CTY.name).map(v => CTY.validate(v))
+    case _ =>
   })
 
   /**
@@ -53,12 +54,12 @@ trait Header {
 
 trait SignHeader extends Header with HeaderStore {
 
-  private val mandatoryParams = values.filter(_.asInstanceOf[ReservedHeaderParameter[Nothing, Nothing]].headerType == HeaderType.SIGNED).filter(_.mandatory)
+  private val mandatoryParams = values.filter(_.mandatory).filter(_.asInstanceOf[ReservedHeaderParameter[Nothing, Nothing]].headerType == HeaderType.SIGNED)
 
   /**
    * validating of mandatory params
    */
-  values.filter(_.asInstanceOf[ReservedHeaderParameter[Nothing, Nothing]].headerType == HeaderType.PLAIN).foreach(p => getAsAny(p.name) match {
+  mandatoryParams.filter(_.asInstanceOf[ReservedHeaderParameter[Nothing, Nothing]].headerType == HeaderType.PLAIN).foreach(p => getAsAny(p.name) match {
     case None => throw new IllegalStateException("Header parameter '" + p.name + "' must be defined.")
     case _ =>
   })
@@ -74,6 +75,7 @@ trait SignHeader extends Header with HeaderStore {
     case Some(X5C) => getAsStringArray(X5C.name).map(v => X5C.validate(v))
     case Some(KID) => getAsString(KID.name).map(v => KID.validate(v))
     case Some(CRIT) => getAsStringArray(CRIT.name).map(v => CRIT.validate(v))
+    case _ =>
   })
 
   /**

@@ -53,7 +53,7 @@ object ReservedHeaderParameter extends CustomEnumeration[Claim] with Certificate
   /**
    * Header parameters of JWT.
    */
-  case object ALG extends ReservedHeaderParameter("alg    ", true, PLAIN,
+  case object ALG extends ReservedHeaderParameter("alg", true, PLAIN,
     (s: String) => Algorithm.optValueOf(s).fold[Unit](throw new IllegalStateException("Header parameter 'alg' has a wrong value '" + s + "'."))(a => {
       if (!a.supported) throw new IllegalStateException("Algorithm '" + a.name + "' is not supported.")}),
     (s: String) => Algorithm.valueOf(s))

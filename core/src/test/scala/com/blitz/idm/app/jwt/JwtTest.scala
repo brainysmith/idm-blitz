@@ -1,5 +1,6 @@
+package com.blitz.idm.app.jwt
+
 import com.blitz.idm.app.json.{JNull, Json}
-import com.blitz.idm.app.jwt.{ReservedClaims, IntDate, StringOrUri, Algorithm}
 import java.net.URISyntaxException
 import org.specs2.mutable.Specification
 
@@ -161,6 +162,10 @@ class JwtTest extends Specification {
 
     "" in {
       "" must be equalTo ""
+    }
+
+    "creating a Plaintext JWT header from a string " in {
+      SimpleHeaderFactory.header("eyJhbGciOiJub25lIn0").toString must be equalTo "{\"alg\":\"none\"}"
     }
 
   }

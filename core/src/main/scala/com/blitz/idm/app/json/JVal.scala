@@ -15,7 +15,7 @@ import scala.collection.generic.CanBuildFrom
 /**
  *
  */
-trait JVal {
+sealed trait JVal {
 
   /**
    * Extract a value corresponding to filed name passed, from this object. It works only in JSON objects.
@@ -158,6 +158,7 @@ object JObj {
 private[json] class JSerializer extends JsonSerializer[JVal]{
   def serialize(bean: JVal, generator: JsonGenerator, provider: SerializerProvider) {
     bean match {
+      case JUndef =>
       case JNull => generator.writeNull()
       case JNum(v) => generator.writeNumber(v.bigDecimal)
       case JStr(v) => generator.writeString(v)
